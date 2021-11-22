@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D766EB68-5A6B-4719-B604-60E1A87A999C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CapaEntidad</RootNamespace>
+    <AssemblyName>CapaEntidad</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admonred\Ent_Cordinator.cs" />
+    <Compile Include="ArticuloStock\Distrito.cs" />
+    <Compile Include="ArticuloStock\Provincia.cs" />
+    <Compile Include="ArticuloStock\Departamento.cs" />
+    <Compile Include="ArticuloStock\Articulo_Tienda.cs" />
+    <Compile Include="ArticuloSustituto\Articulo_Sustituto_Tienda.cs" />
+    <Compile Include="Articulo\Ent_Articulo.cs" />
+    <Compile Include="Articulo\Ent_Articulo_Categoria_Stock.cs" />
+    <Compile Include="Articulo\Ent_Articulo_Precio.cs" />
+    <Compile Include="Articulo\Ent_Categoria.cs" />
+    <Compile Include="Articulo\Ent_Marca.cs" />
+    <Compile Include="Articulo\Ent_Oferta.cs" />
+    <Compile Include="Articulo\Ent_Premios.cs" />
+    <Compile Include="Articulo\Ent_Articulo_Stock.cs" />
+    <Compile Include="Articulo\Ent_CategoriaPrincipal.cs" />
+    <Compile Include="Articulo\Ent_Promocion.cs" />
+    <Compile Include="Articulo\Ent_SubCategoria.cs" />
+    <Compile Include="Articulo\Ent_Temporada.cs" />
+    <Compile Include="Cliente\Ent_Cliente_Agencia.cs" />
+    <Compile Include="Cliente\Ent_Cliente_Despacho.cs" />
+    <Compile Include="Cliente\Ent_Cliente_Lista.cs" />
+    <Compile Include="Cliente\Ent_Combo_Lider.cs" />
+    <Compile Include="Control\Ent_Aplicacion.cs" />
+    <Compile Include="Control\Ent_Recov_Pass.cs" />
+    <Compile Include="Control\Ent_Tienda.cs" />
+    <Compile Include="Devolucion\Ent_Documentos_Dev.cs" />
+    <Compile Include="Facturacion\Ent_Facturacion.cs" />
+    <Compile Include="Financiera\Ent_Banco.cs" />
+    <Compile Include="Financiera\Ent_Concepto.cs" />
+    <Compile Include="Financiera\Ent_Cruce.cs" />
+    <Compile Include="Financiera\Ent_Documento_Transaccion.cs" />
+    <Compile Include="Financiera\Ent_Documents_Trans.cs" />
+    <Compile Include="Financiera\Ent_Estado.cs" />
+    <Compile Include="Financiera\Ent_Nota_Credito.cs" />
+    <Compile Include="Financiera\Ent_Pago.cs" />
+    <Compile Include="Logistica\Ent_Gestion_Stock.cs" />
+    <Compile Include="Logistica\Ent_Lista_Despacho.cs" />
+    <Compile Include="Logistica\Ent_Lista_Rotulo.cs" />
+    <Compile Include="Maestros\Ent_Documento_Tipo.cs" />
+    <Compile Include="Maestros\Ent_Lugar.cs" />
+    <Compile Include="Maestros\Ent_Persona_Tipo.cs" />
+    <Compile Include="Pedido\Ent_Pago_NCredito.cs" />
+    <Compile Include="Pedido\Ent_Liquidacion.cs" />
+    <Compile Include="Pedido\Ent_Documents_Trans.cs" />
+    <Compile Include="Pedido\Ent_Pedidos_Vencidos.cs" />
+    <Compile Include="Pedido\Ent_Pedido_Consultas.cs" />
+    <Compile Include="Pedido\Ent_Pedido_Flete.cs" />
+    <Compile Include="Pedido\Ent_Pedido_Separado.cs" />
+    <Compile Include="Pedido\Order_Dtl_Temp.cs" />
+    <Compile Include="Pedido\Ent_Order_Dtl.cs" />
+    <Compile Include="Pedido\Ent_Articulo_Pedido.cs" />
+    <Compile Include="Pedido\Ent_Pedido_Persona.cs" />
+    <Compile Include="Pedido\Ent_Pedido_Maestro.cs" />
+    <Compile Include="Persona\Persona.cs" />
+    <Compile Include="Promotor\Ent_Promotor.cs" />
+    <Compile Include="Promotor\Ent_Maestro.cs" />
+    <Compile Include="ReportsValeCompra\Reporte_Resultado.cs" />
+    <Compile Include="ReportsValeCompra\Reporte_Filtro.cs" />
+    <Compile Include="RRHH\Ent_Clientes_Convert.cs" />
+    <Compile Include="RRHH\Ent_RRHH.cs" />
+    <Compile Include="Util\Departamento.cs" />
+    <Compile Include="Util\Ent_Combo.cs" />
+    <Compile Include="Util\Ent_Promotor_Maestro.cs" />
+    <Compile Include="Util\JsonResponse.cs" />
+    <Compile Include="ValeCompra\Ent_Cliente.cs" />
+    <Compile Include="Control\Ent_Funcion.cs" />
+    <Compile Include="Control\Ent_Roles.cs" />
+    <Compile Include="Control\Ent_Usuario.cs" />
+    <Compile Include="General\Ent_jQueryDataTableParams.cs" />
+    <Compile Include="Maestros\Ent_Estado.cs" />
+    <Compile Include="Maestros\Ent_Usuario_Tipo.cs" />
+    <Compile Include="Menu\Ent_Menu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\Ent_Bataclub.cs" />
+    <Compile Include="Util\Ent_Conexion.cs" />
+    <Compile Include="Util\Ent_Constantes.cs" />
+    <Compile Include="Util\Ent_Global.cs" />
+    <Compile Include="ValeCompra\Ent_ValeCompra.cs" />
+    <Compile Include="ValeCompra\Ent_ValeCompraDetalle.cs" />
+    <Compile Include="ValeCompra\JsonResponse.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

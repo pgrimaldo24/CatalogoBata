@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Lista de Articulos";
+    ViewBag.SubTitle = "";
+}
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+</style>
+<p class="text-primary">Esta ventana muestra los precios de los articulos.</p>
+
+@*<button type="submit" title="Editar datos del cliente" onclick="" class="btn btn-xs btn-default btn-tabla editar-fila"><span class="fa fa-pencil text-primary"></span></button>*@
+
+<div class="box box-body box-default">
+    <div class="row">
+        <div class="col-md-6">
+            <button id="btnRefrescar" title="Actualizar" class="btn btn-success">
+                <span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Refresh
+            </button>
+        </div>
+        <div class="col-md-6 text-right">
+            <button id="btnExportar" title="Actualizar" class="btn btn-success">
+                <span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Exportar Lista
+            </button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="tbArticulos" class="table table-hover table-bordered compact">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Sub Categoría</th>
+                            <th>Marca</th>
+                            <th>Descripción</th>
+                            <th>Articulo</th>
+                            <th>Precio Inc(Igv)</th>
+                            <th>Precio Sin(Igv)</th>
+                            <th>Precio Costo</th>
+                            <th>Temporada</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach:"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Sub Categoría</th>
+                            <th>Marca</th>
+                            <th>Descripción</th>
+                            <th>Articulo</th>
+                            <th>Precio Inc(Igv)</th>
+                            <th>Precio Sin(Igv)</th>
+                            <th>Temporada</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            var tipo_user=@ViewBag.usu_tip_id;
+            var IsOk = false;
+
+            var actualizar='0';
+
+            //var tipo_user = '0';
+            if (tipo_user == '04' || tipo_user == '06') {
+                IsOk = true;
+            }
+
+            $("#btnRefrescar").click(function () {
+                waitingDialog.show("Espere por favor...")
+                actualizar='1';
+                $('#tbArticulos').DataTable().ajax.reload(function () {
+                    waitingDialog.hide();
+                });
+            })
+
+            $("#btnExportar").click(function () {
+                waitingDialog.show("Espere por favor...")
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("get_exporta_ListaArticulo_excel", "Articulo")',
+                    //data: {},
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        waitingDialog.hide();
+                        if (data.Success) {
+                            toastr.success(data.Message);
+                            window.location = '@Url.Action("ListaArticuloPrecioExcel")';
+                        }
+                        else {
+                            toastr.error(data.Message, "Alerta");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        waitingDialog.hide();
+                        toastr.error("Error al consultar.", "Alerta");
+                    }
+                });
+            })
+
+            $("body").toggleClass('sidebar-collapse');
+
+            $('#tbArticulos').DataTable({
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getListArticulosAjax", "Articulo")',
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "actualizar", "value": actualizar });
+                    actualizar='';
+                },
+                "bdestroy": true,
+                "start": 0,
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": [5, 6, 7],
+                }],
+                "bDeferRender": true,
+                "aoColumns": [
+                        { "sName": "Cat_Principal", "mData": "Cat_Principal" },
+                        { "sName": "SubCategoria", "mData": "SubCategoria" },
+                        { "sName": "Marca", "mData": "Marca" },
+                        { "sName": "Descripcion", "mData": "Descripcion" },
+                        { "sName": "IdArticulo", "mData": "IdArticulo" },
+                        {
+                            "sName": "PrecioIgv", "mData": "PrecioIgv",
+                            "sClass": "alignRight",
+                            "render": function (data, type, full, meta) {
+                                return "S/" + data.toFixed(2)
+                            }
+                        },
+                        {
+                            "sName": "PrecioSinIgv", "mData": "PrecioSinIgv",
+                            "sClass": "alignRight",
+                            "render": function (data, type, full, meta) {
+                                return "S/" + data.toFixed(2)
+                            }
+                        },
+                        {
+                            "sName": "Costo", "mData": "Costo",
+                            "sClass": "alignRight",
+                            "bVisible": IsOk,
+                            "render": function (data, type, full, meta) {
+                                return "S/" + data.toFixed(2)
+                            }
+                        },
+                        { "sName": "Temporada", "mData": "Temporada" }
+                ]
+            });
+        })
+
+    </script>
+}

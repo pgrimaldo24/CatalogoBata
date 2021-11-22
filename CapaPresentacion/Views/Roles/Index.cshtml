@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "Control de Roles";
+}
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+</style>
+<p class="text-primary">Muestra la lista de Roles utilizados en el Sistema. Permite crear nuevos Roles para utilizar en el Sistema y editar los existentes.</p>
+<div class="box box-body box-default">
+
+    <button type="submit" id="btnaceptar" onclick="nuevo();" name="btnaceptar" title="Agregar" class="nuevo btn btn-small btn-primary" data-modal="" data-toggle="modal">Agregar Roles</button>
+
+    <div class="box-body" id="lista">
+        <table id="tbroles" class="table table-hover table-bordered compact">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th> 
+                    <th>Descripcion</th>                   
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:"></tbody>
+            <tfoot>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>                 
+                    <th>Descripcion</th>                   
+                    <th>Acciones</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="myModalContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<script>
+    function funcion(id) {
+        var TeamDetailPostBackURL = "@Url.Action("Funcion", "Roles")";        
+        waitingDialog.show('Espere un momento por favor');
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                waitingDialog.hide();
+                
+                $('#myModalContent').html(data);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+                
+
+            },
+            error: function () {
+                waitingDialog.hide();
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+</script>
+
+<script>
+    function OnNuevo_Grabar() {
+        var msg_titulo = 'Mensaje Aquarella!';
+        var nombre = $("#nombre").val();
+        var descripcion = $("#descripcion").val();
+        waitingDialog.show('Espere un momento por favor');
+        $.ajax
+             ({
+                 url: '../Roles/Nuevo',
+                 dataType: "json",
+                 type: "POST",
+                 data: { nombre: nombre, descripcion: descripcion },
+                 success: function (data, textStatus, XMLHttpRequest) {
+                     if (data.estado == '1') {
+
+                         $('#myModal').modal('hide');
+                         $('body').removeClass('modal-open');
+                         $('.modal-backdrop').remove();
+
+                         actualizar = "1";
+                         $('#tbroles').DataTable().ajax.reload();
+                         actualizar = "";
+                         waitingDialog.hide();
+                         toastr.success(data.desmsg, msg_titulo);
+                     }
+                     else {
+                         waitingDialog.hide();
+                         toastr.error(data.desmsg, msg_titulo);
+                     }
+                 },
+                 error: function (xhr) {
+                     waitingDialog.hide();
+                     toastr.error(xhr, msg_titulo);
+                 }
+             })
+    }
+</script>
+
+<script>
+    function InvalidMsg(textbox, str) {
+
+        if (textbox.value.length == 0) {
+            textbox.setCustomValidity(str);
+        }
+        else {
+            textbox.setCustomValidity('');
+        }
+        return true;
+    }
+</script>
+<script>
+    function nuevo() {
+        waitingDialog.show('Espere un momento por favor');
+        var TeamDetailPostBackURL ="@Url.Action("Nuevo", "Roles")";
+     
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: {},
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                waitingDialog.hide();             
+                $('#myModalContent').html(data);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+            },
+            error: function () {
+                waitingDialog.hide();              
+                alert("Dynamic content load failed.");
+
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function OnEditar_Grabar() {
+        var msg_titulo = 'Mensaje Aquarella!';
+        var id = $("#idrol").val();
+        var nombre = $("#nombre").val();
+        var descripcion = $("#descripcion").val();
+        waitingDialog.show('Espere un momento por favor');
+        $.ajax
+             ({
+                 url: '../Roles/Edit',
+                 dataType: "json",
+                 type: "POST",
+                 data: { id: id, nombre: nombre, descripcion: descripcion },
+                 success: function (data, textStatus, XMLHttpRequest) {
+                     if (data.estado == '1') {
+
+                         $('#myModal').modal('hide');
+                         $('body').removeClass('modal-open');
+                         $('.modal-backdrop').remove();
+
+                         actualizar = "1";
+                         $('#tbroles').DataTable().ajax.reload();
+                         actualizar = "";
+                         waitingDialog.hide();
+                         toastr.success(data.desmsg, msg_titulo);
+                     }
+                     else {
+                         waitingDialog.hide();
+                         toastr.error(data.desmsg, msg_titulo);
+                     }
+                 },
+                 error: function (xhr) {
+                     waitingDialog.hide();
+                     toastr.error(xhr, msg_titulo);
+                 }
+             })
+
+    }
+
+</script>
+
+<script>
+    function editar(id) {
+        var TeamDetailPostBackURL ="@Url.Action("Edit", "Roles")";    
+        waitingDialog.show('Espere un momento por favor');
+    
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            datatype: "json",
+            cache: true,
+            success: function (data) {                
+                waitingDialog.hide();
+                $('#myModalContent').html(data);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');               
+            },
+            error: function () {
+                waitingDialog.hide();
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+</script>
+
+<script>
+        var actualizar = "";
+        $(document).ready(function () {
+
+            $('#tbroles').DataTable({
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getListaRolesAjax", "Roles")',
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "actualizar", "value": actualizar });
+                },
+                "bdestroy": true,
+                "start": 0,
+                "columnDefs": [{
+
+                    "orderable": true
+                }],
+                "bDeferRender": true,
+                "aoColumns": [
+                      { "sName": "rol_id", "mData": "rol_id" },
+                      { "sName": "rol_nombre", "mData": "rol_nombre" },
+                      { "sName": "rol_descripcion", "mData": "rol_descripcion" },
+                      {
+                          "render": function (data, type, full) {                            
+                              return ' <div class="pull-right"><button title="Editar Roles" onclick="editar(' + full.rol_id + ');"  class="btneditar btn btn-primary" style="border-radius:50%" data-id="full.rol_id" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;<button title="Agregar Funciones" class="btnfun btn btn-success" style="border-radius:50%" data-id="" onclick="funcion(' + full.rol_id + ');" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-list-alt"></span></button></div>'
+
+                          }, "class": "boton-td"
+                      }
+                ]
+            });
+
+        });
+</script>
+}

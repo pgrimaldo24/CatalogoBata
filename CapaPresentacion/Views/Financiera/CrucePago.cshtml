@@ -1,0 +1,321 @@
+﻿@{ 
+    ViewBag.Title = "Cruce de pagos y liquidaciones";
+    ViewBag.SubTitle = "";
+}
+<p class="text-primary">Por favor seleccione las liquidaciones y los pagos con los cuales va a cruzar.  El sistema no permite grabar hasta que el "Gran Total" sea un número mayor a cero ó sus pagos superen el valor de sus pedidos o deudas.</p>
+<div class="row">
+    <div class="col-md-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-widget">
+                    <div class="box-header with-border">
+                        Promotor(a)
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-10 col-xs-10">
+                                <div class="form-group">
+                                    @Html.DropDownList("dwPromotor", new SelectList(ViewBag.listPromotor, "codigo", "descripcion", null), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "dwPromotor", @name = "dwPromotor", @onchange = "consultar();" })
+                                    <span class="help-block" style="color: #31708f">Seleccione un promotor sobre el cual realizará las acciones</span>
+                                </div>
+                            </div>
+                            <button type="button" title="Consultar" id="btnConsultar" class="btn btn-primary" onclick="consultar();">
+                                <small class="glyphicon glyphicon-search"></small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-widget">
+                    <div class="box-header with-border">
+                        <div class="user-block">
+                            <img class="img-circle" src="../Content/images/placeholder-user.jpg" alt="User Image">
+                            <span class="username" id="doc-nom-persona">&nbsp;</span>
+                            <span class="description" id="ubi-persona">&nbsp;</span>
+                        </div>
+                        <!-- /.user-block -->
+                        <div class="box-tools">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <div class="box-body">
+                        <div class="row" id="infoProm">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-widget">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table id="tblPL" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Fecha</th>
+                                            <th>Concepto</th>
+                                            <th>Monto</th>
+                                            <th>Tipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach:"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="4"><span class="pull-right text-bold" id="totalPL">S/ 99.99</span></th>
+                                            <th class="text-center" id="iconPL"></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-success pull-right" disabled type="button" id="btnCruce"><i class="fa fa-floppy-o"></i>&nbsp;&nbsp;Guardar el cruce realizado</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    var checking = false;
+    var checkVal;
+    function consultar() {
+        waitingDialog.show("Espere un momento por favor.")
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GET_INFO_PERSONA", "Financiera")',
+            data: { codigo: $("#dwPromotor").val() },
+            success: function (data) {
+                waitingDialog.hide();
+                if (data.estado == 0) {
+                    $("#doc-nom-persona").html(data.info.Bas_Documento + ' - ' + data.info.NombreCompleto);
+                    var strPremio = data.info.premio.length > 0 ? '<b class="pull-right text-danger"><i class="fa fa-gift"></i>&nbsp;' + data.info.premio + '</b>' : "";
+                    $("#ubi-persona").html(data.info.Ubicacion + strPremio);
+                    var html = '<div class="col-md-12 col-xs-12" >\
+                                        <dl class="dl-horizontal">\
+                                        <dt>Asesor Comercial :</dt>\
+                                        <dd>' + data.info.asesor + '</dd>\
+                                        <dt>Lider :</dt>\
+                                        <dd>' + data.info.Are_Descripcion + '</dd>\
+                                        <dt>Ubicación :</dt>\
+                                        <dd>' + data.info.Ubicacion + '</dd>\
+                                        <dt>E-Mail de contacto :</dt>\
+                                        <dd>' + data.info.Bas_Correo + '</dd>\
+                                        <dt>Agencia :</dt>\
+                                        <dd>' + data.info.bas_agencia + '</dd>\
+                                        <dt>Destino :</dt>\
+                                        <dd>' + data.info.bas_destino + '</dd>\
+                                        <dt>Premio por ganar :</dt>\
+                                        <dd>' + data.info.premio + '</dd>\
+                                        </dl>\
+                                    </div>'
+                    $("#infoProm").html(html);
+                    $('#tblPL').DataTable().ajax.reload();
+                    //CargarLiq(data.liquidacion);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                waitingDialog.hide();
+                toastr.error("Error al consultar.", "Alerta");
+            }
+        });
+    }
+
+    //var inicio=0;
+
+    $(document).ready(function () {
+
+        var usutip = @ViewBag.usutipo;
+        //$("#btnCruce").prop("disabled", false);
+
+        if (usutip=='02') consultar();
+
+        //$("#btnConsultar").click(function () {
+        //    consultar();
+        //});
+
+        $("#tblPL").DataTable({
+            "dom": 't',
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json",
+            },
+            "ordering": false,
+            "aLengthMenu": [100],
+            //"bFilter": false,            
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                $.getJSON(sSource, aoData, function (json) {
+
+                    //if (json.aaData.length==0){
+                    //    $("#btnCruce").prop("disabled", true);
+                    //}
+                    //else{
+                    //    $("#btnCruce").prop("disabled", false);
+                    //}
+
+                        
+
+                    $("#totalPL").html("S/ " + parseFloat(json.total).toFixed(2));
+                    if (parseFloat(json.total) >= 0) {
+                        $("#totalPL").removeClass("text-danger");
+                        $("#totalPL").addClass("text-success");
+                        $("#iconPL").html("<span class='text-success'><i class='fa fa-check-circle'></i></span>");
+                        if (json.aaData.length==0){
+                            $("#btnCruce").prop("disabled", true);
+                        }
+                        else{
+                            $("#btnCruce").prop("disabled", false);
+                        }
+                    } else {
+                        $("#totalPL").removeClass("text-success");
+                        $("#totalPL").addClass("text-danger");
+                        $("#iconPL").html("<span class='text-danger'><i class='fa fa-exclamation-circle'></i></span>");
+                        $("#btnCruce").prop("disabled", true);
+                    }
+                    fnCallback(json);
+                });
+            },
+            "bServerSide": true,
+            "autoWidth": false,
+            "sAjaxSource": '@Url.Action("getDataPagsLiqs", "Financiera")',
+            "fnServerParams": function (aoData) {
+                aoData.push(
+                    { "name": "checking", "value": checking },
+                    { "name": "checkVal", "value": checkVal }
+                    );
+            },
+            "bdestroy": true,
+            "columns": [
+                /*
+                            a.dtv_transoc_id     ,
+                            a.dtv_concept_id     ,
+                            a.cov_descriptcion   ,
+                            a.document_date_desc ,
+                            a.dtd_document_date  ,
+                            a.debito             ,
+                            a.credito            ,
+                            a.val                ,
+                            a.TIPO               ,
+                            a.active             ,
+                            a.checks             ,
+                            a.von_increase       ,
+                            a.Flag,
+                            monto
+                */
+                {
+                    render: function (data, type, full) {
+                        if (full.checks == true) {
+                            return "<div class='checkbox' style='height: 13px;'><label><input style='margin-top: 0px;' name='chkPL' value='" + full.dtv_transdoc_id + "' class='marcar-pl' type='checkbox' checked></label></div>"
+                        } else {
+                            return "<div class='checkbox' style='height: 13px;'><label><input style='margin-top: 0px;' name='chkPL' value='" + full.dtv_transdoc_id + "' class='marcar-pl' type='checkbox'  ></label></div>"
+                        }
+                    }, "className": "content-center-text"
+                },
+                { "data": "document_date_desc" },
+                { "data": "cov_description" },
+                {
+                    render: function (data, type, full) {
+                        return "S/ " + full.monto.toFixed(2);
+                    }, "className": "content-rigth-text"
+                },
+                {
+                    render: function (data, type, full) {
+                        if (full.von_increase < 0 || full.credito < 0) {
+                            return '<span class="text-danger text-bold">' + full.TIPO + '</span>'
+                        } else {
+                            return '<span class="text-success text-bold">' + full.TIPO + '</span>'
+                        }
+                    }, "className": "content-center-text"
+                },
+            ]
+        });
+        $('#tblPL').on('change', '.marcar-pl', function (e) {
+            checking = true;
+            checkVal = $(this).val();
+            $('#tblPL').DataTable().ajax.reload(function () {
+                checking = false;
+                checkVal = null;
+            });
+        });
+
+        function GenerarCruce() {
+            waitingDialog.show("Espere por favor...")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("valida_cruce", "Financiera")',
+                data: {},
+                success: function (data) {
+                    waitingDialog.hide();
+                    if (data.estado == 0) {                                                                    
+                        grabar_cruce();                                              
+                    }
+                    else
+                    {
+                        toastr.error(data.mensaje, "Alerta");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {              
+                    toastr.error("Error al consultar.", "Alerta");
+                }
+            });            
+        }
+
+        function grabar_cruce(){
+            swal({
+                title: "Guardar cruce de pago",
+                text: "¿Está seguro de guardar el cruce?",
+                icon: "warning",
+                buttons: ["No", "Si"],
+                dangerMode: true,
+            }).then((cambiar) => {
+                if (cambiar) {
+                    waitingDialog.show("Espere un momento por favor.")
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GuardarCruce", "Financiera")',
+                        data: null,
+                        success: function (data) {
+                            if (data.estado == 0) {
+                                toastr.success(data.mensaje);
+                                checking = false;
+                                checkVal = null;
+                                //inicio=0;
+                                $('#tblPL').DataTable().ajax.reload(function () {
+                                    waitingDialog.hide();
+                                });
+                            } else {
+                                toastr.error(data.mensaje);
+                                waitingDialog.hide();
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            waitingDialog.hide();
+                            toastr.error("Error al consultar.", "Alerta");
+                        }
+                    });
+                }
+            });
+        }
+
+        $("#btnCruce").click(function () {
+            GenerarCruce();  
+        });
+    });
+</script>    
+}

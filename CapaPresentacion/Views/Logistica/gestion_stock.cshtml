@@ -1,0 +1,199 @@
+﻿
+@{
+    ViewBag.Title = "Gestión de Stock - Catálogo - Almacenes";
+}
+
+<p class="text-primary">Consulta de gestión de stock</p>
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+</style>    
+<div class="box box-header box-success">
+    <h3 class="box-title danger" style="color:#9c9c9c;font-weight:bold">Consulta de Stock</h3>
+    <br />
+    <br />
+    <div class="row">   
+        <div class="col-md-4">
+            <div class="form-group" id="divMenArchivo">
+                <label id="lblMenArchivo" class="control-label">
+                    Cargar archivo Excel
+                </label>
+                <div class="input-group Input-Archivo ">
+                    <div class="input-group-btn">
+                        <button id="btnExaminar" class="btn btn-info btn-Examinar" type="button" style="width: 61.5px;">
+                            <i class="glyphicon glyphicon-folder-open" style="color:#FFF"></i>
+                        </button>
+                    </div>
+                    <input id="IdNombre" name="IdNombre" type="text" class="form-control " disabled placeholder='Seleccionar archivo...' />
+                </div>
+            </div>
+        </div>     
+        <div class="col-sm-2" style="padding-left: 25px; width: 105px; margin-top: 23px; margin-bottom: 10px;">
+            <button id="btnnuevo" onclick="exportar();" type="submit" title="Crear Nuevo Despacho" class="btn btn-success">
+                <span class="glyphicon glyphicon-new-window"></span>&nbsp;&nbsp;Expotar a Excel
+            </button>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
+    <script>
+        btnfile();
+        $('input[type="file"]').change(function () {
+            ExportToTable();
+        });
+        function btnfile() {
+            $(".Input-Archivo").before(
+                function () {
+                    if (!$(this).prev().hasClass("Input-File")) {
+                        var element = $("<input type='file' id = 'excelFile' class='Input-File' style='visibility:hidden; height:0'>");
+                        element.attr("name", $(this).attr("name"));
+                        element.change(function () {
+
+                            element.next(element).find('input').val((element.val()).split('\\').pop());
+                        });
+                        $(this).find("button.btn-Examinar").click(function () {
+                            element.click();
+                        });
+                        $(this).find('input').css("cursor", "pointer");
+                        $(this).find('input').mousedown(function () {
+                            $(this).parents('.Input-Archivo').prev().click();
+                            return false;
+                        });
+                        debugger
+
+                        return element;
+                    }
+                }
+            );
+        }
+        function EnviarArticulosExcel(jsonExcel) {
+            waitingDialog.show('Espere un momento por favor');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("JsonExcelArticulos_Logistica", "Logistica")',
+                data: { articulos: JSON.stringify(jsonExcel) },
+                dataType: "json",
+                success: function (data) {
+                    if (data.estado == 1) {
+                        //ordenar = false;
+
+                        //$('#tbarticulo_precio').DataTable().ajax.reload(function () { waitingDialog.hide(); });
+                        $('#excelFile').val("");
+                        waitingDialog.hide();
+                        //$('.table').DataTable().ajax.reload(function () { Resumen(false); waitingDialog.hide(); });
+                    } else {
+                        waitingDialog.hide();
+                        swal({
+                            title: "Error",
+                            text: data.resultados,
+                            icon: "error",
+                            dangerMode: true,
+                        });
+                        //$('#tbarticulo_precio').DataTable().ajax.reload(function () { waitingDialog.hide(); });
+                        $('#excelFile').val("");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    waitingDialog.hide();
+                    var error = eval("(" + XMLHttpRequest.responseText + ")");
+                    swal(error.Message);
+                    //$('#tbarticulo_precio').DataTable().ajax.reload(function () { waitingDialog.hide(); });
+                    $('#excelFile').val("");
+                }
+            });
+        }
+        function ExportToTable() {
+            try {
+                var regex = /\.(xls[mx]?)$/;
+                /*Checks whether the file is a valid excel file*/
+                if (regex.test($("#excelFile").val().toLowerCase())) {
+                    var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/
+                    if ($("#excelFile").val().toLowerCase().indexOf(".xlsx") > 0) {
+                        xlsxflag = true;
+                    }
+                    /*Checks whether the browser supports HTML5*/
+                    if (typeof (FileReader) != "undefined") {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var data = e.target.result;
+                            /*Converts the excel data in to object*/
+                            if (xlsxflag) {
+                                var workbook = XLSX.read(data, { type: 'binary' });
+                            }
+                            else {
+                                var workbook = XLS.read(data, { type: 'binary' });
+                            }
+                            /*Gets all the sheetnames of excel in to a variable*/
+                            var sheet_name_list = workbook.SheetNames;
+
+                            var cnt = 0; /*This is used for restricting the script to consider only first sheet of excel*/
+                            sheet_name_list.forEach(function (y) { /*Iterate through all sheets*/
+                                /*Convert the cell value to Json*/
+                                if (xlsxflag) {
+                                    var exceljson = XLSX.utils.sheet_to_json(workbook.Sheets[y]);
+                                }
+                                else {
+                                    var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);
+                                }
+                                if (exceljson.length > 0 && cnt == 0) {
+                                    EnviarArticulosExcel(exceljson);
+                                }
+                                //ret_exceljson = exceljson;
+                            });
+                            //$('#exceltable').show();
+                        }
+                        if (xlsxflag) {/*If excel file is .xlsx extension than creates a Array Buffer from excel*/
+                            reader.readAsArrayBuffer($("#excelFile")[0].files[0]);
+                        }
+                        else {
+                            reader.readAsBinaryString($("#excelFile")[0].files[0]);
+                        }
+                    }
+                    else {
+                        swal("Tu navegador no soporta HTML5");
+                    }
+                }
+                else {
+                    swal("Por favor selecciona un archivo excel *xlsx");
+                }
+            } catch (e) {
+                swal("Error al cargar archivo excel.");
+            }
+        }
+    </script>
+<script>
+            function exportar() {
+            waitingDialog.show("Espere por favor...")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("get_exporta_LisGestion_Stock_excel", "Logistica")',
+                data: {},
+                success: function (data) {
+                    data = JSON.parse(data);
+                    waitingDialog.hide();
+                    if (data.Success) {
+                        toastr.success(data.Message);
+                        window.location = '@Url.Action("ListaLogisticaStockExcel")';
+                    }
+                    else {
+                        toastr.error(data.Message, "Alerta");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    waitingDialog.hide();
+                    toastr.error("Error al consultar.", "Alerta");
+                }
+            });
+        }
+</script>
+}
+

@@ -1,0 +1,167 @@
+﻿@using CapaEntidad.Promotor
+@model IEnumerable<Ent_Promotor>
+@{
+    ViewBag.Title = "Lista de Promotores";
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "GET",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "lista",
+        OnComplete = "waitingDialog.hide();",
+        OnBegin = "waitingDialog.show('Espere un momento por favor');",
+        OnFailure = "waitingDialog.hide();"
+    };
+}
+<style>
+    #tienda {
+        width: 300px;
+    }
+
+</style>
+
+
+<div class="box box-body box-default">
+    @using (Ajax.BeginForm("ListaPcPromotor", options))
+    {
+        <div class="row">
+
+            <form id="form1">
+
+                <div class="row" style="margin-top:10px;margin-left:10px;margin-right:10px;margin-bottom:10px;background-color:#f4f4f4;border-radius:5px;padding-top:10px;padding-bottom:10px;">
+
+                    <div class="col-sm-3" style="margin-top:2px;margin-bottom:2px;">
+                        <label for="disponible">*Lider</label>
+                    </div>
+                    <div class="col-sm-3" style="margin-top:2px;margin-bottom:2px;">
+                        @Html.DropDownList("dwlider", new SelectList(ViewBag.listLider, "codigo", "descripcion", "-1"), new { @class = "selectpicker", @data_live_search = "true", @id = "dwlider", @onchange = "MostrarListado()", @name = "dwlider", @enable = "false" })
+                    </div>
+                    <div class="col-sm-3" style="margin-top:2px;margin-bottom:2px;">
+                        <button type="submit" title="Consultar" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+
+                    </div>
+
+                </div> 
+
+            </form>
+
+        </div>
+  
+    }
+
+    <div class="box-body" id="lista">
+        @{Html.RenderPartial("ListaPCPromotor", Model);}
+    </div>
+    <br />
+
+
+</div>
+@section scripts{
+    
+<script type="text/javascript">
+    function InvalidMsg(textbox, str) {
+
+        
+    }
+    function InvalidMsgArticulo(textbox, str) {
+
+        if (textbox.value.length < 8) {
+            textbox.setCustomValidity(str);
+        }
+        else {
+            textbox.setCustomValidity('');
+        }
+        return true;
+    }
+</script>
+<script>
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        //, disabled = "disabled"
+        //MostrarListado()
+        var codTienda = '@ViewBag.codTienda'
+
+        if (codTienda != '') {
+
+            $("#dwlider").val(codTienda);
+            document.getElementById("dwlider").disabled = true;
+        }
+
+
+    });
+
+    function MostrarListado() {
+
+        var TeamDetailPostBackURL = "@Url.Action("ListaPcPromotor", "Promotor")";
+        var lider =  $("#dwlider").val();
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { dwlider: lider },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                document.getElementById("lista").innerHTML = data;
+
+            },
+            error: function () {
+
+            }
+        });
+
+    }
+
+</script>
+<script>
+    $(function () {
+        $("#datepickerini").datepicker({
+            autoclose: true,
+            todayHighlight: true
+        }).datepicker("setDate", "0");;
+    });
+    $(function () {
+        $("#datepickerfin").datepicker({
+            autoclose: true,
+            todayHighlight: true
+        }).datepicker("setDate", "0");;
+    });
+
+</script>
+<script>
+        $(document).ready(function () {
+            $('.table').dataTable({
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getListPromotor", "Promotor")',
+                "bdestroy": true,
+                //"bFilter": true,
+                "start": 0,
+                //"bPaginate": false,
+                "orderable": false,
+                //"order": [0, "asc"],
+                "bDeferRender": true,
+                "aoColumns": [
+
+                       { "sName": "prmt_NroDoc", "mData": "prmt_NroDoc" },
+                       { "sName": "prmt_Nombre1", "mData": "prmt_Nombre1" },
+                       { "sName": "prmt_Nombre2", "mData": "prmt_Nombre2" },
+                       { "sName": "prmt_ApePater", "mData": "prmt_ApePater" },
+                       { "sName": "prmt_ApeMater", "mData": "prmt_ApeMater" },
+                       { "sName": "prmt_Correo", "mData": "prmt_Correo" },
+
+                ],
+            });
+
+        });
+
+</script>
+}

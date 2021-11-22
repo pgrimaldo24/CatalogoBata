@@ -1,0 +1,908 @@
+﻿
+@{
+    ViewBag.Title = "Gestionar Asesores - Directoras y Promotor";
+}
+<style>
+    .table thead {
+        background-color: #31708f;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .alignCenter {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table .ColC1 {
+        font-weight: bold;
+        vertical-align: middle;
+    }
+    .nav-tabs-custom>.nav-tabs>li.active>a, .nav-tabs-custom>.nav-tabs>li.active:hover>a {
+        background-color: #e8e8e8;
+        color: #444;
+    }
+</style>
+<p class="text-primary">Gestionar conversiones de asesores - directores y promotores.</p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false">Conversiones de Clientes</a></li>
+                <li class=""><a href="#tab_2" data-toggle="tab" id="tab_relacionar" aria-expanded="false">Relacionar Asesora comercial - Lider</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <h5 class="text-bold">Conversiones de Clientes</h5>
+                    <p class="text-info">Conversiones de cliente a Promotor,Lider,Asesor. Seleccione el tipo de usuario para relizar la busqueda</p>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="box box-widget">
+                                <div class="box-header with-border">
+                                    Parametros de Busqueda
+                                </div>
+                                <div class="box-body">
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-6">
+                                            <div class="form-group">
+                                                @Html.DropDownList("dwtipo_user", new SelectList(ViewBag.UsuTipo, "usu_tip_id", "usu_tip_nombre", "-1"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "dwtipo_user", @name = "dwtipo_user", @onchange = "get_cliente();" })
+                                                <span class="help-block" style="color: #31708f">Seleccione un tipo de usuario</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-10">
+                                            <div class="form-group" id="divUser">
+                                                <table id="TbTabla" class="table table-hover table-bordered compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align: center;">Tipo</th>
+                                                            <th style="text-align: center;">Dni</th>
+                                                            <th style="text-align: center;">Nombres</th>
+                                                            <th style="text-align: center;">Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td colspan='9'>No se encontraron resultados</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Botones" class="box box-widget">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab_2">
+                    <h5 class="text-bold">Relacionar Asesor - Lider</h5>
+                    <p class="text-info">Relaciona el asesor y lider, lista de lideres relaciondos segun asesor </p>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="box box-widget">
+                                <div class="box-header with-border">
+                                    Parametros de Busqueda
+                                </div>
+                                <div class="box-body">
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-6">
+                                            <div class="form-group" id="divasesor">
+                                                @*@Html.DropDownList("dwtipo_user", new SelectList(ViewBag.UsuTipo, "usu_tip_id", "usu_tip_nombre", "-1"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "dwtipo_user", @name = "dwtipo_user", @onchange = "get_cliente();" })*@
+                                                <span class="help-block" style="color: #31708f">Seleccione el Asesor</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-6">
+                                            <div class="form-group" id="divlider">
+                                                @*@Html.DropDownList("dwtipo_user", new SelectList(ViewBag.UsuTipo, "usu_tip_id", "usu_tip_nombre", "-1"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "dwtipo_user", @name = "dwtipo_user", @onchange = "get_cliente();" })*@
+                                                <span class="help-block" style="color: #31708f">Seleccione el Lider</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" title="Agregar Lider al asesor seleccionado" onclick="add_asesor_lider();" id="btnConsultar" class="btn btn-success">
+                                            <small class="glyphicon glyphicon-plus"></small>
+                                        </button>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-10">
+                                            <div class="form-group" id="divUser">
+                                                <table id="TbTablaR" class="table table-hover table-bordered compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align: center;">Documento</th>
+                                                            <th style="text-align: center;">Lider</th>
+                                                            <th style="text-align: center;">Direccion</th>
+                                                            <th style="text-align: center;">Telefono</th>
+                                                            <th style="text-align: center;">Correo</th>
+                                                            <th style="text-align: center;">Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td colspan='9'>No se encontraron resultados</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Botones" class="box box-widget">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+<div class="modal fade" id="myModalConvert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelConvert"></h4>
+            </div>
+            <div class="modal-body">  
+                <input type="hidden" id="bas_id" value="" />                
+                <div class="row">
+                    <div class="col-md-11" style="padding-left: 25px;">
+                        <div id="prm" class="form-group" disabled>
+                            <label for="param_pregunta1" id="param_pregunta1" style="color: #3d566e;font-size:16px;font-weight:bold" ></label>                                                     
+                        </div>
+                    </div>                  
+                </div> 
+                <div class="row">
+                    <div class="col-md-8" style="padding-left: 25px;">
+                        <div id="prm" class="form-group" disabled>
+                            <label for="param_pregunta2" id="param_pregunta2" style="color: #3d566e;;font-size:17px;font-weight:bold" class="label-danger"></label>
+                        </div>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-8" style="padding-left: 25px;">
+                        <div id="prm" class="form-group" disabled>
+                            <label for="dwdis" style="color: #3d566e;" id="param_label">Distrito</label>
+                            <div class="form-group" id="divUsuario">
+                                @*@Html.DropDownList("dwdis", new SelectList(ViewBag.Dis, "Dis_Id", "Dis_Descripcion", "-1"), new { @class = "selectpicker", @data_live_search = "true", @id = "dwdis", @name = "dwdis", @data_actions_box = "true", @data_selected_text_format = "count > 2" })*@
+                            </div>
+                        </div>
+                    </div>                  
+                </div>                                           
+            </div>
+            <div class="modal-footer" style="margin-top:-20px">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                <input type="submit" class="btn btn-success" onclick="grabar_convert('1');" id="btnSubmit" value="Aceptar" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/Linkend/linq.min.js"></script>
+    <script>
+
+        function borrar_lider_asesor(id,nombre,aco_id) {
+            
+            swal({
+                title: "Desasociar Lider del Asesor",
+                text: "¿Está seguro de Desasiciar el Lider " + nombre + " del Asesor?",
+                icon: "warning",
+                buttons: ["No", "Si"],
+                dangerMode: true,
+            }).then((cambiar) => {
+                if (cambiar) {
+                    waitingDialog.show("Espere un momento por favor.")
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DesasociarRela_Asesor_Lider", "RRHH")',
+                        data: { _bas_id_lider: id, _bas_aco_id: aco_id },
+                        async: false,
+                        success: function (data) {
+                            debugger
+                            //data = JSON.parse(data);
+                            if (data.Data.estado == '0') {
+                                swal({ title: "Ok", text: data.Data.mensaje, icon: "success" }).then((value) => {
+                                    //tipo_convert = 0;
+                                    lista_lider_asesor = data.Data.Lista;
+                                    ListaLider_Asesor();
+                                    ListarLider();
+                                    $('#dwlider').val('0');
+                                    $('#dwlider').selectpicker('refresh');
+                                    //get_cliente();                           
+                                });
+                                waitingDialog.hide();
+
+                            } else {
+                                swal({ title: "Alerta", text: data.Data.mensaje, icon: "error" }).then((value) => { waitingDialog.hide(); });
+
+                            }
+                        },
+                        error: function (e) {
+
+                        }
+                    });
+                }
+            })
+        }
+
+        function add_asesor_lider() {
+
+            /*poner validaion*/
+            var _bas_id_asesor = $('#dwasesor').val();
+            var _bas_id_lider = $('#dwlider').val();
+            if (_bas_id_asesor == '0') {
+                swal({ title: "Alerta", text: 'Seleccione al Asesor', icon: "error" }).then((value) => { $('#dwasesor').focus(); });
+                return;
+            }
+            if (_bas_id_lider == '0') {
+                swal({ title: "Alerta", text: 'Seleccione al Lider', icon: "error" }).then((value) => { $('#dwlider').focus(); });
+                return;
+            }
+
+            waitingDialog.show("Espere un momento por favor.")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateRela_Asesor_Lider", "RRHH")',
+                data: { _bas_id_asesor: _bas_id_asesor, _bas_id_lider: _bas_id_lider },
+                async: false,
+                success: function (data) {
+                    debugger
+                    //data = JSON.parse(data);
+                    if (data.Data.estado == '0') {
+                        swal({ title: "Ok", text: data.Data.mensaje, icon: "success" }).then((value) => {
+                            //tipo_convert = 0;
+                            lista_lider_asesor = data.Data.Lista;
+                            ListaLider_Asesor();
+                            ListarLider();
+                            $('#dwlider').val('0');
+                            $('#dwlider').selectpicker('refresh');
+                            //get_cliente();                           
+                        });
+                        waitingDialog.hide();
+
+                    } else {
+                        swal({ title: "Alerta", text: data.Data.mensaje, icon: "error" }).then((value) => { waitingDialog.hide(); });
+
+                    }
+                },
+                error: function (e) {
+
+                }
+            });
+        }
+
+        function ListarAsesor() {
+            var dataArray =lista_lider_asesor;
+            // var dataArray = data.Data;
+            var strTipo = '09';
+
+
+            var listar = [];
+
+            //var lista_filter = dataArray.filter(obj => obj.dep_id == '0');
+            //$.each(lista_filter, function (index, item) {
+
+            //    listar.push(item);
+            //});
+
+            var lista_filter = dataArray.filter(obj => (obj.bas_usu_tipid === strTipo || obj.bas_usu_tipid === 'N'));
+            $.each(lista_filter, function (index, item) {
+
+                listar.push(item);
+            });
+                
+            
+
+
+            var group_asesor = Enumerable.from(listar)
+            .groupBy(
+            null,
+            null,
+            "{ bas_id: $.bas_id, nombres: $.nombres}",
+            "'' + $.bas_id + '-' + $.nombres"
+            ).toArray();
+
+
+            llenarComboAsesor("divasesor", "dwasesor", group_asesor, '0', '', "ListaLider_Asesor", '1');
+        }
+        function llenarComboAsesor(DivId, IdControl, Data, codDefecto, desDefecto, onchangeFuncion, tipo) {
+
+            $('#' + IdControl).find('option').remove();
+
+
+
+            var str = (tipo == '1') ? '<select class="selectpicker" data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '" data-actions-box="true"  data-selected-text-format="count > 2" >' : '<select class="selectpicker"  data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '"  data-actions-box="true"  data-selected-text-format="count > 2" > ';
+            var ItemNormal = '<option value="codItem">desItem</option>';
+            var colectItemNormal = '';
+
+            //if (codDefecto != '') { str += '<option value="' + codDefecto + '" selected="selected">------' + desDefecto + '------</option>'; }
+
+            if (onchangeFuncion != '') { onchangeFuncion = 'onchange = "' + onchangeFuncion + '();"' }
+            str = str.replace("onchangeFuncion", onchangeFuncion);
+
+            $.each(Data, function (index, item) {
+
+                colectItemNormal = colectItemNormal + ItemNormal
+                var strSelected = '"';
+
+                if (item.cod_entid == codDefecto) {
+                    strSelected = '" selected="selected" '
+
+                }
+                strSelected = '" selected="selected" '; // seleccionar todos al cargar
+                colectItemNormal = colectItemNormal.replace("codItem", item.bas_id + strSelected);
+                colectItemNormal = colectItemNormal.replace("desItem", item.nombres);
+
+            });
+
+            str += colectItemNormal
+            str += '</select>'
+            //str += '<button name="btnagencia" id="btnagencia" title="hacer click para mostrar las Agencias predeterminadas" onclick="vista_agencia(1);" class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-ok-circle"></span></button>';
+            str += '<span class="help-block" style="color: #31708f">Seleccione el Asesor</span>';
+            document.getElementById(DivId).innerHTML = str
+
+            $('.selectpicker').selectpicker({
+                liveSearch: true,
+                showSubtext: true
+            });
+
+        }
+
+        function ListarLider() {
+            var dataArray = lista_lider_asesor;
+            // var dataArray = data.Data;
+            var strTipo = '01';
+
+
+            var listar = [];
+
+            //var lista_filter = dataArray.filter(obj => obj.dep_id == '0');
+            //$.each(lista_filter, function (index, item) {
+
+            //    listar.push(item);
+            //});
+
+            var lista_filter = dataArray.filter(obj => ((obj.bas_usu_tipid === strTipo && obj.bas_aco_id=='') || obj.bas_usu_tipid === 'N'));
+            $.each(lista_filter, function (index, item) {
+
+                listar.push(item);
+            });
+
+
+
+
+            var group_lider = Enumerable.from(listar)
+            .groupBy(
+            null,
+            null,
+            "{ bas_id: $.bas_id, nombres: $.nombres}",
+            "'' + $.bas_id + '-' + $.nombres"
+            ).toArray();
+
+
+            llenarComboLider("divlider", "dwlider", group_lider, '0', '', "", '1');
+        }
+        function llenarComboLider(DivId, IdControl, Data, codDefecto, desDefecto, onchangeFuncion, tipo) {
+
+            $('#' + IdControl).find('option').remove();
+
+
+
+            var str = (tipo == '1') ? '<select class="selectpicker" data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '" data-actions-box="true"  data-selected-text-format="count > 2" >' : '<select class="selectpicker"  data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '"  data-actions-box="true"  data-selected-text-format="count > 2" > ';
+            var ItemNormal = '<option value="codItem">desItem</option>';
+            var colectItemNormal = '';
+
+            //if (codDefecto != '') { str += '<option value="' + codDefecto + '" selected="selected">------' + desDefecto + '------</option>'; }
+
+            if (onchangeFuncion != '') { onchangeFuncion = 'onchange = "' + onchangeFuncion + '();"' }
+            str = str.replace("onchangeFuncion", onchangeFuncion);
+
+            $.each(Data, function (index, item) {
+
+                colectItemNormal = colectItemNormal + ItemNormal
+                var strSelected = '"';
+
+                if (item.cod_entid == codDefecto) {
+                    strSelected = '" selected="selected" '
+
+                }
+                strSelected = '" selected="selected" '; // seleccionar todos al cargar
+                colectItemNormal = colectItemNormal.replace("codItem", item.bas_id + strSelected);
+                colectItemNormal = colectItemNormal.replace("desItem", item.nombres);
+
+            });
+
+            str += colectItemNormal
+            str += '</select>'
+            //str += '<button name="btnagencia" id="btnagencia" title="hacer click para mostrar las Agencias predeterminadas" onclick="vista_agencia(1);" class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-ok-circle"></span></button>';
+            str += '<span class="help-block" style="color: #31708f">Seleccione el Lider</span>';
+            document.getElementById(DivId).innerHTML = str
+
+            $('.selectpicker').selectpicker({
+                liveSearch: true,
+                showSubtext: true
+            });
+
+        }
+
+        function ListaLider_Asesor() {
+            objClienteConvert.isOkUpdate = true;
+            objClienteConvert.usu_asesor = $("#dwasesor").val();            
+            objClienteConvert.generaal.consultarLider();
+        }
+       
+    </script>
+
+    <script>
+        var lista_lider_asesor;
+        var tipo_convert = 0;
+        /*tipo_convert=ConvertLiderProm=1*/
+        /*tipo_convert=ConvertLiderAsesor=2*/
+        /*tipo_convert=ConvertPromotorLider=3*/
+        /*tipo_convert=ConvertPromotorAsesor=4*/
+        /*tipo_convert=ConvertAsesorProm=5*/
+
+        function ConvertLiderProm(id, nombre) {
+            tipo_convert = 1;
+            $('#bas_id').val(id);
+            var dataArray = lista_lider_asesor;
+            var lista_filter = dataArray.filter(obj =>  obj.bas_id == id);
+            waitingDialog.show("Espere por favor...");
+            ListarLidAsesor('01', id);
+            $('#dwusuario').val('0');
+            $('#dwusuario').selectpicker('refresh');
+            $('#param_pregunta1').html('Tiene que seleccionar el lider que va pertenecer a los ' + lista_filter[0].npromotor + ' promotores que estan bajo su red y usted, antes de ser un promotor');
+            $('#param_pregunta2').html('¿Desea Convertir Lider a Promotor? ');
+            $('#param_label').html('Lider');
+            $('#myModalLabelConvert').html('Covertir Lider a Promotor: ' + nombre);
+            waitingDialog.hide();
+            $("#myModalConvert").modal({ backdrop: 'static', keyboard: false });
+        }
+        function ConvertLiderAsesor(id, nombre) {
+            /*verificar si el lider tiene promotores*/
+            tipo_convert = 2;
+            $('#bas_id').val(id);
+            var dataArray = lista_lider_asesor;
+            var lista_filter = dataArray.filter(obj =>  obj.bas_id == id);
+
+            if (lista_filter[0].npromotor == 0) {
+                swal({
+                    title: "Conversiones de Clientes",
+                    text: "¿Está seguro de Convertir el Lider " + nombre + " a Asesor?",
+                    icon: "warning",
+                    buttons: ["No", "Si"],
+                    dangerMode: true,
+                }).then((cambiar) => {
+                    if (cambiar) {
+                        grabar_convert('0', id);
+                    }
+                })
+            }
+            else
+            {
+                waitingDialog.show("Espere por favor...");
+                ListarLidAsesor('01', id);
+                $('#dwusuario').val('0');
+                $('#dwusuario').selectpicker('refresh');
+                $('#param_pregunta1').html('Tiene que seleccionar el lider que va pertenecer a los ' + lista_filter[0].npromotor + ' promotores que estan bajo su red, antes de ser un asesor');
+                $('#param_pregunta2').html('¿Desea Convertir Lider a Asesor? ');
+                $('#param_label').html('Lider');
+                $('#myModalLabelConvert').html('Covertir Lider a Asesor: ' + nombre);
+                waitingDialog.hide();
+                $("#myModalConvert").modal({ backdrop: 'static', keyboard: false });
+            }
+        }
+        function ConvertPromotorLider(id, nombre) {
+            tipo_convert = 3;
+            swal({
+                title: "Conversiones de Clientes",
+                text: "¿Está seguro de Convertir el Promotor " + nombre + " a Lider?",
+                icon: "warning",
+                buttons: ["No", "Si"],
+                dangerMode: true,
+            }).then((cambiar) => {
+                if (cambiar) {
+                    grabar_convert('0', id);
+                }
+            })
+
+        }
+        function ConvertPromotorAsesor(id, nombre) {
+            tipo_convert = 4;
+            swal({
+                title: "Conversiones de Clientes",
+                text: "¿Está seguro de Convertir el Promotor " + nombre + " a Asesor?",
+                icon: "warning",
+                buttons: ["No", "Si"],
+                dangerMode: true,
+            }).then((cambiar) => {
+                if (cambiar) {
+                    grabar_convert('0', id);
+                }
+            })
+
+        }
+        function ConvertAsesorProm(id, nombre) {
+            tipo_convert = 5;
+            $('#bas_id').val(id);
+            //var dataArray = lista_lider_asesor;
+            //var lista_filter = dataArray.filter(obj =>  obj.bas_id == id);
+            waitingDialog.show("Espere por favor...");
+            ListarLidAsesor('01', id);
+            $('#dwusuario').val('0');
+            $('#dwusuario').selectpicker('refresh');
+            $('#param_pregunta1').html('Tiene que seleccionar el lider que va pertenecer, antes de ser un promotor');
+            $('#param_pregunta2').html('¿Desea Convertir Asesora a Promotor? ');
+            $('#param_label').html('Lider');
+            $('#myModalLabelConvert').html('Covertir Asesor a Promotor: ' + nombre);
+            waitingDialog.hide();
+            $("#myModalConvert").modal({ backdrop: 'static', keyboard: false });
+        }
+
+        function grabar_convert(popup,id) {
+            if (tipo_convert == 1 || tipo_convert == 5)   /*tipo_convert=ConvertLiderProm=1*/ {
+                var dw_usuario = $('#dwusuario').val();
+                if (dw_usuario == '0') {
+                    toastr.error('Seleccione un lider', "Alerta");
+                    $('#dwusuario').focus();
+                }
+                else {
+                    var bas_id = $('#bas_id').val();
+                    generar_conver(bas_id, dw_usuario, tipo_convert,'1');
+                }
+            }
+            if (tipo_convert == 2)   /*tipo_convert=ConvertLiderAsesor=2*/ {
+                if (popup == '1') {
+                    var dw_usuario = $('#dwusuario').val();
+                    if (dw_usuario == '0') {
+                        toastr.error('Seleccione un lider', "Alerta");
+                        $('#dwusuario').focus();
+                    }
+                    else {
+                        var bas_id = $('#bas_id').val();
+                        generar_conver(bas_id, dw_usuario, tipo_convert, '1');
+                    }
+                } else {
+                    var bas_id = id;
+                    generar_conver(bas_id, dw_usuario, tipo_convert, '0');
+                }                                   
+            }
+            if (tipo_convert == 3 || tipo_convert == 4) {  /*tipo_convert=ConvertPromLider=3*/
+                    var bas_id = id;
+                    generar_conver(bas_id, dw_usuario, tipo_convert, '0');
+            }
+            
+        }
+        function generar_conver(_bas_id, _bas_lider, tipo_convert,popup) {
+            waitingDialog.show("Espere un momento por favor.")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GenerarConvert", "RRHH")',
+                data: { _bas_id: _bas_id, _bas_lider: _bas_lider, _tipo_convert: tipo_convert },
+                async: false,
+                success: function (data) {
+                    debugger
+                    //data = JSON.parse(data);
+                    if (data.Data.estado=='0') {
+                        swal({ title: "Ok", text: data.Data.mensaje, icon: "success" }).then((value) => {
+                            tipo_convert = 0;
+                            lista_lider_asesor = data.Data.Lista;
+                            get_cliente();
+                            if (popup == '1') $('#myModalConvert').modal('hide');
+                        });
+                        waitingDialog.hide();
+
+                    } else {
+                        swal({ title: "Alerta", text: data.Data.mensaje, icon: "error" }).then((value) => { waitingDialog.hide(); });
+
+                    }
+                },
+                error: function (e) {
+
+                }
+            });
+        }
+
+        function ListarLidAsesor(tip,id)
+        {
+            var dataArray =lista_lider_asesor;
+            // var dataArray = data.Data;
+            var strtip = tip;// $('#dwdep').val();
+            var strid = id;// $('#dwprov').val();
+
+
+            var listar = [];
+
+            if (strtip != null && strid != null) {
+
+                //var lista_filter = dataArray.filter(obj => obj.bas_usu_tipid == strtip);
+                //    $.each(lista_filter, function (index, item) {
+
+                //        listar.push(item);
+                //    });
+
+                //var lista_filter = dataArray.filter(obj => obj.bas_usu_tipid == strtip && obj.bas_id == '0');
+                var lista_filter = dataArray.filter(obj =>  obj.bas_id != strid && (obj.bas_usu_tipid == strtip || obj.bas_usu_tipid == 'N'));
+                    $.each(lista_filter, function (index, item) {
+
+                        listar.push(item);
+                    });
+            }
+
+
+            var group_user = Enumerable.from(listar)
+            .groupBy(
+            null,
+            null,
+            "{ bas_id: $.bas_id, nombres: $.nombres}",
+            "'' + $.bas_id + '-' + $.nombres"
+            ).toArray();
+
+
+            llenarComboUser("divUsuario", "dwusuario", group_user, '0', '', "", '1');
+        }
+        function llenarComboUser(DivId, IdControl, Data, codDefecto, desDefecto, onchangeFuncion, tipo) {
+
+            $('#' + IdControl).find('option').remove();
+
+            var str = (tipo == '1') ? '<select class="selectpicker"   data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '" data-actions-box="true"  data-selected-text-format="count > 2" >' : '<select class="selectpicker"  data-live-search="true" onchangeFuncion data-width="100%" id="' + IdControl + '" name="' + IdControl + '"  data-actions-box="true"  data-selected-text-format="count > 2" > ';
+            var ItemNormal = '<option value="codItem">desItem</option>';
+            var colectItemNormal = '';
+
+            //if (codDefecto != '') { str += '<option value="' + codDefecto + '" selected="selected">------' + desDefecto + '------</option>'; }
+
+            if (onchangeFuncion != '') { onchangeFuncion = 'onchange = "' + onchangeFuncion + '()"' }
+            str = str.replace("onchangeFuncion", onchangeFuncion);
+
+            $.each(Data, function (index, item) {
+
+                colectItemNormal = colectItemNormal + ItemNormal
+                var strSelected = '"';
+
+                if (item.bas_id == codDefecto) {
+                    strSelected = '" selected="selected" '
+
+                }
+                strSelected = '" selected="selected" '; // seleccionar todos al cargar
+                colectItemNormal = colectItemNormal.replace("codItem", item.bas_id + strSelected);
+                colectItemNormal = colectItemNormal.replace("desItem", item.nombres);
+
+            });
+
+            str += colectItemNormal
+            str += '</select>'
+
+            document.getElementById(DivId).innerHTML = str
+
+            $('.selectpicker').selectpicker({
+                liveSearch: true,
+                showSubtext: true
+            });
+
+        }
+    </script>
+
+    <script>
+        debugger
+        var objClienteConvert = {
+            Inicio: function () {
+                debugger
+                /*[Inicializamos variables]*/
+                tipo_convert = 0;
+                lista_lider_asesor = function () { return @Html.Raw(Json.Encode(ViewBag.LiderAsesor)); }();
+                this.isOkUpdate = true;
+                this.TipoUser = $("#dwtipo_user").val();
+                this.Tabla = $('#TbTabla');
+
+                this.TablaR = $('#TbTablaR');
+                
+
+                objClienteConvert.grid.get();
+
+                var tipo_user = "@ViewBag.TipoUser";
+
+                if (tipo_user == '09') {
+                    $('#tab_relacionar').addClass('hide')
+                    //$('#tab_relacionar').removeClass('hide')
+                    
+                    return;
+                }
+
+
+                /*segundo panel*/
+                ListarAsesor();
+                $('#dwasesor').val('0');
+                $('#dwasesor').selectpicker('refresh');
+                ListarLider();
+                $('#dwlider').val('0');
+                $('#dwlider').selectpicker('refresh');
+                this.isOkUpdate = true;
+                this.usu_asesor = $("#dwasesor").val();
+                objClienteConvert.grid.getLideres();
+            },
+            grid: {
+                get: function () {
+                    debugger
+                    objClienteConvert.Tabla.DataTable({
+                        "language": {
+                            "url": "../Scripts/DataTables/Spanish.json"
+                        },
+                        //"fnServerData": function (sSource, aoData, fnCallback) {
+                        //},
+                        "bServerSide": true,
+                        "bAutoWidth": false,
+                        "sAjaxSource": '@Url.Action("getLisClienteConvertAjax", "RRHH")',
+                        "fnServerParams": function (aoData) {
+                            debugger;
+                            aoData.push({ "name": "isOkUpdate", "value": objClienteConvert.isOkUpdate });
+                            aoData.push({ "name": "Tipo", "value": objClienteConvert.TipoUser });
+                        },
+                        "bFilter": true,
+                        "bdestroy": true,
+                        "start": 0,
+                        "columnDefs": [{
+                            "orderable": false,
+                            "targets": [0],
+                        }],
+                        "bDeferRender": true,
+                        "aoColumns": [
+                            { "sName": "usu_tip_des", "mData": "usu_tip_des", "sClass": "" },
+                            { "sName": "dni", "mData": "dni", "sClass": "" },
+                            { "sName": "nombres", "mData": "nombres", "sClass": "" },
+                              {
+                                  "render": function (data, type, full) {
+
+                                      var tip = full.usu_tip_id
+                                      var id = full.id;
+                                      var nombre = full.nombres;
+                                      var boton = '';
+                                      switch(tip)
+                                      {
+                                          case "01":
+                                              boton = ' <div class="pull-center"><button title="Convertir a Promotor" onclick="ConvertLiderProm(' + id + ',\'' + nombre + '\');"  class="btneditar btn btn-success" data-toggle="modal"><span class="glyphicon glyphicon-star-empty"></span>Conv. a Promotora</button></div>' +
+                                                  ("&nbsp;").repeat(10) +
+                                                  '<div class="pull-center"><button title="Convertir a Asesor" onclick="ConvertLiderAsesor(' + id + ',\'' + nombre + '\');"  class="btneditar btn btn-info" data-toggle="modal"><span class="glyphicon glyphicon-star"></span>Conv. a Asesor</button></div>'
+
+                                              break;
+                                          case "02":
+                                              boton = ' <div class="pull-center"><button title="Convertir a Lider" onclick="ConvertPromotorLider(' + id + ',\'' + nombre + '\');"  class="btneditar btn btn-success" data-toggle="modal"><span class="glyphicon glyphicon-star-empty"></span>Conv. a Lider</button></div>' +
+                                                 ("&nbsp;").repeat(10) +
+                                                 '<div class="pull-center"><button title="Convertir a Asesor" onclick="ConvertPromotorAsesor(' + id + ',\'' + nombre + '\');"  class="btneditar btn btn-info" data-toggle="modal"><span class="glyphicon glyphicon-star"></span>Conv. a Asesor</button></div>'
+                                              break;
+                                          case "09":
+                                              boton = ' <div class="pull-center"><button title="Convertir a Promotor" onclick="ConvertAsesorProm(' + id + ',\'' + nombre + '\');"  class="btneditar btn btn-primary" data-toggle="modal"><span class="glyphicon glyphicon-star-empty"></span>Conv. a Promotor</button></div>';
+                                              break;
+                                      }
+
+                                      return boton;
+
+                                  }, "class": "boton-td"
+                              }
+                        ],
+                        "fnRowCallback": function (row, data, index) {
+                        },
+                        "drawCallback": function (settings) {
+                            objClienteConvert.isOkUpdate = false;
+                        },
+                        "initComplete": function (settings, json) {
+                        }
+                    });
+                },
+                getLideres: function () {
+                    debugger
+                    objClienteConvert.TablaR.DataTable({
+                        "language": {
+                            "url": "../Scripts/DataTables/Spanish.json"
+                        },
+                        //"fnServerData": function (sSource, aoData, fnCallback) {
+                        //},
+                        "bServerSide": true,
+                        "bAutoWidth": false,
+                        "sAjaxSource": '@Url.Action("getLisRelacionLiderAjax", "RRHH")',
+                        "fnServerParams": function (aoData) {
+                            debugger;
+                            aoData.push({ "name": "isOkUpdate", "value": objClienteConvert.isOkUpdate });
+                            aoData.push({ "name": "idasesor", "value": objClienteConvert.usu_asesor });
+                        },
+                        "bFilter": true,
+                        "bdestroy": true,
+                        "start": 0,
+                        "columnDefs": [{
+                            "orderable": false,
+                            "targets": [2,3,4],
+                        }],
+                        "bDeferRender": true,
+                        "aoColumns": [
+                            { "sName": "documento", "mData": "documento", "sClass": "" },
+                            { "sName": "nombres", "mData": "nombres", "sClass": "" },
+                            { "sName": "direccion", "mData": "direccion", "sClass": "" },
+                            { "sName": "celular", "mData": "celular", "sClass": "" },
+                            { "sName": "correo", "mData": "correo", "sClass": "" },
+                             {
+                                 "mData": null, "sClass": "alignCenter",
+                                 "render": function (data, type, full, meta) {
+                                     var id = full.bas_id;
+                                     var nombre = full.nombres;
+                                     var aco_id = full.bas_aco_id;
+                                     var _input = '<button title="Quitar el lider de la lista del asesor" onclick="borrar_lider_asesor(' + id + ',\'' + nombre + '\','  + aco_id + ');" id = "btnTime" class="btn btn-xs btn-danger">' +
+                                     '<span class="glyphicon glyphicon-remove" ></span>' +
+                                    '</button>';
+                                     return _input;
+                                 }
+                             }
+                        ],
+                        "fnRowCallback": function (row, data, index) {
+                        },
+                        "drawCallback": function (settings) {
+                            objClienteConvert.isOkUpdate = false;
+                        },
+                        "initComplete": function (settings, json) {
+                        }
+                    });
+                },
+                cargaTabla: function () {
+                    debugger
+                    waitingDialog.show("Espere por favor...")
+                    objClienteConvert.Tabla.DataTable().ajax.reload(function () {
+                        waitingDialog.hide();
+                    });
+                },
+                cargaTablaLider: function () {
+                    debugger
+                    waitingDialog.show("Espere por favor...")
+                    objClienteConvert.TablaR.DataTable().ajax.reload(function () {
+                        waitingDialog.hide();
+                    });
+                },
+
+            },
+            generaal: {
+                consultar: function () {
+                    debugger
+                    objClienteConvert.grid.cargaTabla();
+                },
+                consultarLider: function () {
+                    debugger
+                    objClienteConvert.grid.cargaTablaLider();
+                },
+            }
+
+        }
+        function get_cliente() {
+            objClienteConvert.isOkUpdate = true;
+            objClienteConvert.TipoUser = $("#dwtipo_user").val();
+
+            objClienteConvert.generaal.consultar();
+        }
+        $(document).ready(function () {
+
+            objClienteConvert.Inicio();
+
+        });
+    </script>
+}

@@ -1,0 +1,266 @@
+﻿
+@{
+    ViewBag.Title = "Control de funciones";
+}
+
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+</style>
+
+<p class="text-primary">Muestra la lista de Funciones utilizadas. Permite crear nuevas funciones dentro del sistema y editar las existentes.</p>
+<div class="box box-body box-default">
+    @*box-danger">*@
+
+<button type="submit" id="btnaceptar" onclick="nuevo();" name="btnaceptar" title="Agregar" class="nuevo btn btn-small btn-primary" data-modal="" data-toggle="modal">Agregar Funcion</button>
+
+<div class="box-body" id="lista">    
+    <table id="tbfuncion" class="table table-hover table-bordered compact">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Orden</th>
+                <th>Padre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach:"></tbody>
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Orden</th>
+                <th>Padre</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>    
+</div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">            
+            <div class="modal-body" id="myModalContent">              
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+    <script>
+        function aplicacion(id) {      
+            var TeamDetailPostBackURL ="@Url.Action("Aplicacion", "Funcion")";            
+            waitingDialog.show('Espere un momento por favor');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                cache: true,
+                success: function (data) {
+                    waitingDialog.hide();                    
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');                    
+                },
+                error: function () {
+                    waitingDialog.hide();
+                    alert("Dynamic content load failed.");
+                }
+            });
+
+        }
+    </script>
+
+    <script>
+        function OnNuevo_Grabar() {
+            var msg_titulo = 'Mensaje Aquarella!';
+            var nombre = $("#nombre").val();
+            var padre = $('select[name=dwfuncion]').selectpicker('val');
+            var orden = $("#orden").val();
+            waitingDialog.show('Espere un momento por favor');
+            $.ajax
+                 ({
+                     url: '../Funcion/Nuevo',
+                     dataType: "json",
+                     type: "POST",
+                     data: { nombre: nombre, orden: orden, padre: padre },
+                     success: function (data, textStatus, XMLHttpRequest) {
+                         if (data.estado == '1') {
+
+                             $('body').removeClass('modal-open');
+                             $('#myModal').modal('hide');
+
+                             $('.modal-backdrop').remove();
+
+                             actualizar = "1";
+                             $('#tbfuncion').DataTable().ajax.reload();
+                             actualizar = "";
+
+                             waitingDialog.hide();
+                             toastr.success(data.desmsg, msg_titulo);
+                         }
+                         else {
+                             waitingDialog.hide();
+                             toastr.success(data.desmsg, msg_titulo);
+                         }
+                     },
+                     error: function (xhr) {
+                         waitingDialog.hide();
+                         toastr.error(xhr, msg_titulo);
+                     }
+                 })
+        }
+    </script>
+
+    <script>
+        function InvalidMsg(textbox, str) {
+
+            if (textbox.value.length == 0) {
+                textbox.setCustomValidity(str);
+            }
+            else {
+                textbox.setCustomValidity('');
+            }
+            return true;
+        }
+    </script>
+
+    <script>
+        function nuevo() {
+            waitingDialog.show('Espere un momento por favor');
+            var TeamDetailPostBackURL ="@Url.Action("Nuevo", "Funcion")";            
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: {},
+                datatype: "json",
+                cache: true,
+                success: function (data) {
+                    waitingDialog.hide();
+                    
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+
+
+                },
+                error: function () {
+                    waitingDialog.hide();
+                    alert("Dynamic content load failed.");
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function OnEditar_Grabar() {
+            var msg_titulo = 'Mensaje Aquarella!';
+            var id = $("#idfun").val();
+            var nombre = $("#nombre").val();
+            var padre = $('select[name=dwfuncion]').selectpicker('val');
+            var orden = $("#orden").val();
+            waitingDialog.show('Espere un momento por favor');
+            $.ajax
+                 ({
+                     url: '../Funcion/Edit',
+                     dataType: "json",
+                     type: "POST",
+                     data: { id: id,nombre: nombre,  orden: orden, padre: padre },
+                     success: function (data, textStatus, XMLHttpRequest) {
+                         if (data.estado == '1') {
+
+                             $('#myModal').modal('hide');
+                             $('body').removeClass('modal-open');
+                             $('.modal-backdrop').remove();
+                             actualizar = "1";
+                             $('#tbfuncion').DataTable().ajax.reload();
+                             actualizar = "";
+                             waitingDialog.hide();
+                             toastr.success(data.desmsg, msg_titulo);
+                         }
+                         else {
+                             waitingDialog.hide();
+                             toastr.error(data.desmsg, msg_titulo);
+                         }
+                     },
+                     error: function (xhr) {
+                         waitingDialog.hide();
+                         toastr.error(xhr, msg_titulo);
+                     }
+                 });
+        }
+    </script>
+
+    <script>
+        var actualizar = "";
+        $(document).ready(function () {
+
+            $('#tbfuncion').DataTable({
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getListaFuncionAjax", "Funcion")',
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "actualizar", "value": actualizar });
+                },
+                "bdestroy": true,
+                "start": 0,             
+                "columnDefs": [{
+
+                    "orderable": true
+                }],
+                "bDeferRender": true,
+                "aoColumns": [
+                      { "sName": "fun_id", "mData": "fun_id" },
+                      { "sName": "fun_nombre", "mData": "fun_nombre" },
+                      { "sName": "fun_orden", "mData": "fun_orden" },
+                      { "sName": "fun_padre", "mData": "fun_padre" },
+                      {
+                          "render": function (data, type, full) {                           
+                              return ' <div class="pull-right"><button title="Editar Funcion" onclick="editar(' + full.fun_id + ');" style="border-radius:50%" class="btneditar btn btn-primary" data-id="" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;<button title="Agregar Aplicación" style="border-radius:50%" class="btnapli btn btn-success" data-id="" onclick="aplicacion(' + full.fun_id + ');" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-list-alt"></span></button></div>'
+                          }, "class": "boton-td"
+                      }
+                ]
+            });
+
+        });
+    </script>
+    <script>
+        function editar(id) {
+            var TeamDetailPostBackURL ="@Url.Action("Edit", "Funcion")";            
+            waitingDialog.show('Espere un momento por favor');            
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                cache: true,
+                success: function (data) {                    
+                    waitingDialog.hide();
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');                    
+
+                },
+                error: function () {
+                    waitingDialog.hide();
+                    alert("Dynamic content load failed.");
+                }
+            });
+        }
+    </script>
+      
+}   

@@ -1,0 +1,224 @@
+﻿
+@{
+    ViewBag.Title = "Stock de Articulo del Almacen - 700";
+}
+
+<p class="text-primary">Lista de Stock de articulo del almacen - 700</p>
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .alignCenter {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<div class="box box-header box-primary">
+    <label style="color:#9c9c9c;font-weight:bold">Parametros de busqueda</label>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button id="btnRefrescar" onclick="refrescar();" class="btn btn-primary" type="button" style="margin-left: 10px;">
+                            <i class="glyphicon glyphicon-refresh" style="color:#FFF"></i>
+                            &nbsp;&nbsp;Refrescar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-6 text-right">
+            <button id="btnexportar" onclick="exportar_excel();" type="submit" title="Exportar a Excel" class="btn btn-success">
+                <span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Exportar Lista
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="tabstock" class="table table-hover table-bordered compact">
+                    <thead>
+                        <tr id="tr_table1">
+                            <th width="10%;">ALMACEN</th>  
+                            <th width="10%;">ARTICULO</th>                            
+                            <th width="90%;">
+                                <div class="col-sm-6" style="width:100%;text-align:center;margin-top:2px;margin-bottom:2px;">
+                                    <label for="disponible">TALLA/CANTIDAD</label>
+                                </div>
+
+                            </th>                           
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach:">
+                        <tr>
+                            <th>ALMACEN</th>                            
+                            <th>ARTICULO</th>                            
+                            <th width="90%;">
+                                <div class="col-sm-6" style="width:100%;text-align:center;margin-top:2px;margin-bottom:2px;">
+                                    <label for="disponible">TALLA/CANTIDAD</label>
+                                </div>
+                            </th>                           
+                        </tr>
+                    </tbody>
+                </table>                 
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        function exportar_excel() {
+            waitingDialog.show("Espere por favor...")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("get_exporta_stock_700_excel", "Articulo")',
+                data: {},
+                success: function (data) {
+                    waitingDialog.hide();
+                    if (data.estado == "1") {
+                        toastr.success(data.mensaje);
+                        window.location = '@Url.Action("ListaStockArticulo700Excel")';
+                    }
+                    else {
+                        toastr.error(data.mensaje, "Alerta");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    waitingDialog.hide();
+                    toastr.error("Error al consultar.", "Alerta");
+                }
+            });
+        }
+
+
+        function refrescar() {
+            isOkUpdate = true;
+            waitingDialog.show("Espere por favor...")
+            $('#tabstock').DataTable().ajax.reload(function () {
+                
+            });
+        }
+
+        var isOkUpdate = true;
+
+        waitingDialog.show("Espere por favor...")
+
+        $(document).ready(function () {
+            isOkUpdate = true;
+            $('#tabstock').dataTable({
+                //"dom": 't',
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bProcessing": true,
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getTableStock700Ajax", "Articulo")',
+                "fnServerParams": function (aoData) {
+                    debugger;
+                    aoData.push({ "name": "isOkUpdate", "value": isOkUpdate });
+                    isOkUpdate = false;
+                },
+                "bFilter": true,
+                "bdestroy": true,
+                "start": 0,
+                //"searching": false,
+                //"sort": false,
+                "order": [],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": [0, 2],
+                }],
+                "bDeferRender": true,
+                "drawCallback": function (settings) {
+                    waitingDialog.hide();
+                },
+
+                "aoColumns": [
+                         { "sName": "almacen", "mData": "almacen" },
+                         { "sName": "articulo", "mData": "articulo" },                                  
+                           {
+                               "sWidth": "30%",
+                               "render": function (data, type, full) {
+                                   var botones_head = '';
+                                   var botones_cant = '';
+                                   var lista = full.list_talla;
+
+                                   botones_head = '<div class="col-sm-1" style="width:100%;margin-top:2px;margin-bottom:2px;text-align:center;">' +
+                                             '<table>' +
+                                             '<tbody>' +
+                                             '<tr>' +
+                                             '<td>' +
+                                             '<div style="margin-top:2px;margin-right:2px;">' +
+                                             '<button class="btn btn-white btn-xs" title="Tallas" style="width:100%;color:black;">T:</button>' +
+                                             '</div>' +
+                                             '</td>' +
+                                             '<td>' +
+                                             '<div style="margin-top:2px;margin-right:2px;">' +
+                                             '<button class="btn btn-success btn-xs" style="width:100%;">Total</button>' +
+                                             '</div>' +
+                                             '</td>';
+
+
+                                   botones_cant = '<tr>' +
+                                                 '<td>' +
+                                                 '<div style="margin-top:2px;margin-right:2px;">' +
+                                                 '<button title="Cantidad" class="btn btn-white btn-xs" style="width:100%;color:black;">C:</button>' +
+                                                 '</div>' +
+                                                 '</td>';
+                                   botones_cant += '<td>' +
+                                                  '<div style="margin-top:2px;margin-right:2px;">' +
+                                                  '<button class="btn btn-success btn-xs" style="width:100%;">' + full.total + '</button>' +
+                                                  '</div>' +
+                                                  '</td>';
+
+                                   lista.forEach(function (entry) {
+                                       botones_head += '<td>' +
+                                             '<div style="margin-top:2px;margin-right:2px;">' +
+                                             '<button class="btn btn-primary btn-xs" style="width:100%;" title="Talla" data-id="codTienda" data-tda="desTiendaS" data-modal="codTalla" data-art="codArticulo">' + entry.talla + '</button>' +
+                                             '</div>' +
+                                             '</td>';
+                                       botones_cant += '<td>' +
+                                                       '<div style="margin-top:2px;margin-right:2px;">' +
+                                                       '<button class="btn btn-info btn-xs" style="width:100%;text-align:center;">' + entry.cantidad + '</button>' +
+                                                       '</div>' +
+                                                       '</td>';
+
+                                   });
+
+                                   botones_head += botones_cant + '</tr></tr>' +
+                                            '</tbody>' +
+                                            '</table>' +
+                                            '</div>';
+
+
+                                   return botones_head;
+                               },
+                           },
+                                                       
+                ],
+                dom: 'Bfrtip',
+                buttons:
+                    [
+                    ]
+            });
+
+        });
+    </script>
+    }

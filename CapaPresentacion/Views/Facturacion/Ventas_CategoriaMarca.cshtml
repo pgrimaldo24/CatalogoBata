@@ -1,0 +1,968 @@
+﻿@{
+    ViewBag.Title = "Consulta de ventas de marca por categoría";
+    ViewBag.SubTitle = "";
+}
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .alignCenter {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<p class="text-primary">Consulte entre un rango de fechas, marca y directora.</p>
+<div class="box box-header box-primary">
+    <h3 class="box-title danger" style="color:#9c9c9c;font-weight:bold">Parametro de Busqueda</h3>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default p-10">
+                <div class="panel-body" style="padding-top: 7px;padding-bottom: 4px;">
+
+                    <div class="row">
+                        <div class="col-md-7" style="padding-left: 0px;">
+                            <div class="col-md-8">
+                                <div class="col-md-6" style="padding-left: 0px;">
+                                    <label for="" style="color: #3d566e;">Asesor</label>
+                                    <div id="DivAsesor" class="form-group">
+                                        @Html.DropDownList("ddlAsesor", new SelectList(ViewBag.ListarAsesor, "bas_aco_id", "nombres"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "ddlAsesor", @name = "ddlAsesor", @style = "max-width: 100%" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="padding-left: 0px;">
+                                    <label for="" style="color: #3d566e;">Directora</label>
+                                    <div id="DivLider" class="form-group">
+                                        @Html.DropDownList("ddlClientes", new SelectList(ViewBag.ListarLider, "bas_id", "nombres"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "ddlClientes", @name = "ddlClientes", @style = "max-width: 100%" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="padding-left: 0px; padding-right: 0px;">
+                                <label for="" style="color: #3d566e;">Marca</label>
+                                <div class="form-group">
+                                    @Html.DropDownList("ddlMarca", new SelectList(ViewBag.ListarMarca, "Mar_Id", "Mar_Descripcion", "-1"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "ddlMarca", @name = "ddlMarca", @style = "max-width: 100%" })
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5" style="padding-left: 0px;">
+                            <div class="col-md-5" style="padding-right: 0px;">
+                                <div>
+                                    <label for="dtpFechaNotaCredito" style="color: #3d566e;">Fecha de Inicio</label>
+                                    <div id="datepickerIni" class="input-group date" data-date-format="dd/mm/yyyy">
+                                        <input id="dtpFechaInicio" type="text" class="form-control input-sm ui-cell-input" disabled style="max-width: 100%" />
+                                        <span class="input-group-addon btn btn-xs btn-default" style="padding: 4px 5px;">
+                                            <i class="glyphicon glyphicon-calendar" height="20" width="20" style="color:#ff9f3f"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="dtpFechaNotaCredito" style="color: #3d566e;">Fecha de Cierre</label>
+                                <div id="datepickerFin" class="input-group date" data-date-format="dd/mm/yyyy">
+                                    <input id="dtpFechaFin" type="text" class="form-control input-sm ui-cell-input" disabled style="max-width: 100%" />
+                                    <span class="input-group-addon btn btn-xs btn-default" style="padding: 4px 5px;">
+                                        <i class="glyphicon glyphicon-calendar" height="20" width="20" style="color:#ff9f3f"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-right" style="padding:0px">
+                                <button id="btnBuscar" type="submit" title="Consultar" class="btn btn-primary" style="margin-top: 22px;">
+                                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false">Información general de ventas</a></li>
+                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Gráfico Barras</a></li>
+                <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Gráfico Pastel</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button id="btnExportar" title="Actualizar" class="btn btn-success disabled" disabled>
+                                <span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Exportar Lista
+                            </button>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="TbTabla" class="table table-hover table-bordered compact">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;">Asesor</th>
+                                            <th style="text-align: center;">Directora</th>
+                                            <th style="text-align: center;">Promotor</th>
+                                            <th style="text-align: center;">Linea</th>
+                                            <th style="text-align: center;">Marca</th>
+                                            <th style="text-align: center;">Venta sin IGV</th>
+                                            <th style="text-align: center;">Pares</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan='7'>No se encontraron resultados</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab_2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-8">
+                                <p class="text-center">
+                                    <strong id=""> Venta Neta por Categoría</strong>
+                                </p>
+                                <div class="chart">
+                                    <canvas id="ChartBar" style="height: 310px; width:500px"></canvas>
+                                </div>
+                            </div>
+                            <!-- /.chart-responsive -->
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @Html.DropDownList("ddlChartBar", new List<SelectListItem>
+                                            {
+                                               new SelectListItem{ Text="Monto", Value = "1" },
+                                               new SelectListItem{ Text="Unidad", Value = "2" }
+                                            }, new { @class = "form-control", @id = "ddlChartBar", @name = "ddlChartBar", @style = "max-width: 100%" })
+                                        <br />
+                                        <br />
+                                        <div id="DivDirectora" class="form-group">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table id="TbTablaDirectora" class="table table-hover table-bordered compact">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center;">Categoria</th>
+                                                        <th style="text-align: center;">Porc. (%)</th>
+                                                        <th style="text-align: center;">Porc. (%)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan='2'>No se encontraron resultados</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab_3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-8">
+                                <p class="text-center">
+                                    <strong id=""> Venta Global - Participación por Categoría</strong>
+                                </p>
+                                <div class="chart">
+                                    <canvas id="ChartPie" style="height: 310px; width:500px"></canvas>
+                                </div>
+                            </div>
+                            <!-- /.chart-responsive -->
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @Html.DropDownList("ddlChartPie", new List<SelectListItem>
+                                            {
+                                               new SelectListItem{ Text="Monto", Value = "1" },
+                                               new SelectListItem{ Text="Unidad", Value = "2" }
+                                            }, new { @class = "form-control", @id = "ddlChartPie", @name = "ddlChartPie", @style = "max-width: 100%" })
+                                        <br />
+  
+                                        <div id="DivCategoria" class="form-group">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table id="TbTablaCategoria" class="table table-hover table-bordered compact">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center;">Marca</th>
+                                                        <th style="text-align: center;">Porc. (%)</th>
+                                                        <th style="text-align: center;">Porc. (%)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan='2'>No se encontraron resultados</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.tab-content -->
+        </div>
+    </div>
+</div>
+
+<div class="box box-header box-primary">
+    <label style="color:#9c9c9c;font-weight:bold">Información de totalizado</label>
+    <div class="row">
+        <div class="col-md-6">
+            @*[cuerpo del form]*@
+            <form role="form">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label>Total Monto (S/.):</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label id="lblTotalMonto"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label>Total Unidades:</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label id="lblTotalCantidad"></label>
+                        </div>
+                    </div>
+                </div>               
+            </form>
+            @*[/cuerpo del form]*@
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var objVentMarcaCateg = {
+            Inicio: function () {
+                /*[Inicializamos variables]*/
+                $("body").toggleClass('sidebar-collapse');
+
+                this.ListarLider = function () { return @Html.Raw(Json.Encode(ViewBag.ListarLider)); }();
+
+                var date = new Date();
+                $("#datepickerIni").datepicker({
+                    autoclose: true,
+                    todayHighlight: true
+                }).datepicker("setDate", "0");
+
+                $("#datepickerFin").datepicker({
+                    autoclose: true,
+                    todayHighlight: true
+                }).datepicker("setDate", "0");
+
+                this.isOkUpdate = true;
+                this.FechaInicio = $("#dtpFechaInicio").val();
+                this.FechaFin = $("#dtpFechaFin").val();
+                this.Mar_Id = "-1";
+                this.Bas_Id = -1;
+                this.Bas_Aco_Id = "";
+                this.Tabla = $('#TbTabla');
+                this.TablaDirectora = $('#TbTablaDirectora');
+                this.TablaCategoria = $('#TbTablaCategoria');
+                this.NombreLider = "";
+                this.Categoria = "";
+                this.ChartBar;
+                this.ChartPie;
+                this.ChartBarMonto;
+                this.ChartBarUnidad;
+                this.ChartPieMonto;
+                this.ChartPieUnidad;
+
+                var dataV = { Success: false, Data :{}};
+                objVentMarcaCateg.generaal.Chart.Bar(dataV);
+                objVentMarcaCateg.generaal.Chart.Pie(dataV);
+
+                objVentMarcaCateg.grid.get();
+                objVentMarcaCateg.grid.getDirectora();
+                objVentMarcaCateg.grid.getCategoria();
+                /*[/Inicializamos variables]*/
+
+                /*[btn Exportar y buscar]*/
+                $("#btnExportar").click(function () {
+                    objVentMarcaCateg.FechaInicio = $("#dtpFechaInicio").val();
+                    objVentMarcaCateg.FechaFin = $("#dtpFechaFin").val();
+                    waitingDialog.show("Espere por favor...")
+                    objVentMarcaCateg.generaal.exportar();
+                })
+
+                $("#btnBuscar").click(function () {
+                    $("#ddlChartBar").selectpicker("val", "1");
+                    objVentMarcaCateg.isOkUpdate = true;
+                    objVentMarcaCateg.FechaInicio = $("#dtpFechaInicio").val();
+                    objVentMarcaCateg.FechaFin = $("#dtpFechaFin").val();
+                    objVentMarcaCateg.Bas_Id = $("#ddlClientes").val();
+                    objVentMarcaCateg.Bas_Aco_Id = $("#ddlAsesor").selectpicker("val");
+                    objVentMarcaCateg.Mar_Id = $("#ddlMarca").val();
+                    objVentMarcaCateg.NombreLider = "";
+                    objVentMarcaCateg.Categoria = "";
+                    objVentMarcaCateg.generaal.consultar();
+                    objVentMarcaCateg.grid.cargaTablaDirectora();
+                    objVentMarcaCateg.grid.cargaTablaCategoria();
+                })
+                /*[btn Exportar y buscar]*/
+
+                /*[Select]*/
+                $("#ddlAsesor").change(function () {
+                    debugger;
+                    objVentMarcaCateg.generaal.dropdownlist.Llena(this.value, 'Clientes', objVentMarcaCateg.ListarLider);
+                })
+
+                $("#ddlChartBar").change(function () {
+                    objVentMarcaCateg.ChartBar.destroy();
+
+                    objVentMarcaCateg.NombreLider = $("#ddlDirectora").selectpicker("val");
+                    objVentMarcaCateg.grid.cargaTablaDirectora();
+
+                    if(this.value == "1"){
+                        objVentMarcaCateg.generaal.Chart.Bar(objVentMarcaCateg.ChartBarMonto);
+                        objVentMarcaCateg.TablaDirectora.DataTable().columns([1]).visible(true);
+                        objVentMarcaCateg.TablaDirectora.DataTable().columns([2]).visible(false);
+                    }else{
+                        objVentMarcaCateg.generaal.Chart.Bar(objVentMarcaCateg.ChartBarUnidad);
+                        objVentMarcaCateg.TablaDirectora.DataTable().columns([1]).visible(false);
+                        objVentMarcaCateg.TablaDirectora.DataTable().columns([2]).visible(true);
+                    }
+                })
+
+                $('#DivDirectora').on('change', '#ddlDirectora', function (e) {
+                    objVentMarcaCateg.NombreLider = $("#ddlDirectora").selectpicker("val");
+                    objVentMarcaCateg.grid.cargaTablaDirectora();
+                })
+
+                $("#ddlChartPie").change(function () {
+                    objVentMarcaCateg.ChartPie.destroy();
+
+                    objVentMarcaCateg.Categoria = $("#ddlCategoria").selectpicker("val");
+                    objVentMarcaCateg.grid.cargaTablaCategoria();
+
+                    if (this.value == "1") {
+                        objVentMarcaCateg.generaal.Chart.Pie(objVentMarcaCateg.ChartPieMonto);
+                        objVentMarcaCateg.TablaCategoria.DataTable().columns([1]).visible(true);
+                        objVentMarcaCateg.TablaCategoria.DataTable().columns([2]).visible(false);
+                    } else {
+                        objVentMarcaCateg.generaal.Chart.Pie(objVentMarcaCateg.ChartPieUnidad);
+                        objVentMarcaCateg.TablaCategoria.DataTable().columns([1]).visible(false);
+                        objVentMarcaCateg.TablaCategoria.DataTable().columns([2]).visible(true);
+                    }
+                })
+
+                $('#DivCategoria').on('change', '#ddlCategoria', function (e) {
+                    objVentMarcaCateg.Categoria = $("#ddlCategoria").selectpicker("val");
+                    objVentMarcaCateg.grid.cargaTablaCategoria();
+                })
+
+                /*[/Select]*/
+            },
+            grid: {
+                get: function () {
+                    //debugger
+                    objVentMarcaCateg.Tabla.DataTable({
+                        "language": {
+                            "url": "../Scripts/DataTables/Spanish.json"
+                        },
+                        "fnServerData": function (sSource, aoData, fnCallback) {
+                            $.getJSON(sSource, aoData, function (json) {
+                                debugger
+                                //var data = JSON.parse(json.jsonChart);
+
+                                $("#lblTotalMonto").html(objVentMarcaCateg.generaal.FormatDecimal(json.dclTotalMonto, 2, '.', ','));
+                                $("#lblTotalCantidad").html(json.dclTotalCantidad);
+                                /*[Creacion de los charts]*/
+                                objVentMarcaCateg.ChartBar.destroy();
+                                objVentMarcaCateg.ChartPie.destroy();
+                                //-----------------BAR----------------------/
+                                objVentMarcaCateg.ChartBarMonto = json.jsChartBarMontoData;
+                                objVentMarcaCateg.ChartBarUnidad = json.jsChartBarUnidadData
+                                objVentMarcaCateg.generaal.Chart.Bar(json.jsChartBarMontoData);
+                                //-----------------PIE----------------------/
+                                objVentMarcaCateg.ChartPieMonto = json.jsChartPieMontoData;
+                                objVentMarcaCateg.ChartPieUnidad = json.jsChartPieUnidadData
+                                objVentMarcaCateg.generaal.Chart.Pie(json.jsChartPieMontoData);
+
+                                /*[/Creacion de los charts]*/
+                                objVentMarcaCateg.generaal.dropdownlist.Directora.Limpia();
+                                objVentMarcaCateg.generaal.dropdownlist.Directora.Llena(json.jsListSecundario)
+
+                                objVentMarcaCateg.TablaDirectora.DataTable().columns([1]).visible(true);
+                                objVentMarcaCateg.TablaDirectora.DataTable().columns([2]).visible(false);
+
+                                objVentMarcaCateg.generaal.dropdownlist.Categoria.Limpia();
+                                objVentMarcaCateg.generaal.dropdownlist.Categoria.Llena(json.jsListCategoria)
+
+                                objVentMarcaCateg.TablaCategoria.DataTable().columns([1]).visible(true);
+                                objVentMarcaCateg.TablaCategoria.DataTable().columns([2]).visible(false);
+
+                                fnCallback(json);
+                            });
+                        },
+                        "bServerSide": true,
+                        "bAutoWidth": false,
+                        "sAjaxSource": '@Url.Action("getLisVentasCategoriaMarcaAjax", "Facturacion")',
+                        "bdestroy": true,
+                        "start": 0,
+                        "columnDefs": [{
+                            "orderable": false,
+                            "targets": [],
+                        }],
+                        "bDeferRender": true,
+                        "aoColumns": [
+                                { "sName": "Asesor", "mData": "Asesor", "sClass": "" },
+                                { "sName": "NombreLider", "mData": "NombreLider", "sClass": "" },
+                                { "sName": "Promotora", "mData": "Promotora", "sClass": "" },
+                                { "sName": "Categoria", "mData": "Categoria", "sClass": "" },
+                                { "sName": "Marca", "mData": "Marca", "sClass": "" },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.Monto;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.Cantidad;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                }
+                        ],
+                        "fnRowCallback": function (row, data, index) {
+                        },
+                        "drawCallback": function (settings) {
+                            objVentMarcaCateg.isOkUpdate = false;
+                            objVentMarcaCateg.isOkSemanal = false;
+
+                            var table = objVentMarcaCateg .Tabla.dataTable();
+                            var data = table.fnGetData();
+                            if (data.length == 0) {
+                                $("#btnExportar").addClass("disabled");
+                                $("#btnExportar").attr('disabled', 'disabled');
+                            } else {
+                                $("#btnExportar").removeClass("disabled");
+                                $("#btnExportar").removeAttr("disabled");
+                            }
+                        },
+                        "initComplete": function (settings, json) {
+                        }
+                    });
+                },
+                cargaTabla: function () {
+                   // debugger
+                    //waitingDialog.show("Espere por favor...")
+                    objVentMarcaCateg.Tabla.DataTable().ajax.reload(function () {
+                        waitingDialog.hide();
+                    });
+                },
+                getDirectora: function () {
+                    //debugger
+                    objVentMarcaCateg.TablaDirectora.DataTable({
+                        "language": {
+                            "url": "../Scripts/DataTables/Spanish.json"
+                        },
+                        //Info
+                        "infoCallback": function (settings, start, end, max, total, pre) {
+                            debugger
+                            return "Del " + start + " al " + end;
+                        },
+                        "bServerSide": true,
+                        "bAutoWidth": false,
+                        "fnServerData": function (sSource, aoData, fnCallback) {
+                            $.getJSON(sSource, aoData, function (json) {
+                                debugger
+                                fnCallback(json);
+                            });
+                        },
+                        "sAjaxSource": '@Url.Action("getLisVentasCategoriaMarcaSecundarioAjax", "Facturacion")',
+                        "fnServerParams": function (aoData) {
+                            debugger;
+                            aoData.push({ "name": "NombreLider", "value": objVentMarcaCateg.NombreLider });
+                        },
+                        //"lengthMenu": [[5, 10], [5, 10]],
+                        "bFilter": false,
+                        "bdestroy": true,
+                        "start": 0,
+                        "columnDefs": [{
+                            "orderable": false,
+                            "targets": [],
+                        }],
+                        "bDeferRender": true,
+                        "aoColumns": [
+                                { "sName": "Categoria", "mData": "Categoria", "sClass": "" },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.Prc;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.CantidadPrc;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                }
+                        ],
+                        "fnRowCallback": function (row, data, index) {
+                        },
+                        "drawCallback": function (settings) {
+                        },
+                        "initComplete": function (settings, json) {
+                        }
+                    });
+                   // $.fn.DataTable.ext.pager.numbers_length = 1;
+                },
+                cargaTablaDirectora: function () {
+                    // debugger
+                    //waitingDialog.show("Espere por favor...")
+                    objVentMarcaCateg.TablaDirectora.DataTable().ajax.reload(function () {
+                       // waitingDialog.hide();
+                    });
+                },
+                getCategoria: function () {
+                    //debugger
+                    objVentMarcaCateg.TablaCategoria.DataTable({
+                        "language": {
+                            "url": "../Scripts/DataTables/Spanish.json"
+                        },
+                        //Info
+                        "infoCallback": function (settings, start, end, max, total, pre) {
+                            debugger
+                            return "Del " + start + " al " + end;
+                        },
+                        "bServerSide": true,
+                        "bAutoWidth": false,
+                        "fnServerData": function (sSource, aoData, fnCallback) {
+                            $.getJSON(sSource, aoData, function (json) {
+                                debugger
+                                fnCallback(json);
+                            });
+                        },
+                        "sAjaxSource": '@Url.Action("getLisVentasCategoriaMarcaCategoriaAjax", "Facturacion")',
+                        "fnServerParams": function (aoData) {
+                            debugger;
+                            aoData.push({ "name": "Categoria", "value": objVentMarcaCateg.Categoria });
+                        },
+                        //"lengthMenu": [[5, 10], [5, 10]],
+                        "bFilter": false,
+                        "bdestroy": true,
+                        "start": 0,
+                        "columnDefs": [{
+                            "orderable": false,
+                            "targets": [],
+                        }],
+                        "bDeferRender": true,
+                        "aoColumns": [
+                                { "sName": "Marca", "mData": "Marca", "sClass": "" },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.Monto;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                },
+                                {
+                                    "mData": null,
+                                    "sClass": "alignRight",
+                                    "render": function (Data, type, full, meta) {
+                                        let Monto = full.Cantidad;
+                                        return (Monto == undefined || Monto == null || Monto == 0) ? ' ' : objVentMarcaCateg.generaal.FormatDecimal(Monto, 2, '.', ',');
+                                    }
+                                }
+                        ],
+                        "fnRowCallback": function (row, data, index) {
+                        },
+                        "drawCallback": function (settings) {
+                        },
+                        "initComplete": function (settings, json) {
+                        }
+                    });
+                    // $.fn.DataTable.ext.pager.numbers_length = 1;
+                },
+                cargaTablaCategoria: function () {
+                    // debugger
+                    //waitingDialog.show("Espere por favor...")
+                    objVentMarcaCateg.TablaCategoria.DataTable().ajax.reload(function () {
+                        // waitingDialog.hide();
+                    });
+                },
+            },
+            generaal: {
+                FormatDecimal: function (numero, decimales, separadorDecimal, separadorMiles) {
+                    //debugger
+                    var partes, array;
+                    if (!isFinite(numero) || isNaN(numero = parseFloat(numero))) {
+                        return "";
+                    }
+                    if (typeof decimales === "undefined") {
+                        decimales = 2;
+                    }
+                    if (typeof separadorDecimal === "undefined") {
+                        separadorDecimal = ".";
+                    }
+                    if (typeof separadorMiles === "undefined") {
+                        separadorMiles = ",";
+                    }
+                    // Redondeamos
+                    if (!isNaN(parseInt(decimales))) {
+                        if (decimales >= 0) {
+                            numero = numero.toFixed(decimales);
+                        } else {
+                            numero = (
+                                Math.round(numero / Math.pow(10, Math.abs(decimales))) * Math.pow(10, Math.abs(decimales))
+                            ).toFixed();
+                        }
+                    } else {
+                        numero = numero.toString();
+                    }
+                    // Damos formato
+                    partes = numero.split(".", 2);
+                    array = partes[0].split("");
+                    for (var i = array.length - 3; i > 0 && array[i - 1] !== "-"; i -= 3) {
+                        array.splice(i, 0, separadorMiles);
+                    }
+                    numero = array.join("");
+                    if (partes.length > 1) {
+                        numero += separadorDecimal + partes[1];
+                    }
+                    return numero;
+                },
+                Validar : {
+                   // debugger;
+                    Campos : function(){
+                        // debugger;
+                        if (objVentMarcaCateg .FechaInicio == undefined || objVentMarcaCateg .FechaInicio == null || objVentMarcaCateg .FechaInicio.length == 0 || objVentMarcaCateg .FechaInicio == '') {
+                            toastr.error("La fecha de Inicio no puede estar vacio", "Alerta");
+                            return false;
+                        }
+                        if (objVentMarcaCateg .FechaFin == undefined || objVentMarcaCateg .FechaFin == null || objVentMarcaCateg .FechaFin.length == 0 || objVentMarcaCateg .FechaFin == '') {
+                            toastr.error("La fecha de Fin no puede estar vacio", "Alerta");
+                            return false;
+                        }
+                        return true;
+                    },
+                    Data: function () {
+                        debugger;
+                        waitingDialog.show("Espere por favor...")
+                        var _Ent = function () { return @Html.Raw(Json.Encode(ViewBag.Ent_VentasCategoriaMarca)); }();
+                        _Ent.FechaIni = objVentMarcaCateg.FechaInicio;
+                        _Ent.FechaFin = objVentMarcaCateg.FechaFin;
+                        _Ent.Bas_Id = objVentMarcaCateg.Bas_Id;
+                        _Ent.Bas_Aco_Id = objVentMarcaCateg.Bas_Aco_Id;
+                        _Ent.Mar_Id = objVentMarcaCateg.Mar_Id;
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("_valVentasCategoriaMarca", "Facturacion")',
+                            data : {_Ent:_Ent},
+                            success: function (data) {
+                                debugger;
+                                data = JSON.parse(data);
+                                waitingDialog.hide();
+                                if (data.Success) {
+                                    //toastr.success(data.Message);
+                                    objVentMarcaCateg.grid.cargaTabla();
+                                }
+                                else {
+                                    objVentMarcaCateg.grid.cargaTabla();
+                                    //toastr.error(data.Message, "Alerta");
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                waitingDialog.hide();
+                                toastr.error("Error al exportar excel.", "Alerta");
+                            }
+                        });
+                    }
+                },
+                consultar: function () {
+                    //debugger
+                    if (objVentMarcaCateg.generaal.Validar.Campos())
+                        objVentMarcaCateg.generaal.Validar.Data();
+                        //objVentMarcaCateg .grid.cargaTabla();
+                },
+                exportar: function () {
+                    var _Ent = function () { return @Html.Raw(Json.Encode(ViewBag.Ent_VentasCategoriaMarca)); }();
+                    _Ent.FechaIni = objVentMarcaCateg.FechaInicio;
+                    _Ent.FechaFin = objVentMarcaCateg.FechaFin;
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("get_exporta_LisVentasCategoriaMarca_excel", "Facturacion")',
+                        data : {_Ent:_Ent},
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            waitingDialog.hide();
+                            if (data.Success) {
+                                toastr.success(data.Message);
+                                window.location = '@Url.Action("ListarVentasCategoriaMarcaExcel")';
+                            }
+                            else {
+                                toastr.error(data.Message, "Alerta");
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            waitingDialog.hide();
+                            toastr.error("Error al exportar excel.", "Alerta");
+                        }
+                    });
+                },
+                Chart:{
+                    Bar: function (_data) {
+                        //debugger
+                        //[Config chart]
+                        objVentMarcaCateg.ChartBar = new Chart(document.getElementById("ChartBar"),
+                            {
+                                type: 'bar',
+                                data: _data,
+                                plugins: [ChartDataLabels],
+                                options: {
+                                    //title:
+                                    //{
+                                    //    display: true,
+                                    //    text: "Venta Neta por Categoría"
+                                    //},
+                                    //responsive: true,
+                                    maintainAspectRatio: true,
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true,
+                                            }
+                                        }],
+                                        xAxes: [{
+                                            ticks: {
+                                                callback: function (value) {
+                                                    if (value.length > 7 && 5 == 6) {
+                                                        return value.substr(0, 7) + "..."; //truncate
+                                                    } else {
+                                                        return value
+                                                    }
+                                                }
+                                            }
+                                        }],
+                                    },
+                                    tooltips: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: 'rgba(237, 237, 237,0.8)',
+                                        bodyFontColor: 'rgba(73, 73, 73,0.8)',
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(158, 158, 158, 1)',
+                                        titleFontColor: 'rgba(73, 73, 73,0.8)',
+                                        callbacks: {
+                                            title: function (tooltipItems, data) {
+                                                //if (informe == 6){
+                                                var idx = tooltipItems[0].index;
+                                                return data.labels[idx]; //do something with title
+                                                //}
+                                            },
+                                        }
+                                    },
+                                    plugins: {
+                                        datalabels: {
+                                            align: 'end',
+                                            anchor: 'end',
+                                            //color: function (context) {
+                                            //    return context.dataset.backgroundColor;
+                                            //},
+                                            color: "#00578A",
+                                            font: {
+                                                weigth: 'bold',
+                                                size: 12,
+                                            },
+                                            textAlign: 'end'
+                                        }
+                                    },
+                                    legend: {
+                                        display: false,
+                                    }
+                                }
+                            });
+                        //[/Config chart]
+                    },
+                    Pie: function (_data) {
+                        //[Config chart]
+                        objVentMarcaCateg.ChartPie = new Chart(document.getElementById("ChartPie"),
+                            {
+                                type: 'doughnut',
+                                data: _data,
+
+                                options: {
+                                    //events: ['click'] ,
+                                    legend: {
+                                        position: 'right'
+                                    },
+                                    title:
+                                    {
+                                        display: true,
+                                        //text: "Venta Neta por Categoría"
+                                    },
+                                    tooltips: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: 'rgba(237, 237, 237,0.8)',
+                                        bodyFontColor: 'rgba(73, 73, 73,0.8)',
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(158, 158, 158, 1)',
+                                        titleFontColor: 'rgba(73, 73, 73,0.8)',
+                                        callbacks: {
+                                            title: function (tooltipItems, data) {
+                                                //if (informe == 6){
+                                                var idx = tooltipItems[0].index;
+                                                return data.labels[idx]; //do something with title
+                                                //}
+                                            },
+                                        }
+                                    },
+                                    plugins: {
+                                        datalabels: {
+                                            align: 'end',
+                                            anchor: 'end',
+                                            //color: function (context) {
+                                            //    return context.dataset.backgroundColor;
+                                            //},
+                                            color: "#00578A",
+                                            font: {
+                                                weigth: 'bold',
+                                                size: 12,
+                                            },
+                                            textAlign: 'end'
+                                        }
+                                    },
+
+                                }
+                            });
+                        //[/Config chart]
+                    }
+                },
+                dropdownlist: {
+                    Llena: function (Value, Id, Listado) {
+                        debugger
+                        let Lista = (Value == '-1') ? Listado : Listado.filter((item) => { return item.bas_aco_id === Value; });
+                        let dropdownlist = '<select class="form-control selectpicker" data-live-search="true" id="ddl' + Id + '" name="ddl' + Id + '" style="max-width: 100%" tabindex="-98">';
+
+                        dropdownlist += (Lista.length == 1) ? '' : '<option value = "-1">Seleccionar a todos</option>';
+
+                        for (var key in Lista) {
+                            dropdownlist += '<option value = ' + Lista[key].bas_id + '>' + Lista[key].nombres + '</option>';
+                        }
+                        dropdownlist += '</select>';
+
+                        $("#DivLider").html(dropdownlist);
+                        $('.selectpicker').selectpicker({
+                            liveSearch: true,
+                            showSubtext: true
+                        });
+                    },
+                    Directora: {
+                        Llena: function (Lista) {
+                            let dropdownlist = '<select class="form-control selectpicker" data-live-search="true" id="ddlDirectora" name="ddlDirectora" style="max-width: 100%" tabindex="-98">';
+
+                            dropdownlist += '<option value = "-1">Seleccione</option>';
+                            debugger
+                            for (var key in Lista) {
+                                dropdownlist += '<option value = \'' + Lista[key].NombreLider + '\'>' + Lista[key].NombreLider + '</option>';
+                            }
+                            dropdownlist += '</select>';
+
+                            $("#DivDirectora").html(dropdownlist);
+                            $('.selectpicker').selectpicker({
+                                liveSearch: true,
+                                showSubtext: true
+                            });
+                        },
+                        Limpia: function () {
+                            $('#ddlDirectora').find('option').remove().end()
+                            .append('<option value="-1">Seleccione</option>').val('-1');
+                        }
+                    },
+                    Categoria: {
+                        Llena: function (Lista) {
+                            let dropdownlist = '<select class="form-control selectpicker" data-live-search="true" id="ddlCategoria" name="ddlCategoria" style="max-width: 100%" tabindex="-98">';
+
+                            dropdownlist += '<option value = "-1">Seleccione</option>';
+                            debugger
+                            for (var key in Lista) {
+                                dropdownlist += '<option value = \'' + Lista[key].Categoria + '\'>' + Lista[key].Categoria + '</option>';
+                            }
+                            dropdownlist += '</select>';
+
+                            $("#DivCategoria").html(dropdownlist);
+                            $('.selectpicker').selectpicker({
+                                liveSearch: true,
+                                showSubtext: true
+                            });
+                        },
+                        Limpia: function () {
+                            $('#ddlCategoria').find('option').remove().end()
+                            .append('<option value="-1">Seleccione</option>').val('-1');
+                        }
+                    }
+                }
+            }
+        };
+        $(document).ready(function () {
+            objVentMarcaCateg.Inicio();
+        });
+    </script>
+}

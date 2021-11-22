@@ -1,0 +1,1302 @@
+﻿@using CapaEntidad.Pedido
+@model IEnumerable<Ent_Order_Dtl>
+@{ 
+    ViewBag.Title = "Pedidos";
+    ViewBag.SubTitle = "Lista de pedidos";
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "GET",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "lista",
+        OnComplete = "waitingDialog.hide();",
+        OnBegin = "waitingDialog.show('Espere un momento por favor');",
+        OnFailure = "waitingDialog.hide();"
+    };
+}
+
+@*@Scripts.Render("~/bundles/bootstrap")*@
+<style>
+    #dwcliente {
+        width: 200px;
+    }
+
+    .imgRedonda {
+        width: 100px;
+        height: 80px;
+        border-radius: 15px;
+    }
+
+    #divImagen {
+        width: 100%;
+        height: 100%;
+    }
+
+    #listatallas {
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        border: 2px;
+    }
+
+    #lugar {
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        border: 2px;
+    }
+    .table thead{
+        background-color: #5799bf;
+        color: #fff;
+    }
+    .boton-xs-td{
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    .nav-tabs-custom>.nav-tabs>li.active>a, .nav-tabs-custom>.nav-tabs>li.active:hover>a {
+        background-color: #e8e8e8;
+        color: #444;
+    }
+</style>
+<p class="text-primary">Creación y modificación de pedidos en borrador, creación y consulta de liquidaciones, consulta de facturas y devoluciones.</p>
+
+<div class="row">
+    <div class="col-md-12">
+        @*@using (Ajax.BeginForm("ListaPcPedidos", options))
+        {*@
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="box box-widget">
+                        <div class="box-header with-border">
+                            Promotor(a)
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-10 col-xs-10">
+                                    <div class="form-group">
+                                        @Html.DropDownList("dwPromotor", new SelectList(ViewBag.listPromotor, "codigo", "descripcion", "-1"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "dwPromotor", @name = "dwPromotor", @onchange = "get_info_cliente();" })
+                                        <span class="help-block" style="color: #31708f">Seleccione un promotor sobre el cual realizará las acciones</span>
+                                    </div>
+                                </div>
+                                <button type="button" title="Consultar" onclick="get_info_cliente();" id="btnConsultar" class="btn btn-primary">
+                                    <small class="glyphicon glyphicon-search"></small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Botones" class="box box-widget">
+                      
+                    </div>                           
+                </div>
+                <div class="col-md-5">
+                    <div class="box box-widget">
+                        <div class="box-header with-border">
+                            <div class="user-block">
+                                <img class="img-circle" src="../Content/images/placeholder-user.jpg" alt="User Image">
+                                <span class="username" id="doc-nom-persona">&nbsp;</span>
+                                <span class="description" id="ubi-persona">&nbsp;</span>
+                            </div>
+                            <!-- /.user-block -->
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <!-- /.box-tools -->
+                        </div>
+                        <div class="box-body">
+                            <div class="row" id="infoProm">
+                                
+                            </div>
+                        </div>
+                    </div>                       
+                </div>
+            </div>
+        @* }   *@      
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @*<li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="true">Borrador de Pedidos</a></li>*@
+                <li class="active"><a href="#tab_2" data-toggle="tab" aria-expanded="false">Historial de pedidos</a></li>
+                <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Historial de Nota de credito</a></li>
+                <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Historial de Consignaciones</a></li>
+                <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Nota de Credito (Saldos)</a></li>
+                <li class=""><a href="#tab_6" id="tab_flete" data-toggle="tab" aria-expanded="false">Liquidacion - Flete</a></li>
+                @*<li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Liquidacion Flete</a></li>*@
+            </ul>
+            <div class="tab-content">
+                @*<div class="tab-pane" id="tab_1">
+                    <b>How to use:</b>
+                    <p>
+                        Exactly like the original bootstrap tabs except you should use
+                        the custom wrapper <code>.nav-tabs-custom</code> to achieve this style.
+                    </p>
+                    A wonderful serenity has taken possession of my entire soul,
+                    like these sweet mornings of spring which I enjoy with my whole heart.
+                    I am alone, and feel the charm of existence in this spot,
+                    which was created for the bliss of souls like mine. I am so happy,
+                    my dear friend, so absorbed in the exquisite sense of mere tranquil existence,
+                    that I neglect my talents. I should be incapable of drawing a single stroke
+                    at the present moment; and yet I feel that I never was a greater artist than now.
+                </div>*@
+                <!-- /.tab-Liquidaciones -->
+                <div class="tab-pane active" id="tab_2">
+                    <h5 class="text-bold">Historial de pedidos</h5>
+                    <p class="text-info">Historial de liquidaciones y estados; consulta de reportes de liquidacion y facturación general e individual por promotor.</p>
+                    
+                    <div class="table-responsive">
+                        <table id="tblLiquidaciones" class="table table-hover table-bordered compact">
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Factura</th>
+                                    <th>Fecha</th>
+                                    <th>Pares</th>
+                                    <th>Estado</th>
+                                    <th>Ganancia</th>
+                                    <th>Sub-Total</th>
+                                    <th>NC y/o SF</th>
+                                    <th>Total</th>
+                                    <th>Percepcion</th>
+                                    <th>T. Pagar</th>                                 
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach:"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Factura</th>
+                                    <th>Fecha</th>
+                                    <th>Pares</th>
+                                    <th>Estado</th>
+                                    <th>Ganancia</th>
+                                    <th>Sub-Total</th>
+                                    <th>NC y/o SF</th>
+                                    <th>Total</th>
+                                    <th>Percepcion</th>
+                                    <th>T. Pagar</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.tab-NotaCredito -->
+                <div class="tab-pane" id="tab_3">
+                    <h5 class="text-bold">Historial de Nota de credito</h5>
+                    <p class="text-info">Historial de notas crédito o devoluciones realizadas.</p>
+                    <div class="table-responsive">
+                        <table id="tblNC" class="table table-hover table-bordered compact">
+                            <thead>
+                                <tr>
+                                    <th>Nro NC</th>
+                                    <th>Fecha</th>
+                                    <th>Unidades</th>
+                                    <th>Valor</th>
+                                    <th>Descargar</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach:"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Nro NC</th>
+                                    <th>Fecha</th>
+                                    <th>Unidades</th>
+                                    <th>Valor</th>
+                                    <th>Descargar</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.tab-Consignaciones -->
+                <div class="tab-pane" id="tab_4">
+                    <h5 class="text-bold">Historial de Consignaciones</h5>
+                    <p class="text-info">Historial de Consignaciones general e individual por promotor.</p>
+                    <div class="table-responsive">
+                        <table id="tblConsignaciones" class="table table-hover table-bordered compact">
+                            <thead>
+                                <tr>
+                                    <th>Pago</th>
+                                    <th>OP</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach:"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Pago</th>
+                                    <th>OP</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.tab-Saldos -->
+                <div class="tab-pane" id="tab_5">
+                    <h5 class="text-bold">Saldos</h5>
+                    <p class="text-info">Saldos A Favor general e individual por promotor.</p>
+                    <div class="table-responsive">
+                        <table id="tblSaldos" class="table table-hover table-bordered compact">
+                            <thead>
+                                <tr>
+                                    <th>Descripcion</th>
+                                    <th>Monto</th>
+                                    <th>Percepcion</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach:"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Descripcion</th>
+                                    <th>Monto</th>
+                                    <th>Percepcion</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.tab-Liquidacion-Flete -->
+                <div class="tab-pane" id="tab_6">                                       
+                    <div class="box box-header box-primary">
+                        <h5 class="text-bold">Generacion de Flete - Liquidacion</h5>
+                        <p class="text-info">En esta opcion se genera el monto manualmente del flete, segun los pedidos que seleccione.</p>
+                        <h3 class="box-title danger" style="color:#9c9c9c;font-weight:bold">Parametro de Busqueda</h3>
+                        
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-3">
+
+                            </div>
+                            <div class="col-md-3" style="padding-left: 30px; padding-right: 0px;">
+                            </div>
+                            <div class="col-md-6" style="padding-left: 0px;">
+                                <div class="col-md-5" style="padding-right: 0px;">
+                                    <div>
+                                        <label for="lblFechaInicio" style="color: #3d566e;">Fecha de Inicio</label>
+                                        <div id="datepickerIni" class="input-group date" data-date-format="dd/mm/yyyy">
+                                            <input id="dtpFechaInicio" type="text" class="form-control input-sm ui-cell-input" disabled style="max-width: 100%" />
+                                            <span class="input-group-addon btn btn-xs btn-default" style="padding: 4px 5px;">
+                                                <i class="glyphicon glyphicon-calendar" height="20" width="20" style="color:#ff9f3f"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="lblFechaFin" style="color: #3d566e;">Fecha de Cierre</label>
+                                    <div id="datepickerFin" class="input-group date" data-date-format="dd/mm/yyyy">
+                                        <input id="dtpFechaFin" type="text" class="form-control input-sm ui-cell-input" disabled style="max-width: 100%" />
+                                        <span class="input-group-addon btn btn-xs btn-default" style="padding: 4px 5px;">
+                                            <i class="glyphicon glyphicon-calendar" height="20" width="20" style="color:#ff9f3f"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-right" style="padding:0px">
+                                    <button id="btnBuscar" type="submit" title="Consultar" onclick="buscar_flete(1);" class="btn btn-primary" style="margin-top: 19px;">
+                                        <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tblflete" class="table table-hover table-bordered compact">
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>                                    
+                                    <th>Fecha</th>
+                                    <th>Pares</th>
+                                    <th>Estado</th>
+                                    <th>Ganancia</th>
+                                    <th>Sub-Total</th>
+                                    <th>NC y/o SF</th>
+                                    <th>Total</th>
+                                    <th>Percepcion</th>
+                                    <th>T. Pagar</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach:"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan='9'>No se encontraron resultados</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-offset-5 col-sm-7 col col-md-offset-7 col-md-5">
+                              
+                              
+                                <div class="row row-no-gutter">
+                                    <div class="col-xs-7 col-sm-5 col-md-6"><strong>Total Seleccionados: </strong></div>
+                                    <div class="col-xs-2 col-sm-3 col-md-2 text-right">S/</div>
+                                    <div class="col-xs-3 col-sm-4 col-md-4 text-right alert-danger"><span style="font-size:16px;font-weight:bold;" id="total_sel_flete">0.00</span></div>
+                                </div>
+                              
+                                <br />
+                                <div class="row row-no-gutter alert-info">
+                                    <div class="col-xs-7 col-sm-5 col-md-6"><strong>Monto Flete (Inc.IGV) :</strong></div>
+                                    <div class="col-xs-2 col-sm-3 col-md-2 text-right">S/</div>
+                                    <div class="col-xs-3 col-sm-4 col-md-4 text-right">
+                                                                               
+                                            <input id="txtflete" type="text" focus="true" style="text-align:right;font-size:15px;font-weight:bold;" onkeypress="return numbersonly(event);"  class="form-control" name="txtflete" placeholder="Ingrese Monto">
+                                       
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row row-no-gutter">
+                                    <div class="col-xs-7 col-sm-5 col-md-6"><strong></strong></div>
+                                    <div class="col-xs-2 col-sm-3 col-md-2 text-right"></div>
+                                    <div class="col-xs-3 col-sm-4 col-md-4 text-right">
+                                        <button class="btn btn-success" type="button" onclick="generar_flete_pedido();" id="btnflete" name="btnliquidar" title="Generar Flete">
+                                            <span class="fa fa-floppy-o"></span>&nbsp;Generar Flete
+                                        </button>
+                                        @*<input id="txtflete" type="text" focus="true" style="text-align:right;font-size:15px;font-weight:bold;" onkeypress="return numbersonly(event);" class="form-control" name="txtflete" placeholder="Ingrese Monto">*@
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+        </div>
+    </div>
+</div>
+
+@*<script src="~/Scripts/Plugins/iCheck/icheck.min.js"></script>
+
+//"~/Scripts/bootstrap-select.min.js",
+//"~/ScriptsSelect/bootstrap-select.js",
+*@
+
+<div class="modal fade" id="CRLiquidacion" tabindex="-1" role="dialog" aria-labelledby="CRLiquidacion">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="ifrReporte" class="well" style="width: 100%; height: 100%; padding:0;">
+                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto" 
+                                    onload="javascript: waitingDialog.hide();" style="zoom:90%; width: 100%; height: calc(100vh - 100px);"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-primary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/bootstrap-select.min.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+
+@section scripts{ 
+<script>
+
+    function verpedido(liqId){
+        //var liqId = $(this).attr('data-liqId');
+        //var pedId = $(this).attr('data-pedId');
+        //var custId = $(this).attr('data-custId');
+        waitingDialog.show("Espere por favor...");
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("VerLiquidacion", "Pedido")',
+            data: { liquidacion: liqId },
+            success: function (data) {
+                if (data.estado == 0) {
+                    $("#load").show();
+                    $("#load").attr("src", "../AspNetForms/ReportLiquidation.aspx");
+                    $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                } else {
+                    waitingDialog.hide()
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
+            }
+        });
+    }
+
+    function generar_flete_pedido(){
+
+        var monto_flete=$('#txtflete').val();
+
+        if (monto_flete==''){
+            toastr.error("Ingrese el monto del flete", 'Mensaje');
+            $('txtflete').focus();
+            return;
+        }
+
+        if (rows_selected.length==0){
+            toastr.error("No se ha seleccionado ningun pedido para generar su flete", 'Mensaje');
+            return;
+        }
+
+
+
+        swal({
+            title: "Anular Pedido",
+            icon: "warning",
+            text: "¿Está seguro de Anular el Pedido número?",
+            buttons: ["No", "Si"],
+            dangerMode: true,
+        }).then((cambiar) => {
+            if (cambiar) {
+                waitingDialog.show("Espere un momento por favor.")
+                $.ajax({
+                    type: "Post",
+                    //contentType: 'application/json',
+                    url: '@Url.Action("GenerarFlete", "Pedido")',
+                    data: { pedidos: rows_selected,monto_flete:monto_flete,bas_id:$("#dwPromotor").val() },
+                    async: false,
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        if (data.Success) {
+                            //objMarcar.isOkUpdate = true;
+                            swal({ title: "Ok", text: data.Message, icon: "success" }).then((value) => { 
+                                buscar_flete();
+                                get_info_cliente(1);
+                                //waitingDialog.hide();
+                            });
+                            //swal({title: "Ok",text: data.Message,icon: "success"}).then((value) => {});
+                            //waitingDialog.hide();
+                            //$('#tbPicking').DataTable().ajax.reload(function () { });
+                        }else{
+                            swal({ title: "Alerta", text: data.Message, icon: "error" }).then((value) => { });
+                            waitingDialog.hide();
+                        }
+                    },
+                    error: function (xhr) {
+                        waitingDialog.hide();
+                        swal({ title: "Alerta", text: "Error al grabar.", icon: "error" }).then((value) => { });
+                    }
+                });
+            }
+        })
+    }
+
+    function buscar_flete(cargar){
+        rows_selected = [];
+        isOkUpdate = true;
+        $('#txtflete').val('');
+        bas_id= $("#dwPromotor").val();
+        FechaInicio = $("#dtpFechaInicio").val();
+        FechaFin = $("#dtpFechaFin").val();
+        if (cargar==1) waitingDialog.show("Espere por favor...")
+        tabla_flete.DataTable().ajax.reload(function () {
+            calcular_total();
+            waitingDialog.hide();
+        });
+    };
+
+    function FormatDecimal (numero, decimales, separadorDecimal, separadorMiles) {
+        //debugger
+        var partes, array;
+        if (!isFinite(numero) || isNaN(numero = parseFloat(numero))) {
+            return "";
+        }
+        if (typeof decimales === "undefined") {
+            decimales = 2;
+        }
+        if (typeof separadorDecimal === "undefined") {
+            separadorDecimal = ".";
+        }
+        if (typeof separadorMiles === "undefined") {
+            separadorMiles = ",";
+        }
+        // Redondeamos
+        if (!isNaN(parseInt(decimales))) {
+            if (decimales >= 0) {
+                numero = numero.toFixed(decimales);
+            } else {
+                numero = (
+                    Math.round(numero / Math.pow(10, Math.abs(decimales))) * Math.pow(10, Math.abs(decimales))
+                ).toFixed();
+            }
+        } else {
+            numero = numero.toString();
+        }
+        // Damos formato
+        partes = numero.split(".", 2);
+        array = partes[0].split("");
+        for (var i = array.length - 3; i > 0 && array[i - 1] !== "-"; i -= 3) {
+            array.splice(i, 0, separadorMiles);
+        }
+        numero = array.join("");
+        if (partes.length > 1) {
+            numero += separadorDecimal + partes[1];
+        }
+        return numero;
+    };
+
+    function calcular_total(){
+        var total_sel= rows_selected.reduce(function (acc, obj) { return acc + obj.tpagar; }, 0); // 7
+        $("#total_sel_flete").html(total_sel.toFixed(2));
+        //var total= rows_selected.reduce((a, b) => ({x: a.tpagar + b.tpagar}));
+    }
+
+    $('#tblflete tbody').on('click', 'input[type="checkbox"]', function (e) {
+        var table = $('#tblflete').DataTable();
+        var chk = this;
+        if (chk.name == 'chka') {
+            // alert('ok');
+            var $row = $(this).closest('tr');
+
+            // Get row data
+            var data = table.row($row).data();
+
+            // Get row ID
+            var rowId = data;
+
+            //// Determine whether row ID is in the list of selected row IDs
+            var index = $.inArray(rowId, rows_selected);
+
+            //// If checkbox is checked and row ID is not in list of selected row IDs
+            if (this.checked && index === -1) {
+                rows_selected.push(rowId);
+
+                //    // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+            } else if (!this.checked && index !== -1) {
+                rows_selected.splice(index, 1);
+            }
+
+            if (this.checked) {
+                $row.addClass('info text-bold');
+            } else {
+                $row.removeClass('info text-bold');
+            }
+
+            calcular_total();
+            //// Prevent click event from propagating to parent
+            e.stopPropagation();
+        }
+
+
+
+    });
+
+    var tabla_flete= $('#tblflete');
+    var isOkUpdate=false;
+    var bas_id=$("#dwPromotor").val();
+    var FechaInicio=$("#dtpFechaInicio").val();
+    var FechaFin=$("#dtpFechaFin").val();
+    var rows_selected = [];
+    $(document).ready(function () {
+
+        $("#datepickerIni").datepicker({
+            autoclose: true,
+            todayHighlight: true
+        }).datepicker("setDate", "0");
+
+        $("#datepickerFin").datepicker({
+            autoclose: true,
+            todayHighlight: true
+        }).datepicker("setDate", "0");
+
+        debugger
+        tabla_flete.DataTable({
+            "dom": 't<"row"<"col-md-6"f><"col-md-6"p>>',
+            "iDisplayLength": 1500,
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json"
+            },
+            //"fnServerData": function (sSource, aoData, fnCallback) {
+            //},
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getListPedidoFleteAjax", "Pedido")',
+            "fnServerParams": function (aoData) {
+                debugger;
+                aoData.push({ "name": "isOkUpdate", "value": isOkUpdate });
+                aoData.push({ "name": "bas_id", "value": bas_id });
+                aoData.push({ "name": "FechaInicio", "value": FechaInicio });
+                aoData.push({ "name": "FechaFin", "value": FechaFin });
+                isOkUpdate=false;
+                bas_id='';
+                FechaInicio='';
+                FechaFin='';
+            },
+            "sort": false,
+            "bProcessing": true,
+            //"bFilter": true,
+            "bdestroy": true,
+            "orderable": false,
+            "start": 0,
+            "columnDefs": [{
+                "orderable": false,
+                //"targets": [],
+            }],
+            "bDeferRender": true,
+            "aoColumns": [
+                { "sName": "pedido", "mData": "pedido", "sClass": "" },
+                { "sName": "fecha", "mData": "fecha", "sClass": "" },
+                { "sName": "pares", "mData": "pares", "sClass": "alignRight" },
+                { "sName": "estado", "mData": "estado", "sClass": "" },
+                //TotVenta
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let ganancia = full.ganancia;
+                        return (ganancia == undefined || ganancia == null) ? ' ' : 'S/ ' + FormatDecimal(ganancia, 2, '.', ',');
+                    }
+                },                           
+                //Comision
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let subtotal = full.subtotal;
+                        return (subtotal == undefined || subtotal == null || subtotal == 0) ? ' ' : 'S/ ' + FormatDecimal(subtotal, 2, '.', ',');
+                    }
+                },
+                //Bonosnuevas
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let pagoncsf = full.pagoncsf;
+                        return (pagoncsf == undefined || pagoncsf == null) ? ' ' :'S/ ' +  FormatDecimal(pagoncsf, 2, '.', ',');
+                    }
+                },
+                //SubTotalSinIGV
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let total = full.total;
+                        return (total == undefined || total == null || total == 0) ? ' ' :'S/ ' + FormatDecimal(total, 2, '.', ',');
+                    }
+                },
+
+                 //SubTotalSinIGV
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let percepcion = full.percepcion;
+                        return (percepcion == undefined || percepcion == null) ? ' ' :'S/ ' + FormatDecimal(percepcion, 2, '.', ',');
+                    }
+                },
+
+                 //SubTotalSinIGV
+                {
+                    "mData": null,
+                    "sClass": "alignRight",
+                    "render": function (Data, type, full, meta) {
+                        let tpagar = full.tpagar;
+                        return (tpagar == undefined || tpagar == null || tpagar == 0) ? ' ' :'S/ ' + FormatDecimal(tpagar, 2, '.', ',');
+                    }
+                },
+
+                 {
+                     "render": function (data, type, full) {
+                         var liqId = full.pedido
+                         var pedId = full.pedido
+                         var custId=$("#dwPromotor").val();
+                           
+
+                         //return '<a onclick="EditarLiquidacion(' + liqId + ',' + pedId + ',' + custId + ')" target="_blank" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print fa-1x"></span></a>';
+                  
+
+                         var btnVliq = '<button title="Ver Liquidacion" onclick="verpedido(' + liqId + ');"  class="btn btn-xs btn-default btn-tabla ver-liq" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-print"></span></button>';                                                                         
+
+                         var chk_agregar = '<div class="form-group"><div class="col-sm-5 checkbox text-primary text-bold"><input style="cursor:pointer" type="checkbox" name="chka"  id="chka" value="0" class="chkag" /></div></div>';
+
+                         return  btnVliq + ("&nbsp;").repeat(10) + chk_agregar ;
+                     }, "class": "boton-xs-td"
+                 },
+            ],
+            "fnRowCallback": function (row, data, index) {
+                waitingDialog.hide();
+            },
+            "drawCallback": function (settings) {
+                waitingDialog.hide();
+                isOkUpdate = false;
+                var table = tabla_flete.dataTable();
+                var data = table.fnGetData();
+                if (data.length == 0) {
+                    $("#btnflete").addClass("disabled");
+                    $("#btnflete").attr('disabled', 'disabled');
+                } else {
+                    $("#btnflete").removeClass("disabled");
+                    $("#btnflete").removeAttr("disabled");
+                }
+            },
+            "initComplete": function (settings, json) {
+            }
+        });
+
+
+    });
+
+    function numbersonly(e) {
+        var unicode = e.charCode ? e.charCode : e.keyCode
+
+        var valor = ($("[id$='txtflete']").val()).trim()
+        var n = valor.indexOf(".")
+
+        if ((n >= 0 && unicode == 46) || (valor == "" && unicode == 46))
+            return false
+
+        if (unicode == 44)
+            return false
+
+        if (unicode != 8 && unicode != 44 && unicode != 46) {
+            if (unicode < 48 || unicode > 57) //if not a number
+            { return false } //disable key press    
+        }
+    }
+ </script>
+
+<script>
+    var gbMovile = false;
+
+    function get_info_cliente(nocargar) {
+        if (nocargar!=1) waitingDialog.show("Espere un momento por favor.")
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GET_INFO_PERSONA_PEDIDO", "Pedido")',
+            data: { codigo: $("#dwPromotor").val() },
+            success: function (data) {
+                waitingDialog.hide();
+                if (data.estado == 0) {
+                    $("#doc-nom-persona").html(data.info.Bas_Documento + ' - ' + data.info.NombreCompleto);
+                    var strPremio = data.info.premio.length > 0 ? '<b class="pull-right text-danger"><i class="fa fa-gift"></i>&nbsp;' + data.info.premio + '</b>' : "";
+                    $("#ubi-persona").html(data.info.Ubicacion + strPremio);
+                    var html = '<div class="col-md-12 col-xs-12" >\
+                                        <dl class="dl-horizontal">\
+                                        <dt>Tipo Despacho :</dt>\
+                                        <dd>' + data.info.desp_des + '</dd>\
+                                        <dt>Asesor Comercial :</dt>\
+                                        <dd>' + data.info.asesor + '</dd>\
+                                        <dt>Lider :</dt>\
+                                        <dd>' + data.info.Are_Descripcion + '</dd>\
+                                        <dt>Ubicación :</dt>\
+                                        <dd>' + data.info.Ubicacion + '</dd>\
+                                        <dt>E-Mail de contacto :</dt>\
+                                        <dd>' + data.info.Bas_Correo + '</dd>\
+                                        <dt>Celular :</dt>\
+                                        <dd>' + data.info.Bas_Celular + '</dd>\
+                                        <dt>Agencia :</dt>\
+                                        <dd>' + data.info.bas_agencia + '</dd>\
+                                        <dt>Destino :</dt>\
+                                        <dd>' + data.info.bas_destino + '</dd>\
+                                        <dt>Premio por ganar :</dt>\
+                                        <dd>' + data.info.premio + '</dd>\
+                                        </dl>\
+                                    </div>'
+                    var botones = '<div class="box-body">\
+                                        <form action="@Url.Action("CrearEditar", "Pedido")" method="post">\
+                                            <input type="hidden" name="custId" value="' + $("#dwPromotor").val() + '" />\
+                                            <button type="submit" class="btn btn-success" ><i class="fa fa-shopping-cart"></i>&nbsp; Nuevo Pedido</button>\
+                                        </form>\
+                                      </div>'
+
+                    $("#infoProm").html(html);
+                    $("#Botones").html(botones);
+                    $('#tblLiquidaciones').DataTable().ajax.reload();
+                    $('#tblNC').DataTable().ajax.reload();
+                    $('#tblConsignaciones').DataTable().ajax.reload();
+                    $('#tblSaldos').DataTable().ajax.reload();
+                    //CargarLiq(data.liquidacion);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                waitingDialog.hide();
+                toastr.error("Error al consultar.", "Alerta");
+            }
+        });
+
+        buscar_flete();
+    }
+
+    $(document).ready(function () {
+
+
+
+      
+        //$('#tab_flete').removeClass('hide')
+        //$('#tab_flete').trigger('click')
+
+        //$("#btnConsultar").click(function () {
+            @*waitingDialog.show("Espere un momento por favor.")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GET_INFO_PERSONA_PEDIDO", "Pedido")',
+                data: { codigo: $("#dwPromotor").val() },
+                success: function (data) {
+                    waitingDialog.hide();
+                    if (data.estado == 0) {
+                        $("#doc-nom-persona").html(data.info.Bas_Documento + ' - ' + data.info.NombreCompleto);
+                        var strPremio = data.info.premio.length > 0 ? '<b class="pull-right text-danger"><i class="fa fa-gift"></i>&nbsp;' + data.info.premio + '</b>' : "";
+                        $("#ubi-persona").html(data.info.Ubicacion + strPremio);
+                        var html = '<div class="col-md-12 col-xs-12" >\
+                                        <dl class="dl-horizontal">\
+                                        <dt>Asesor Comercial :</dt>\
+                                        <dd>' + data.info.asesor + '</dd>\
+                                        <dt>Lider :</dt>\
+                                        <dd>' + data.info.Are_Descripcion + '</dd>\
+                                        <dt>Ubicación :</dt>\
+                                        <dd>' + data.info.Ubicacion + '</dd>\
+                                        <dt>E-Mail de contacto :</dt>\
+                                        <dd>' + data.info.Bas_Correo + '</dd>\
+                                        <dt>Agencia :</dt>\
+                                        <dd>' + data.info.bas_agencia + '</dd>\
+                                        <dt>Destino :</dt>\
+                                        <dd>' + data.info.bas_destino + '</dd>\
+                                        <dt>Premio por ganar :</dt>\
+                                        <dd>' + data.info.premio + '</dd>\
+                                        </dl>\
+                                    </div>'
+                        var botones = '<div class="box-body">\
+                                        <form action="@Url.Action("CrearEditar", "Pedido")" method="post">\
+                                            <input type="hidden" name="custId" value="' + $("#dwPromotor").val() + '" />\
+                                            <button type="submit" class="btn btn-success" ><i class="fa fa-shopping-cart"></i>&nbsp; Nuevo Pedido</button>\
+                                        </form>\
+                                      </div>'
+
+                        $("#infoProm").html(html);
+                        $("#Botones").html(botones);
+                        $('#tblLiquidaciones').DataTable().ajax.reload(); 
+                        $('#tblNC').DataTable().ajax.reload();
+                        $('#tblConsignaciones').DataTable().ajax.reload();
+                        $('#tblSaldos').DataTable().ajax.reload();
+                        //CargarLiq(data.liquidacion);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    waitingDialog.hide();
+                    toastr.error("Error al consultar.", "Alerta");
+                }
+            });*@
+        //});
+    });
+
+    function DibujarGrilla() {
+        if (gbMovile) {
+            alert('movil')
+            //GrillaMovil();
+        } else {
+            MostrarPcListado();
+        }
+    }
+    function MostrarPcListado() {
+
+        var idlider = $("#dwLider").val();
+        var TeamDetailPostBackURL = "@Url.Action("ListaPcPedidos", "Promotor")";
+
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { idLider: idlider },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                document.getElementById("lista").innerHTML = data;
+
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    function EditarLiquidacion(IdLiquidacion) {
+        alert(IdLiquidacion)
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        var usutip = @ViewBag.usutipo;
+
+        if (usutip=='02') get_info_cliente();
+
+        if (usutip=='01' || usutip=='02') $('#tab_flete').addClass('hide');
+
+        /** Liquidaciones **/
+        $('#tblLiquidaciones').DataTable({
+            dom: 'Bfrtip',
+            columnDefs: [
+                {
+                    targets: [6, 7, 8, 9], //[0,1,2,3,4,5,10,11,12,13,14],
+                    visible: false,
+                },
+                {
+                    targets: [11],
+                    orderable: false,
+                }
+            ],
+            buttons: [
+                {
+                    extend: 'colvis',
+                    collectionLayout: 'fixed three-column',
+                }
+            ],
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json",
+                buttons: {
+                    colvis: 'Columnas'
+                }
+            },
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getListPedido", "Pedido")',
+            "bdestroy": true,
+            //"bFilter": true,
+            "start": 0,
+            //"bPaginate": false,
+            "orderable": false,
+            "order": [0, "desc"],
+            "bDeferRender": true,
+            "columns": [
+                   { "data": "liq_Id" },
+                   { "data": "ventaId" },
+                   { "data": "liq_Fecha" },
+                   { "data": "Pares" },
+                   { "data": "Estado" },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Ganancia.toFixed(2);
+                       },
+                   },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Subtotal.toFixed(2);
+                       },
+                   },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.N_C.toFixed(2);
+                       },
+                   },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Total.toFixed(2);
+                       },
+                   },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Percepcion.toFixed(2);
+                       },
+                   },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.TotalPagar.toFixed(2);
+                       },
+                   },
+                   {
+                       "render": function (data, type, full) {
+                           var liqId = full.liq_Id
+                           var pedId = full.ped_Id
+                           var custId = full.cust_Id
+                           var venId = full.ventaId
+
+                           var liq_tipo_prov=full.liq_tipo_prov;
+                           var liq_tipo_des=full.liq_tipo_des;
+                           var liq_agencia=full.liq_agencia;
+                           var liq_agencia_direccion=full.liq_agencia_direccion;
+                           var liq_destino=full.liq_destino;
+                           var liq_direccion=full.liq_direccion;
+                           var liq_referencia=full.liq_referencia;
+                           
+
+                           //return '<a onclick="EditarLiquidacion(' + liqId + ',' + pedId + ',' + custId + ')" target="_blank" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print fa-1x"></span></a>';
+                           var btnEdit =  full.estId == "PS" || full.estId == "PC" ? '<form action="@Url.Action("CrearEditar", "Pedido")" method="post" style="display: inline;">\
+                                            <input type="hidden" name="liqId" value="' + liqId + '" />\
+                                            <input type="hidden" name="pedId" value="' + pedId + '" />\
+                                            <input type="hidden" name="custId" value="' + custId + '" />\
+                                            <input type="hidden" name="liq_tipo_prov" value="' + liq_tipo_prov + '" />\
+                                            <input type="hidden" name="liq_tipo_des" value="' + liq_tipo_des + '" />\
+                                            <input type="hidden" name="liq_agencia" value="' + liq_agencia + '" />\
+                                            <input type="hidden" name="liq_agencia_direccion" value="' + liq_agencia_direccion + '" />\
+                                            <input type="hidden" name="liq_destino" value="' + liq_destino + '" />\
+                                            <input type="hidden" name="liq_direccion" value="' + liq_direccion + '" />\
+                                            <input type="hidden" name="liq_referencia" value="' + liq_referencia + '" />\
+                                            <button type="submit" title="Editar Liquidacion" class="btn btn-xs btn-default btn-tabla editar-fila"><span class="fa fa-pencil text-primary"></span></button>\
+                                        </form>' : ("&nbsp;").repeat(10);
+
+                           if (full.liq_opg=='2') btnEdit=("&nbsp;").repeat(10);
+
+                           var btnVliq = '<button title="Ver Liquidacion" class="btn btn-xs btn-default btn-tabla ver-liq" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-print"></span></button>';
+                           var btnVfac = full.ventaId == "" || full.ventaId == null ? ("&nbsp;").repeat(10) : '<button title="Ver Factura" class="btn btn-xs btn-default btn-tabla ver-fac"  data-liqId="' + liqId + '" data-venId="' + venId + '" style="margin-left: 3.5px;"><span class="fa fa-file-text-o text-success"></span></button>';
+                           var btnAnu = full.estId == "PS" || full.estId == "PC" ? '<button title="Anular" class="btn btn-xs btn-default btn-tabla anular" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-trash text-danger"></span></button>' : ("&nbsp;").repeat(10) ;
+
+                           if (full.liq_opg=='2') {
+                               if (usutip=='01' || usutip=='02') btnAnu=("&nbsp;").repeat(10);
+                           }
+
+                           
+
+                           return  btnVliq + btnVfac + btnEdit + btnAnu ;
+                       }, "class": "boton-xs-td"
+                   },
+            ]
+        });
+        $('#tblLiquidaciones').on('click', '.ver-liq', function (e) {
+            var liqId = $(this).attr('data-liqId');
+            var pedId = $(this).attr('data-pedId');
+            var custId = $(this).attr('data-custId');
+            waitingDialog.show("Espere por favor...");
+            $.ajax({
+                type: "Post",
+                url: '@Url.Action("VerLiquidacion", "Pedido")',
+                data: { liquidacion: liqId },
+                success: function (data) {
+                    if (data.estado == 0) {
+                        $("#load").show();
+                        $("#load").attr("src", "../AspNetForms/ReportLiquidation.aspx");
+                        $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                    } else {
+                        waitingDialog.hide()
+                    }
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
+                }
+            });
+        });
+        $('#tblLiquidaciones').on('click', '.ver-fac', function (e) {
+            var liqId = $(this).attr('data-liqId');
+            var venId = $(this).attr('data-venId');
+            waitingDialog.show("Espere por favor...");
+            $.ajax({
+                type: "Post",
+                url: '@Url.Action("VerFactura", "Pedido")',
+                data: { liquidacion: liqId, invoice: venId },
+                success: function (data) {
+                    if (data.estado == 0) {
+                        $("#load").show();
+                        $("#load").attr("src", "../AspNetForms/ReportInvoice.aspx");
+                        $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                    } else {
+                        waitingDialog.hide()
+                    }
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
+                }
+            });
+        });
+        $('#tblLiquidaciones').on('click', '.anular', function (e) {
+            var liqId = $(this).attr('data-liqId');
+            var pedId = $(this).attr('data-pedId');
+            var custId = $(this).attr('data-custId');
+            swal({
+                title: "Anular Liquidacion",
+                text: "¿Está seguro de anular liquidacion: "+ liqId +"?",
+                icon: "warning",
+                buttons: ["No" , "Si"],
+                dangerMode: true,
+            }).then((cambiar) => {
+                if (cambiar){
+                    waitingDialog.show("Espere por favor...");
+                    $.ajax({
+                        type: "Post",
+                        url: '@Url.Action("AnularLiquidacion", "Pedido")',
+                        data: { liq: liqId, cliente: $("#dwPromotor").val() },
+                        success: function (data) {
+                            waitingDialog.hide()
+                            if (data.estado == 0) {
+                                $('#tblLiquidaciones').DataTable().ajax.reload();
+                                toastr.success('Liquidacion anulada con éxito.', 'Anular');
+                                waitingDialog.hide();
+                            } else {
+                                toastr.error('Error al anular liquidacion', 'Anular')
+                            }
+                        },
+                        error: function (xhr) {
+                            waitingDialog.hide();
+                            toastr.error(xhr, 'Mensaje');
+                        }
+                    });
+                }
+            });
+        });
+
+        /** Notas de credito **/
+
+        $('#tblNC').DataTable({
+            columnDefs: [
+                {
+                    targets: [0,2,3,4],
+                    orderable: false,
+                }
+            ],
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json",
+                buttons: {
+                    colvis: 'Columnas'
+                }
+            },
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getListNotaCredito", "Pedido")',
+            "bdestroy": true,
+            //"bFilter": true,
+            "start": 0,
+            //"bPaginate": false,
+            "orderable": false,
+            "order": [2, "desc"],
+            "bDeferRender": true,
+            "columns":
+                [
+                   { "data": "Not_Numero" },
+                   { "data": "Not_Fecha" },
+                   { "data": "Not_Det_Cantidad" },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Total.toFixed(2);
+                       },
+                   },
+                   {
+                       "render": function (data, type, full) {
+                           var boton_nc='<a onclick="descargar_nc(' + full.Not_Id + ');" title="Descargar"  target="_blank" class="btn btn-xs btn-default"><span class="fa fa-print text-success"></span></a>';
+                           return boton_nc;
+                       }, "class": "boton-td"
+                   }
+                ]
+        });
+
+        /** Consignaciones **/
+
+        $('#tblConsignaciones').DataTable({
+            columnDefs: [
+                {
+                    targets: [0, 1],
+                    orderable: false,
+                }
+            ],
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json",
+                buttons: {
+                    colvis: 'Columnas'
+                }
+            },
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getListConsignaciones", "Pedido")',
+            "bdestroy": true,
+            //"bFilter": true,
+            "start": 0,
+            //"bPaginate": false,
+            "orderable": false,
+            "order": [3, "desc"],
+            "bDeferRender": true,
+            "columns":
+                [
+                   { "data": "Ban_Descripcion" },
+                   { "data": "Pag_Num_Consignacion" },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Pag_Monto.toFixed(2);
+                       },
+                   },
+                   { "data": "Pag_Num_ConsFecha" },
+                ]
+        });
+
+        /** Consignaciones **/
+
+        $('#tblSaldos').DataTable({
+            columnDefs: [
+                {
+                    targets: [0,2,3],
+                    orderable: false,
+                }
+            ],
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json",
+                buttons: {
+                    colvis: 'Columnas'
+                }
+            },
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getListSaldos", "Pedido")',
+            "bdestroy": true,
+            //"bFilter": true,
+            "start": 0,
+            //"bPaginate": false,
+            "orderable": false,
+            "order": [3, "desc"],
+            "bDeferRender": true,
+            "columns":
+                [
+                   { "data": "Descipcion" },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Monto.toFixed(2);
+                       },
+                   },
+                   { "data": "Percepcion" },
+                   {
+                       render: function (data, type, full) {
+                           return "S/ " + full.Saldo.toFixed(2);
+                       },
+                   },
+                ]
+        });
+    });
+    function EditarLiquidacion(IdLiquidacion, IdPedido, IdCustomer) {
+
+        var strLiquidacion = IdLiquidacion + '_' + IdPedido + '_' + IdCustomer
+        url = '@Url.Action("Nuevo", "Pedido" , new { idLiq = "xxxx"})';
+        url = url.replace("xxxx", strLiquidacion);
+
+        location.href = url;
+
+    }
+
+    function descargar_nc(not_id){
+
+        waitingDialog.show("Espere por favor...");
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("VerNotaCredito", "Pedido")',
+            data: { not_id: not_id },
+            success: function (data) {
+                if (data.estado == 0) {
+                    //location.href = "../AspNetForms/reportArticlesReturned.aspx";
+                    $("#load").show();
+                    $("#load").attr("src", "../AspNetForms/reportArticlesReturned.aspx");
+                    waitingDialog.hide()
+                    $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                } else {
+                    waitingDialog.hide()
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
+            }
+        });
+
+       // alert(not_id);
+    }
+
+</script>
+
+}

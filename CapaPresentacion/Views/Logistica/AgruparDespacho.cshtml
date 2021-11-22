@@ -1,0 +1,335 @@
+﻿
+@{
+    ViewBag.Title = "Agrupar Despacho Lima - Callao y Provincia";
+}
+<style>
+    .table thead {
+        background-color: #808080;
+        color: #fff;
+    }
+
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        padding-left: 35px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .alignCenter {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<p class="text-primary">Ingrese los codigo se despacho para el agrupamiento</p>
+<div class="box box-body box-primary">
+    <div class="row">
+        <div class="col-sm-3" style="padding-left: 25px; margin-right: inherit;">
+            <label for="txtdespacho" style="color: #3d566e;">N° de Despacho</label>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon" style="color: #3d566e;"><i class="glyphicon glyphicon-th-list"></i></span>
+                    <input id="txtdespacho" type="number" focus="true" maxlength="7" autofocus class="form-control" name="txtdespacho" placeholder="Ingresar el N° de Despacho">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2" style="padding-left: 25px; width: 105px; margin-top: 23px; margin-bottom: 10px;">
+            <button id="btnagregar" onclick="agregar();" type="submit" title="Agregar Despacho" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Agregar
+            </button>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-4">
+
+        <div class="box box-body box-primary">
+            <h4>Lista de N° de Despacho a agrupar:</h4>           
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">                      
+                        <div class="col-md-7">
+                            <button id="btngenerar" onclick="Generar();" type="submit" title="Generar - Agrupar" class="btn btn-success">
+                                <span class="glyphicon glyphicon-saved"></span>&nbsp;&nbsp;Generar Agrupar
+                            </button>
+                        </div>
+                    </div>                                    
+                </div>
+
+                <div class="col-md-5">
+                    <div class="row">                      
+                        <div class="col-md-6">
+                            <button id="btnborrart" onclick="borrar_lista();" type="submit" title="Borrar Lista" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Borrar Lista
+                            </button>
+                        </div>
+                    </div>                 
+                                      
+                </div>
+            </div>
+            <br />
+            <br />
+            <table id="tabdespacho" class="table table-hover table-bordered compact">
+                <thead>
+                    <tr id="tr_table1">
+                        <th>N°Despacho</th>
+                        <th>Acciones</th>                        
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach:">
+                    <tr>
+                        <th>N°Despacho</th>
+                        <th>Acciones</th>    
+                    </tr>
+                </tbody>
+            </table>
+        </div>   
+       
+    </div>    
+</div>
+<script src="~/Scripts/bootstrap-select.min.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+@section scripts{
+<script>
+
+    function valida_genera() {
+       
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("GenerarGrupoValida", "Logistica")',
+            data: {},
+            success: function (data) {
+                waitingDialog.hide()
+                if (data.estado == 0) {
+                    return true;
+                } else {
+                    //toastr.error(data.mensaje, 'Generar')
+                    return false;
+                }
+            },
+            error: function (xhr) {
+                return false;
+                //toastr.error(xhr, 'Mensaje');
+            }
+        });
+        
+    }
+
+    function grabar() {
+        swal({
+            title: "Generar Agrupamiento",
+            text: "¿Está seguro de Generar el agrupamiento de los despachos?",
+            icon: "warning",
+            buttons: ["No", "Si"],
+            dangerMode: true,
+        }).then((cambiar) => {
+            if (cambiar) {
+                waitingDialog.show("Espere por favor...");
+                $.ajax({
+                    type: "Post",
+                    url: '@Url.Action("GenerarGrupo", "Logistica")',
+                    data: {},
+                    success: function (data) {
+                        waitingDialog.hide()
+                        if (data.estado == 0) {
+
+                            swal({
+                                title: "Ok",
+                                text: "Se genero con exito, el nuevo numero de Orden es: " + data.orden,
+                                icon: "success"
+                            }
+                            ).then((value) => {
+                                $('#tabdespacho').DataTable().ajax.reload();
+                                toastr.success('Se genero correctamente.', 'Generar');
+                                $('#txtdespacho').val('');
+                                $('#txtdespacho').focus();
+                                //waitingDialog.hide();
+                            });
+
+                            
+                        } else {
+                            toastr.error(data.mensaje, 'Generar')
+                        }
+                    },
+                    error: function (xhr) {
+                        waitingDialog.hide();
+                        toastr.error(xhr, 'Mensaje');
+                    }
+                });
+            }
+        });
+    }
+
+    function Generar() {
+
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("GenerarGrupoValida", "Logistica")',
+            data: {},
+            success: function (data) {
+                waitingDialog.hide()
+                if (data.estado == 0) {
+                    grabar();
+                } else {
+                    toastr.error(data.mensaje, 'Generar')
+                   
+                }
+            },
+            error: function (xhr) {
+                return false;
+                toastr.error(xhr, 'Mensaje');
+            }
+        });
+
+
+       
+
+       
+    }
+
+    function borrar_lista() {
+
+        swal({
+            title: "Borrar lista",
+            text: "¿Está seguro de Borrar toda la lista?",
+            icon: "warning",
+            buttons: ["No", "Si"],
+            dangerMode: true,
+        }).then((cambiar) => {
+            if (cambiar) {
+                waitingDialog.show("Espere por favor...");
+                $.ajax({
+                    type: "Post",
+                    url: '@Url.Action("BorrarTodoGrupo", "Logistica")',
+                    data: {},
+                    success: function (data) {
+                        waitingDialog.hide()
+                        if (data.estado == 0) {
+                            $('#tabdespacho').DataTable().ajax.reload();                            
+                            toastr.success('Se borro todo correctamente.', 'Borrar');
+                            waitingDialog.hide();
+                        } else {
+                            toastr.error('Error al borrara la lista', 'Borrar')
+                        }
+                    },
+                    error: function (xhr) {
+                        waitingDialog.hide();
+                        toastr.error(xhr, 'Mensaje');
+                    }
+                });
+            }
+        });
+
+    }
+    $(document).ready(function () {
+        
+        $('#tabdespacho').dataTable({
+            "dom": 't',
+            "language": {
+                "url": "../Scripts/DataTables/Spanish.json"
+            },
+            "bProcessing": true,
+            "bServerSide": true,
+            "bAutoWidth": false,
+            "sAjaxSource": '@Url.Action("getTableDespachoAjax", "Logistica")',
+            "bdestroy": true,
+            "start": 0,
+            "searching": false,
+            "sort": false,
+            "order": [],
+            "bDeferRender": true,            
+            "aoColumns": [
+                     { "sName": "desp_nrodoc", "mData": "desp_nrodoc" },
+                     {
+                         "render": function (data, type, full) {
+                             var desp_nrodoc = full.desp_nrodoc                                                       
+                             var btnAnu = '<button title="Eliminar Item" onclick="eliminar_item(\'' + desp_nrodoc + '\')" class="btn btn-xs btn-default btn-tabla anular" data-liqId="" data-pedId="" data-custId="" ><span class="fa fa-trash text-danger"></span></button>';
+
+                             
+                             return btnAnu;
+                         }, "class": "boton-xs-td"
+                     },
+
+            ],
+            dom: 'Bfrtip',
+            buttons:
+                [
+                ]
+        });
+        
+    });
+
+    $("#txtdespacho").keyup(function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            agregar();
+        }
+    });
+
+    function eliminar_item(despacho)
+    {
+
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("BorrarItemGrupo", "Logistica")',
+            data: { nro_desp: despacho },
+            success: function (data) {
+                waitingDialog.hide()
+                if (data.estado == 0) {
+                    $('#tabdespacho').DataTable().ajax.reload();
+                    //toastr.success('Se borro correctamente.', 'Borrar');
+                    waitingDialog.hide();
+                } else {
+                    toastr.error('Error al borrara la lista', 'Borrar')
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
+            }
+        });
+
+      
+    }
+
+    function agregar() {
+        var strdespacho = $('#txtdespacho').val().trim().trimLeft().trimRight().toString();
+
+        if (strdespacho.length == 0) {
+            toastr.error('Ingrese el N° de Despacho', 'Mensaje');
+            $('#txtdespacho').focus();
+            return;
+        }
+        waitingDialog.show("Espere por favor...")
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("get_nro_despacho", "Logistica")',
+            data: { nro_despacho: strdespacho },
+            success: function (data) {
+                waitingDialog.hide();
+                if (data.estado == "1") {
+                    $('#txtdespacho').val('');
+                  
+                    $('#tabdespacho').DataTable().ajax.reload();
+                    toastr.success(data.mensaje, "Info");
+                    $('#txtdespacho').focus();
+                }
+                else {
+                    //document.getElementById('imagenCatalogo').src = '../Content/images/lupa.jpg';
+                    //$('#tabstock').DataTable().ajax.reload();
+                    toastr.error(data.mensaje, "Alerta");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                waitingDialog.hide();
+                toastr.error("Error al consultar.", "Alerta");
+            }
+        });
+    }
+</script>
+}

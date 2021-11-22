@@ -1,0 +1,105 @@
+﻿@{
+    Layout = null;
+}
+<style>
+    .GFG {
+        border-radius: 30px;
+        /*background: #ffffff;*/
+        padding: 25px;
+        text-align:justify;
+        /*width: 300px;*/
+        /*height: 280px;*/
+    }
+
+    /*img.zoom {
+        /*width: 350px;
+    height: 200px;*/
+        /*-webkit-transition: all .2s ease-in-out;
+        -moz-transition: all .2s ease-in-out;
+        -o-transition: all .2s ease-in-out;
+        -ms-transition: all .2s ease-in-out;
+    }*/*/
+
+    .transition {
+        -webkit-transform: scale(1.8);
+        -moz-transform: scale(1.8);
+        -o-transform: scale(1.8);
+        transform: scale(1.8);
+    }
+
+    .sidebarContent {
+        background-color: silver;
+        /*text-align:center;
+    font-size:large;*/
+        /*min-height:150px;*/
+        /*margin-bottom:5px;*/
+    }
+
+    .mainContent {
+        background-color: silver;
+        /*text-align:center;*/
+        /*font-size:large;*/
+        /*min-height:310px;*/
+    }
+</style>
+
+<div class="row">
+    <div class="col-xs-4">
+
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="box-body GFG">
+                    <h4>Imagen:</h4>
+                    <br />
+                    <br />                                  
+                    <img id="imagenCatalogo" style="border-top:2px solid #ffffff;border-right:1px solid ;border-bottom:2px solid #ffffff;border-left:1px solid #ffffff;" src="~/Content/images/lupa.jpg" class="img-responsive center-block d-block mx-auto zoom rounded" width="240" height="160" />                                    
+                </div>
+
+            </div>
+        </div>      
+    </div>
+    <div class="col-xs-8">
+        <div class="box-body GFG">
+            <h4>Detalles:</h4>
+            <ul>
+                <li style="margin-top: 10px;">
+                    <label>Cod Articulo: <b></b></label> <label id="lblcodigo" style="font-size:13px"  class="label label-default"></label>
+                </li>
+                <li style="margin-top: 10px;">
+                    <label>Nombre Articulo: </label> <label id="lblnombre" style="font-size:13px" class="label label-default"></label>
+                </li>
+                <li style="margin-top: 10px;">
+                    <label>Marca Articulo: </label> <label id="lblmarca" style="font-size:13px" class="label label-default"></label>
+                </li>
+                <li style="margin-top: 10px;">
+                    <label>Color : </label> <label id="lblcolor" style="font-size:13px" class="label label-default"></label>
+                </li>
+                <li style="margin-top: 10px;">
+                    <label>Categorizacion: </label> <label id="lblcategoria" style="font-size:13px" class="label label-default"></label>
+                </li>  
+                
+                <li style="margin-top: 10px;">
+                    <label style="font-size:18px;font-weight:bold">Precio: </label> <label style="font-size:17px;font-weight:bold" id="lblprecio" class="label label-danger"></label>
+                </li>        
+                            
+               
+            </ul>
+
+        </div>
+       
+    </div>
+</div>
+    <script>
+        $(document).ready(function () {
+            var dataArray = function () { return @Html.Raw(Json.Encode(ViewBag.DataArticulo)); }();
+            $('#lblcodigo').html(dataArray.Art_id);
+            $('#lblnombre').html(dataArray.Art_Descripcion);
+            $('#lblmarca').html(dataArray.Mar_Descripcion);
+            $('#lblcolor').html(dataArray.Col_Descripcion);
+            $('#lblcategoria').html(dataArray.Cat_Pri_Descripcion);
+            $('#lblprecio').html("S/ " + dataArray.Art_Pre_Sin_Igv.toFixed(2));
+
+            document.getElementById('imagenCatalogo').src = dataArray.Art_Foto;
+        });
+    </script>

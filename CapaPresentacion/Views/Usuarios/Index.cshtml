@@ -1,0 +1,187 @@
+﻿@using CapaEntidad.Control
+@model IEnumerable<Ent_Usuario>
+@{
+    ViewBag.Title = "Control de usuarios";
+}
+<style>
+    .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
+</style>
+
+<p class="text-primary">Muestra la lista de usuarios utilizadas. Permite crear nuevos usuarios dentro del sistema y editar las existentes.</p>
+<div class="box box-body box-default">
+
+    @*<button type="submit" id="btnaceptar" name="btnaceptar" title="Agregar" class="nuevo btn btn-small btn-primary" data-modal="" data-toggle="modal">Agregar Usuario</button>*@
+   
+    <div class="box-body" id="lista">
+        <table id="tbusuario" class="table table-hover table-bordered compact">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Login</th>
+                    <th>Estado</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:"></tbody>
+            <tfoot>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Login</th>
+                    <th>Estado</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="myModalContent">
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+<script>
+    function refrescar_grid(){
+        //alert('ok');
+        actualizar="1";
+        $('#tbusuario').DataTable().ajax.reload(function () {
+            waitingDialog.hide();
+        });
+    }
+</script>
+
+<script>
+        var actualizar = "";
+        $(document).ready(function () {
+
+            var usu_tip_id =@ViewBag.usu_tipo;
+            waitingDialog.show("Espere por favor...")
+
+            $('#tbusuario').DataTable({
+                "language": {
+                    "url": "../Scripts/DataTables/Spanish.json"
+                },
+                "bServerSide": true,
+                "bAutoWidth": false,
+                "sAjaxSource": '@Url.Action("getListaUsuarioAjax", "Usuarios")',
+                "fnServerParams": function (aoData) {
+                    aoData.push({ "name": "actualizar", "value": actualizar });
+                    actualizar="";
+                },
+                "fnRowCallback": function (row, data, index) {
+                    waitingDialog.hide();
+                },
+                "bdestroy": true,
+                "start": 0,
+                "columnDefs": [{
+
+                    "orderable": true
+                }],
+                "bDeferRender": true,
+                "aoColumns": [
+                      { "sName": "usu_id", "mData": "usu_id" },
+                      { "sName": "usu_nombre", "mData": "usu_nombre" },
+                      { "sName": "usu_login", "mData": "usu_login" },
+                      { "sName": "usu_est_id", "mData": "usu_est_id" },
+                      { "sName": "usu_tip_nom", "mData": "usu_tip_nom" },
+                      {
+                          "render": function (data, type, full) {
+
+                             
+
+                              var boton = (usu_tip_id!='04')?'': ' <div class="pull-right"><button title="Editar Funcion" onclick="editar(' + full.usu_id + ');" style="border-radius:50%;visibility:hidden" class="btneditar btn btn-primary" data-id="" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;<button title="Agregar Roles" style="border-radius:50%" class="btnrol btn btn-success" data-id="" onclick="agregarRol(' + full.usu_id + ');" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-list-alt"></span></button></div>'
+                              boton = boton + ' <div class="pull-right"><button title="Editar Funcion" onclick="editarPass(' + full.usu_id + ');" style="border-radius:50%;visibility:hidden" class="btneditar btn btn-primary" data-id="" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></button>&nbsp;<button title="Cambiar Password ó Estado" style="border-radius:50%" class="btnrol btn btn-danger" data-id="" onclick="editarPass(' + full.usu_id + ');" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-user"></span></button></div>'
+
+                              return boton;
+                          }, "class": "boton-td"
+                      },
+                       //{
+                       //    "render": function (data, type, full) {
+                       //        return ' <div class="pull-right"><button title="Editar Funcion" onclick="editar(' + full.usu_id + ');" style="border-radius:50%;visibility:hidden" class="btneditar btn btn-primary" data-id="" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-user"></span></button>&nbsp;<button title="Agregar Roles" style="border-radius:50%" class="btnrol btn btn-success" data-id="" onclick="agregarRol(' + full.usu_id + ');" data-modal="" data-toggle="modal"><span class="glyphicon glyphicon-user"></span></button></div>'
+                       //    }, "class": "boton-td"
+                       //}
+                ]
+            });
+
+        });
+</script>
+<script>
+    function agregarRol(id) {
+
+        var TeamDetailPostBackURL ="@Url.Action("Roles", "Usuarios")";
+        //debugger;
+        //var $buttonClicked = $(this);
+        //var id = idUsuario;
+        waitingDialog.show('Espere un momento por favor');
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                waitingDialog.hide();
+                //debugger;
+                $('#myModalContent').html(data);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+                // debugger;
+
+            },
+            error: function () {
+                waitingDialog.hide();
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+
+    function editarPass(id) {
+
+        //alert(id);
+
+        var TeamDetailPostBackURL ="@Url.Action("UpdatePassword", "Usuarios")";
+        //debugger;
+        //var $buttonClicked = $(this);
+        //var id = idUsuario;
+        waitingDialog.show('Espere un momento por favor');
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                waitingDialog.hide();
+                //debugger;
+                $('#myModalContent').html(data);
+                $('#myModal').modal(options);
+                $('#myModal').modal('show');
+                // debugger;
+
+            },
+            error: function () {
+                waitingDialog.hide();
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+
+</script>
+
+
+}
