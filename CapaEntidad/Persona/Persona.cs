@@ -57,5 +57,10 @@ namespace CapaEntidad.Persona
         //Campo adicionales
         public int Codigo { get; set; }
         public string Descripcion { get; set; }
+         
+        public string ApellidoCompleto { get; set; }
+        public string TipoDocumento { get; set; }
+        public string Departamento { get; set; }
+        public string Provincia { get; set; }
     }
 }
