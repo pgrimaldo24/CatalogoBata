@@ -226,7 +226,6 @@ namespace CapaPresentacion.Controllers
 
             return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success , Data = jsonResponse.Data }, JsonRequestBehavior.AllowGet);
         }
-
  
 
         #region modal card information
