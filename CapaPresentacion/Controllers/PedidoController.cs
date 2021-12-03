@@ -269,6 +269,10 @@ namespace CapaPresentacion.Controllers
             }
             return validaartcatag;
         }
+        //procesoenvio catalogo(nropedido)
+        //{
+        //    ActualizarManifiesto la base de pagos de catalogo
+        //}
         public ActionResult LiquidarPedido(string tipo_des,string agencia,string destino,string direccion_agencia,string direccion,string referencia,
                                            string liq_tipo_prov,string liq_provincia, decimal _usu = 0, 
                                            decimal _idCust = 0, string _reference = "", decimal _discCommPctg = 0,
@@ -354,16 +358,24 @@ namespace CapaPresentacion.Controllers
                 oJRespuesta.Message = (noOrder[0]).ToString();
                 oJRespuesta.Data = true;
                 oJRespuesta.Success = true;
+                oJRespuesta.Products = order;
+                //var API=API.SERVICIO(
                 GetCRLiquidacion((noOrder[0]).ToString());
+
+
             }
             else {
 
                 oJRespuesta.Message = (noOrder[1]).ToString();
                 oJRespuesta.Data = false;
                 oJRespuesta.Success = false;
+                
             }
             return Json(oJRespuesta, JsonRequestBehavior.AllowGet);
         }
+
+
+
 
         private void GetCRLiquidacion(string liq, bool download = false)
         {
@@ -5037,6 +5049,16 @@ namespace CapaPresentacion.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
         #endregion
+        public ActionResult envioInfoPasarelaPago(string nombresapellidos, string emailcontacto, string numerodocumento, string ubicacion, decimal? totalpago)
+        {  
+            return RedirectToAction("PasarelaPago", "PasarelaPago", new {
+                nombresapellidos = nombresapellidos,
+                emailcontacto = emailcontacto,
+                numerodocumento = numerodocumento,
+                ubicacion = ubicacion,
+                totalpago = totalpago
+            });
 
+        }
     }
 }
