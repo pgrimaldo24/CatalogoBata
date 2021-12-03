@@ -144,6 +144,7 @@ namespace CapaPresentacion.Controllers
                 var _restServicesApi = new RestServicesApi();
                 var request = new PaymentRequest();
                 var metadaData = new MetadataDto();
+                var response = new Root();
                 request.additional_info = new AdditionalInfoPaymentDto();
                 request.additional_info.payer = new PayerMercadoPagoDto();
                 request.additional_info.payer.address = new AddressDto();
@@ -201,10 +202,10 @@ namespace CapaPresentacion.Controllers
                 request.token = tokenCard;
                 request.transaction_amount = importeTotal;
 
-                var response = _restServicesApi.PostInvoque<PaymentRequest, ResponsePasarelaPago>(
+                response = _restServicesApi.PostInvoque<PaymentRequest, Root>(
                     request, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoProccessPayment], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, "POST", "ProccessPayment");
 
-                var payment = new PaymentResponse()
+                var payment = new DataRoot()
                 {
                     id = response.response.Data.id,
                     status = response.response.Data.status

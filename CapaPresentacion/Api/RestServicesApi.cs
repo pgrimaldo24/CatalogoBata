@@ -53,6 +53,10 @@ namespace CapaPresentacion.Api
                 {
                     StreamReader reader = new StreamReader(stream, Encoding.UTF8);
                     var responseString = reader.ReadToEnd();
+                    if (nameMethod.Equals("ProccessPayment"))
+                    {
+                        result = JsonConvert.DeserializeObject<TResult>(responseString);
+                    }
                     result = JsonConvert.DeserializeObject<TResult>(responseString);
                 }
             }

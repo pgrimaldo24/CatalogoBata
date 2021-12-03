@@ -710,6 +710,11 @@ else
             $('#mdlMercadoPago').modal('hide');
         }
 
+        function parentHrefPopup() {
+            window.location.href = "@Url.Action("Lista", "Pedido")";
+            return false;
+        }
+
         function habilitarMercadoPago(valor) { 
             if (valor == "005") { $("#btnMercadoPago").prop("disabled", false); }
             else { $("#btnMercadoPago").prop("disabled", true); }

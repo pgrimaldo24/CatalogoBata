@@ -264,6 +264,30 @@
             <div class="form-row">
                 <div class="form-group">
                     <div class="col-md-4 mb-3">
+                        Tipo documento
+                        <select class="form-control"
+                                id="dwTipoDocumentoPayment"
+                                name="dwTipoDocumentoPayment" style="width:240px;">
+                            <option value="0">Seleccione</option>
+                            <option value="DNI">DNI</option>
+                            <option value="RUC">RUC</option>
+                            <option value="CARNETEXT">CARNET EXT</option>
+                        </select>  
+                    </div>
+                    <div class="col-md-4 mb-3"
+                         style="margin-top: -54px;
+                     margin-left:250px;">
+                        N° de documento
+                        <input type="text"
+                               class="form-control"
+                               id="txtDocumentoPayment"
+                               style="font-size:1.3rem;">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="col-md-4 mb-3">
                         Año
                         <select class="form-control" 
                                 id="anio"  
@@ -307,7 +331,7 @@
                                class="form-control"
                                id="txtCuotas"
                                style="font-size:1.3rem;"
-                               placeholder="Cuotas" maxlength="3" value="0"/>
+                               placeholder="Cuotas" maxlength="3" value="1"/>
                     </div>
                     <div class="form-group" style="margin-top:15px;">
                         <p id="loading-message" style="margin-left:15px"><strong>*Recordar que al procesar el pago, no se debe actualizar la página web.</strong></p> 
@@ -362,12 +386,12 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-4 product-detail">
                         <div class="form-group"
-                             style="margin-top:-180%;">
-                            <label style="margin-left:30px; font-size:25px;"><strong>Detalle del Pago</strong></label><br />
+                             style="margin-top:-205%;">
+                            <label style="margin-left:40px; font-size:25px;"><strong>Detalle del Pago</strong></label><br />
                             <img src=""
                                  height='80' class='credit-card-image' id='img-respuesta-api' 
                                  style="margin-top:25px;"/>
-                            <div style="margin-left:190px;">
+                            <div style="margin-left:70px;">
                                 <p><b>N° de Pago: </b><span id="payment-id"></span></p>
                                 <p><b>Estado del pago: </b><span id="payment-status"></span></p> 
                             </div>  
@@ -375,11 +399,11 @@
                     </div>
                 </div>
                 <div class="col-md-12"
-                     style="margin-top:-800px;">
+                     style="margin-top:-950px; padding:23px;">
                     <label style="margin-left:15px; font-size:25px;"><strong>Reporte final</strong></label><br />
                     <div id="ifrReporte" 
                          class="well" 
-                         style="width: 100%; height: 100%; padding:0;">
+                         style="width: 100%; height: 100%;">
                         <iframe id="icrystalReport" 
                                 src="" frameborder="0" 
                                 marginheight="1" 
@@ -394,8 +418,14 @@
                     </div>
                 </div>
 
-                <div style="margin-left:190px;">
-                    <a href="@Url.Action("Lista","Pedido")" class="btn btn-primary">Volver a Pedidos</a>
+                <div style="margin-left:25px;">
+                    <button type="button"
+                            class="btn btn-success" 
+                            id="btnPedido"
+                            onclick="showListaPedido();" style="width:95%;">
+                        Volver a Pedidos
+                    </button>
+                    @*<a href="@Url.Action("Lista","Pedido")" class="btn btn-success" style="width:95%;">Volver a Pedidos</a>*@
                 </div> 
             </div>
         </div>
@@ -457,7 +487,12 @@
             changeCardPayment($(this).val());
         })
 
-        
+        $('#dwTipoDocumentoPayment').change(function () {
+            if ($(this).val() == "0") {
+                $("#txtDocumentoPayment").prop("disabled", true);
+            }
+        })
+
 
         function getInformationCvv(value) {
             if (value == 1) {
@@ -467,7 +502,7 @@
 
             }
         }
-         
+
 
         function getDayMonthCard() {
             var today = new Date();
@@ -542,6 +577,8 @@
                 $("#horizontal_logo").prop("disabled", true);
                 $("#btnPago").prop("disabled", true);
                 $("#txtCuotas").prop("disabled", true);
+                $("#dwTipoDocumentoPayment").prop("disabled", true);
+                $("#txtDocumentoPayment").prop("disabled", true);
             }
             else if (valueSelect === "visa") {
                 document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/logo-visa.jpg";
@@ -553,6 +590,8 @@
                 $("#horizontal_logo").prop("disabled", false);
                 $("#txtCuotas").prop("disabled", false);
                 $("#btnPago").prop("disabled", false);
+                $("#dwTipoDocumentoPayment").prop("disabled", false);
+                $("#txtDocumentoPayment").prop("disabled", false);
             }
             else if (valueSelect === "mastercard") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/2vbqk5lcpi7hjoc/MasterCard_Logo.svg.png";
@@ -564,6 +603,8 @@
                 $("#horizontal_logo").prop("disabled", false);
                 $("#txtCuotas").prop("disabled", false);
                 $("#btnPago").prop("disabled", false);
+                $("#dwTipoDocumentoPayment").prop("disabled", false);
+                $("#txtDocumentoPayment").prop("disabled", false);
             }
             else if (valueSelect === "americanexpress") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/f5hyn6u05ktql8d/amex-icon-6902.png";
@@ -575,6 +616,8 @@
                 $("#horizontal_logo").prop("disabled", false);
                 $("#txtCuotas").prop("disabled", false);
                 $("#btnPago").prop("disabled", false);
+                $("#dwTipoDocumentoPayment").prop("disabled", false);
+                $("#txtDocumentoPayment").prop("disabled", false);
             }
         }
 
@@ -585,8 +628,11 @@
             var mes = $("#mes").val();
             var cvv = $("#txtcvc").val();
             var cuotas = $("#txtCuotas").val();
+
+            var tipodoc = $("#dwTipoDocumentoPayment").val();
+            var document = $("#txtDocumentoPayment").val();
             //var p = document.createElement("p");
-            debugger;
+            
             var errors = [];
 
             if (cardholder == null || cardholder == '') { errors.push('Debe ingresar el nombre del titular de la tarjeta.'); }
@@ -594,7 +640,10 @@
             if (anio == "Seleccione") { errors.push('Debes seleccionar el Año de vencimiento de tu tarjeta.'); }
             if (mes == "0") { errors.push('Debes seleccionar el Mes de vencimiento de tu tarjeta.'); }
             if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
+            if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
+            if (document == '' || document == null) { errors.push('Debe ingresar un número de documento.'); }
 
+            debugger;
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
                 var li = document.createElement("li");
@@ -658,6 +707,15 @@
             else { document.getElementById("total_amount").innerHTML = _totalpago; }
         }
 
+        function showListaPedido() {
+
+            //window.location.href = '/Lista/Pedido';
+            $("#loading").fadeIn("slow");
+            parent.parentHrefPopup();
+            $("#loading").fadeOut("slow");
+            //return false;
+        }
+
         function registerPayment() {
             $("#loading").fadeIn("slow");
             if (getPayValidate()) {
@@ -671,12 +729,12 @@
                 var fechaExpiracionAnio = $("#anio").val();
                 var fechaExpiracionMes = $("#mes").val();
                 var codigoSeguridad = $("#txtcvc").val();
-                var tipoDocumento = $("#dpdTipoDocumento").val();
-                var numeroDocumento = $("#txtDocumento").val(); 
+                var tipoDocumento = $("#dwTipoDocumentoPayment").val();
+                var numeroDocumento = $("#txtDocumentoPayment").val();
                 getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento);
             }
         }
- 
+
         function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                     tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
                     direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia) {
@@ -688,13 +746,13 @@
                     waitingDialog.hide();
                     if ((data.Success).toString() == "true") {
                         debugger;
-                        listProducts = data.Products; 
+                        listProducts = data.Products;
                         enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, data.Message, listProducts);  
+                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, "milladeleon.elba@testuser.com", numerocelular, data.Message, listProducts);
                     } else {
                         toastr.error(data.Message, "Error");
                         $("#loading").fadeOut("slow");
-                    } 
+                    }
                 },
                 error: function (xhr) {
                     waitingDialog.hide();
@@ -703,7 +761,7 @@
                 }
             });
         }
-         
+
         function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
               tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts) {
 
@@ -715,11 +773,11 @@
                     debugger;
                     if ((data.Success).toString() == "true") {
                         //toastr.success(data.Message, "Proceso Exitoso!!");
-                        responsePaymentProcessed(data.Status, data.data.id, data.Message);
-                    } else { 
+                        responsePaymentProcessed(data.Status, data.Data.id, data.Message);
+                    } else {
                         toastr.error(data.Message, 'Error');
                         $("#loading").fadeOut("slow");
-                    } 
+                    }
                 },
                 error: function (xhr) {
                     waitingDialog.hide();
@@ -736,13 +794,13 @@
         }
 
         //Reporte
-        function responsePaymentProcessed(status, idpayment, message) { 
+        function responsePaymentProcessed(status, idpayment, message) {
             document.getElementById("frmRequestPayment").style.visibility = "hidden";
             document.getElementById("frmResponsePayment").style.visibility = "visible";
             debugger
             switch (status) {
                 case "1":
-                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-pending-api.png";
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
                     $("#loading").fadeOut("slow");
@@ -755,13 +813,13 @@
                     $("#loading").fadeOut("slow");
                     break;
                 default:
-                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-pending-api.png";
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
                     $("#loading").fadeOut("slow");
                     break;
 
-            } 
+            }
         }
 
         function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento) {
@@ -773,15 +831,15 @@
                     var nombreTitular = document.getElementById("nombreTitular").innerHTML;
                     var apellidoTitular = document.getElementById("apellidoTitular").innerHTML;
                     var emailCliente = $("#txtEmail").val();
-                    var tipoDocumento = $("#dpdTipoDocumento").val();
-                    var numeroDocumento = $("#txtDocumento").val();
+                    var tipoDocumento = $("#dwTipoDocumentoPayment").val();
+                    var numeroDocumento = $("#txtDocumentoPayment").val();
                     var zipCode = "01";
                     var street_name = $("#txtubicacion").val();
                     var state_name = document.getElementById("departamento").innerHTML;
                     var city_name = document.getElementById("provincia").innerHTML;
                     var installments = $("#txtCuotas").val();
                     var payment_method_id = $("#dwFormaPagoCard").val();
-                    var importeTotal = document.getElementById("total_amount").innerHTML; 
+                    var importeTotal = document.getElementById("total_amount").innerHTML;
                     var tokenCard = data.data;
                     var numerocelular = document.getElementById("celular").innerHTML;
 
