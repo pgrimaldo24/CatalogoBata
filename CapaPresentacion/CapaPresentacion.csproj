@@ -194,6 +194,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\RestServicesApi.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -243,6 +244,8 @@
     <Compile Include="Bll\Basico.cs" />
     <Compile Include="Bll\ExcelExportHelper.cs" />
     <Compile Include="Bll\ReportCredentials.cs" />
+    <Compile Include="Common\ConstantsCommon.cs" />
+    <Compile Include="Common\HeaderCommon.cs" />
     <Compile Include="Controllers\AdminLteController.cs" />
     <Compile Include="Controllers\AplicacionController.cs" />
     <Compile Include="Controllers\ArticuloController.cs" />
@@ -3201,6 +3204,8 @@
     <Content Include="Views\Logistica\gestion_stock.cshtml" />
     <Content Include="Views\RRHH\GestionarClientes.cshtml" />
     <Content Include="Views\Home\Error_Roles.cshtml" />
+    <Content Include="Views\PasarelaPago\CardInformationCvv.cshtml" />
+    <Content Include="Views\PasarelaPago\PasarelaPago.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
