@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CapaEntidad.PasarelaPago;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,42 +23,62 @@ namespace CapaPresentacion.Api
                 request.Method = typeRequest; 
                 ASCIIEncoding encoder = new ASCIIEncoding();
 
-                if (nameMethod.Equals("Auth"))
-                {
-                    string data = JsonConvert.SerializeObject(obj);
-                    byte[] byteArray = Encoding.UTF8.GetBytes(data);
-                    request.ContentType = "application/json";
-                    request.ContentLength = byteArray.Length;
-                    request.Timeout = Convert.ToInt32(50000);
-                    request.Expect = "application/json";
-                    Stream dataStream = request.GetRequestStream();
-                    dataStream.Write(byteArray, 0, byteArray.Length);
-                    dataStream.Close();
-                }
-                else
-                {
-                    request.Headers = GetHeaders(false ? ParameterHeaderOsb(obj, token) : ParameterHeader(obj, token));
-                    string data = JsonConvert.SerializeObject(obj);
-                    byte[] byteArray = Encoding.UTF8.GetBytes(data);
-                    request.ContentLength = byteArray.Length;
-                    request.Expect = "application/json";
-                    request.Accept = "application/json";
-                    request.ContentType = "application/json";
-                    Stream dataStream = request.GetRequestStream();
-                    dataStream.Write(byteArray, 0, byteArray.Length);
-                    dataStream.Close();
-                }
-            
+                request.Headers = GetHeaders(false ? ParameterHeaderOsb(obj, token) : ParameterHeader(obj, token));
+                string data = JsonConvert.SerializeObject(obj);
+                byte[] byteArray = Encoding.UTF8.GetBytes(data);
+                request.ContentLength = byteArray.Length;
+                request.Expect = "application/json";
+                request.Accept = "application/json";
+                request.ContentType = "application/json";
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
+
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse; 
                 using (Stream stream = response.GetResponseStream())
                 {
                     StreamReader reader = new StreamReader(stream, Encoding.UTF8);
                     var responseString = reader.ReadToEnd();
-                    if (nameMethod.Equals("ProccessPayment"))
-                    {
-                        result = JsonConvert.DeserializeObject<TResult>(responseString);
-                    }
                     result = JsonConvert.DeserializeObject<TResult>(responseString);
+                }
+            }
+            catch (Exception ex)
+            {
+                var exception = string.Empty;
+                TResult expcetion_response = JsonConvert.DeserializeObject<TResult>(exception);
+                return expcetion_response;
+            }
+
+            return result;
+        }
+
+
+        public TResult Authentication<T, TResult>(T obj, string detailUrlKey, string token, string typeRequest, string nameMethod)
+        {
+            TResult result;
+            try
+            {
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
+                var request = WebRequest.Create(detailUrlKey) as HttpWebRequest;
+                request.Method = typeRequest;
+                ASCIIEncoding encoder = new ASCIIEncoding();
+
+                string data = JsonConvert.SerializeObject(obj);
+                byte[] byteArray = Encoding.UTF8.GetBytes(data);
+                request.ContentType = "application/json";
+                request.ContentLength = byteArray.Length;
+                request.Timeout = Convert.ToInt32(50000);
+                request.Expect = "application/json";
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
+
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                using (Stream stream = response.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                    var responseString = reader.ReadToEnd();
+                    result = JsonConvert.DeserializeObject<TResult>(responseString); 
                 }
             }
             catch (Exception ex)

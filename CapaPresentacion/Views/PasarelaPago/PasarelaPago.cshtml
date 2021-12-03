@@ -159,10 +159,10 @@
                         style="width:200px;
                         margin-top:-30px;
                         margin-left:200px;">
-                    <option value="0">Seleccione</option> 
-                    <option value="visa">Visa</option> 
-                    <option value="mastercard">MasterCard</option> 
-                    <option value="americanexpress">AmericanExpress</option>  
+                    <option value="0">Seleccione</option>
+                    <option value="visa">Visa</option>
+                    <option value="master">MasterCard</option>
+                    <option value="americanexpress">AmericanExpress</option> 
                 </select>  
             </div>
         </div>
@@ -188,29 +188,29 @@
                            style="font-size:1.3rem; max-width:100%;" 
                            disabled="disabled" />
                 </div>
-            </div>
+            </div> 
+
             <div class="form-row">
                 <div class="form-group">
                     <div class="col-md-4 mb-3">
-                        Tipo documento 
+                        Tipo documento
                         <input type="text"
                                class="form-control"
                                id="dpdTipoDocumento"
-                               style="font-size:1.3rem;width:230px;"
-                               disabled="disabled">
+                               style="font-size:1.3rem;width:240px;" disabled="disabled">
                     </div>
                     <div class="col-md-4 mb-3"
                          style="margin-top: -54px;
                      margin-left:250px;">
                         N° de documento
-                        <input type="text" 
-                               class="form-control" 
-                               id="txtDocumento" 
-                               style="font-size:1.3rem;" 
-                               disabled="disabled">
+                        <input type="text"
+                               class="form-control"
+                               id="txtDocumento"
+                               style="font-size:1.3rem;" disabled="disabled">
                     </div>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-group col-md-12">
                     Dirección
@@ -241,16 +241,34 @@
                 <img src='~/Content/MercadoPago/img/logos/logo-visa.jpg' 
                      height='80' class='credit-card-image' id='credit-card-image' />
             </div>  
+
             <div class="form-row">
-                <div class="form-group col-md-12">
-                    Titular de la tarjeta
-                    <input type="text" 
-                           class='form-control' 
-                           id="txtnombre_titular" 
-                           style="max-width:100%;
-                           font-size:1.3rem; " 
-                           onkeypress="return soloLetras(event)"/>
-                </div> 
+                <div class="form-group">
+                    <div class="col-md-4 mb-3">
+                        Nombres de Titular
+                        <input type="text"
+                               class='form-control'
+                               id="txtnombre_titular"
+                               style="width:240px;
+                               font-size:1.3rem; "
+                               onkeypress="return soloLetras(event)" />
+                    </div>
+                    <div class="col-md-4 mb-3"
+                         style="margin-top: -54px;
+                     margin-left:250px;">
+                        Apellidos de Titular
+                        <input type="text"
+                               class="form-control"
+                               id="txtApellidos_titular"
+                               style="font-size:1.3rem;"
+                               onkeypress="return soloLetras(event)" />
+                    </div>
+                </div>
+            </div>
+
+           
+
+            <div class="form-row"> 
                 <div class="form-group col-md-12">
                     Número de la tarjeta
                     <input type="text" 
@@ -260,31 +278,7 @@
                            font-size:1.3rem; " 
                            placeholder="0123 456 789 125 558" maxlength="16"/>
                 </div>
-            </div> 
-            <div class="form-row">
-                <div class="form-group">
-                    <div class="col-md-4 mb-3">
-                        Tipo documento
-                        <select class="form-control"
-                                id="dwTipoDocumentoPayment"
-                                name="dwTipoDocumentoPayment" style="width:240px;">
-                            <option value="0">Seleccione</option>
-                            <option value="DNI">DNI</option>
-                            <option value="RUC">RUC</option>
-                            <option value="CARNETEXT">CARNET EXT</option>
-                        </select>  
-                    </div>
-                    <div class="col-md-4 mb-3"
-                         style="margin-top: -54px;
-                     margin-left:250px;">
-                        N° de documento
-                        <input type="text"
-                               class="form-control"
-                               id="txtDocumentoPayment"
-                               style="font-size:1.3rem;">
-                    </div>
-                </div>
-            </div>
+            </div>  
             <div class="form-row">
                 <div class="form-group">
                     <div class="col-md-4 mb-3">
@@ -332,6 +326,28 @@
                                id="txtCuotas"
                                style="font-size:1.3rem;"
                                placeholder="Cuotas" maxlength="3" value="1"/>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4 mb-3" style="margin-top: 17px;">
+                            Tipo documento
+                            <select class="form-control"
+                                    id="dwTipoDocumentoPayment"
+                                    name="dwTipoDocumentoPayment" style="width:240px;">
+                                <option value="0">Seleccione</option>
+                                <option value="DNI">DNI</option>
+                                <option value="RUC">RUC</option>
+                                <option value="CARNETEXT">CARNET EXT</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3"
+                             style="margin-top: -54px;
+                     margin-left:250px;">
+                            N° de documento
+                            <input type="text"
+                                   class="form-control"
+                                   id="txtDocumentoPayment"
+                                   style="font-size:1.3rem;">
+                        </div>
                     </div>
                     <div class="form-group" style="margin-top:15px;">
                         <p id="loading-message" style="margin-left:15px"><strong>*Recordar que al procesar el pago, no se debe actualizar la página web.</strong></p> 
@@ -579,6 +595,7 @@
                 $("#txtCuotas").prop("disabled", true);
                 $("#dwTipoDocumentoPayment").prop("disabled", true);
                 $("#txtDocumentoPayment").prop("disabled", true);
+                $("#txtApellidos_titular").prop("disabled", true);
             }
             else if (valueSelect === "visa") {
                 document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/logo-visa.jpg";
@@ -592,6 +609,7 @@
                 $("#btnPago").prop("disabled", false);
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
+                $("#txtApellidos_titular").prop("disabled", false);
             }
             else if (valueSelect === "mastercard") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/2vbqk5lcpi7hjoc/MasterCard_Logo.svg.png";
@@ -605,6 +623,7 @@
                 $("#btnPago").prop("disabled", false);
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
+                $("#txtApellidos_titular").prop("disabled", false);
             }
             else if (valueSelect === "americanexpress") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/f5hyn6u05ktql8d/amex-icon-6902.png";
@@ -618,6 +637,7 @@
                 $("#btnPago").prop("disabled", false);
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
+                $("#txtApellidos_titular").prop("disabled", false);
             }
         }
 
@@ -632,18 +652,17 @@
             var tipodoc = $("#dwTipoDocumentoPayment").val();
             var document = $("#txtDocumentoPayment").val();
             //var p = document.createElement("p");
-            
+
             var errors = [];
 
-            if (cardholder == null || cardholder == '') { errors.push('Debe ingresar el nombre del titular de la tarjeta.'); }
-            if (cardnumber == null || cardnumber == '') { errors.push('Debe ingresar un número de tarjeta.'); }
+            if (cardholder == null || cardholder == "") { errors.push('Debe ingresar el nombre del titular de la tarjeta.'); }
+            if (cardnumber == null || cardnumber == "") { errors.push('Debe ingresar un número de tarjeta.'); }
             if (anio == "Seleccione") { errors.push('Debes seleccionar el Año de vencimiento de tu tarjeta.'); }
             if (mes == "0") { errors.push('Debes seleccionar el Mes de vencimiento de tu tarjeta.'); }
             if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
             if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
-            if (document == '' || document == null) { errors.push('Debe ingresar un número de documento.'); }
+            if (document == "" || document == null) { errors.push('Debe ingresar un número de documento.'); }
 
-            debugger;
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
                 var li = document.createElement("li");
@@ -721,9 +740,9 @@
             if (getPayValidate()) {
                 var token_public = document.getElementById("mercadopagopublickey").innerHTML;
                 var mercadopago = new MercadoPago(token_public);
-                var nombreCompletoTitular = $("#txtnombre_titular").val();
-                var nombreTitular = document.getElementById("nombreTitular").innerHTML;
-                var apellidoTitular = document.getElementById("apellidoTitular").innerHTML;
+                var nombreCompletoTitular = $("#txtnombre_titular").val() + ' ' + $("#txtApellidos_titular").val();
+                var nombreTitular = $("#txtnombre_titular").val();
+                var apellidoTitular = $("#txtApellidos_titular").val();
                 var numeroTarjeta = $("#txtnumero_tarjeta").val();
                 var emailCliente = $("#txtEmail").val();
                 var fechaExpiracionAnio = $("#anio").val();
@@ -828,8 +847,8 @@
                 url: '@Url.Action("SetCardToken", "PasarelaPago")',
                 data: { 'token_public': token_public, 'numeroTarjeta': numeroTarjeta, 'codigoSeguridad': codigoSeguridad, 'fechaExpiracionMes': fechaExpiracionMes, 'fechaExpiracionAnio': fechaExpiracionAnio, 'nombreCompletoTitular': nombreCompletoTitular, 'numeroDocumento': numeroDocumento, 'tipoDocumento': tipoDocumento },
                 success: function (data) {
-                    var nombreTitular = document.getElementById("nombreTitular").innerHTML;
-                    var apellidoTitular = document.getElementById("apellidoTitular").innerHTML;
+                    var nombreTitular = $("#txtnombre_titular").val();
+                    var apellidoTitular = $("#txtApellidos_titular").val();
                     var emailCliente = $("#txtEmail").val();
                     var tipoDocumento = $("#dwTipoDocumentoPayment").val();
                     var numeroDocumento = $("#txtDocumentoPayment").val();
@@ -857,6 +876,25 @@
                     proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                     tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
                     direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log('Error interno en el servidor');
+                    $("#loading").fadeOut("slow");
+                }
+            });
+
+        }
+
+        function getEstadosFormasPago() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetMasterStatus", "PasarelaPago")',
+                data: { 'token_public': token_public },
+                success: function (data) {
+                    var lista = [];
+
+                    lista = data;
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log('Error interno en el servidor');
