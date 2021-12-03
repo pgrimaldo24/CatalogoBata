@@ -76,6 +76,7 @@
     <Compile Include="Maestros\Dat_Persona_Tipo.cs" />
     <Compile Include="Maestros\Dat_Usuario_Tipo.cs" />
     <Compile Include="Menu\Dat_Menu.cs" />
+    <Compile Include="PasarelaPago\Dat_PasarelaPago.cs" />
     <Compile Include="Pedido\Dat_Pedido.cs" />
     <Compile Include="Pedido\Dat_Pedido_Separado.cs" />
     <Compile Include="Persona\Dat_Persona.cs" />
