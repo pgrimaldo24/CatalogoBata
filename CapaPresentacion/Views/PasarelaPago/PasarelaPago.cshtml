@@ -1,0 +1,838 @@
+﻿ 
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PasarelaPago</title>
+    @*<link href="~/Content/MercadoPago/style-pasarela-pago.css" rel="stylesheet" type="text/css" />*@
+    @*<link href="~/Content/MercadoPago/stylepayment.css" rel="stylesheet" type="text/css" />*@
+    <script src="https://sdk.mercadopago.com/js/v2" type="text/javascript"></script>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/morris/morris.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/AdminLTE/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/AdminLTE/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")  
+    <style>
+        .footer-bata {
+            margin: 0 0 0 65%;
+            width: 200px;
+            text-align: left;
+            position: absolute;
+        }
+
+        .line {
+          height:1px;
+          width:100%;
+          margin-top:10px;
+          margin-bottom:10px;
+          background:#ddd;
+        }
+
+        .total {
+            margin-top: 25px;
+            font-size: 17px;
+            position: absolute;
+            bottom: 80px;
+            right: 27px;
+            left: 35px;
+        }
+
+        .totalmonto {
+            margin-top: 25px;
+            font-size: 23px;
+            position: absolute;
+            bottom: 80px;
+            right: 27px;
+            left: 35px;
+        }
+
+        .list-option li span {
+            position: relative;
+            left: -5px;
+            font-size: 15px;
+        }
+
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('/Content/MercadoPago/img/loading-cargando.gif') 50% 50% no-repeat rgb(249,249,249);
+            opacity: .8;
+        }
+
+        .credit-card-image {
+            display: block;
+            max-height: 80px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: -20px;
+            margin-bottom: 15px;
+        }
+
+        .credit-info-content {
+            margin-top: 25px;
+            -webkit-flex-flow: column;
+            -ms-flex-flow: column;
+            flex-flow: column;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            width: 100%;
+        }
+
+        .credit-info {
+            background: #4488dd;
+            height: 100%;
+            width: 50%;
+            color: #eee;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            font-size: 14px;
+            font-size: .9rem;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            box-sizing: border-box;
+            padding-left: 25px;
+            padding-right: 25px;
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <span style="display:none;" value="@ViewBag.mercadoPagoPublicKey" id="mercadopagopublickey">@ViewBag.mercadoPagoPublicKey</span>
+    <span style="display:none;" value="@ViewBag.nombreCompletoUsuario" id="nombreCompletoUsuario">@ViewBag.nombreCompletoUsuario</span>
+    <span style="display:none;" value="@ViewBag.email" id="emailcontacto">@ViewBag.email</span>
+    <span style="display:none;" value="@ViewBag.numerodocumento" id="numerodocumento">@ViewBag.numerodocumento</span>
+    <span style="display:none;" value="@ViewBag.direccion" id="direccion">@ViewBag.direccion</span>
+
+    <span style="display:none;" value="@ViewBag.nombres" id="nombreTitular">@ViewBag.nombres</span>
+    <span style="display:none;" value="@ViewBag.apellidos" id="apellidoTitular">@ViewBag.apellidos</span>
+
+    <span style="display:none;" value="@ViewBag.tipo_des" id="tipo_des">@ViewBag.tipo_des</span>
+    <span style="display:none;" value="@ViewBag.referencia" id="referencia">@ViewBag.referencia</span>
+    <span style="display:none;" value="@ViewBag.agencia" id="agencia">@ViewBag.agencia</span>
+    <span style="display:none;" value="@ViewBag.destino" id="destino">@ViewBag.destino</span>
+    <span style="display:none;" value="@ViewBag.agencia_direccion" id="agencia_direccion">@ViewBag.agencia_direccion</span>
+    <span style="display:none;" value="@ViewBag.tipo_documento" id="tipo_documento">@ViewBag.tipo_documento</span>
+    <span style="display:none;" value="@ViewBag.celular" id="celular">@ViewBag.celular</span>
+    <span style="display:none;" value="@ViewBag.departamento" id="departamento">@ViewBag.departamento</span>
+    <span style="display:none;" value="@ViewBag.provincia" id="provincia">@ViewBag.provincia</span> 
+    <span style="display:none;" value="@ViewBag.TokenTarjetaMercadoPago" id="tokenTarjetaMercadoPago">@ViewBag.TokenTarjetaMercadoPago</span>
+    <span style="display:none;" value="@ViewBag.totalpago" id="totalpago">@ViewBag.totalpago</span>
+
+    <span style="display:none;" value="@ViewBag.liq_tipo_prov" id="liq_tipo_prov">@ViewBag.liq_tipo_prov</span>
+    <span style="display:none;" value="@ViewBag.liq_provincia" id="liq_provincia">@ViewBag.liq_provincia</span>
+
+    <div class="loader" id="loading"></div>
+
+    <br />
+    <div class="row" id="frmRequestPayment">
+        <div class="col-md-5">
+            <div class="form-group" style="margin-left:20px; margin-right:20px;">
+                <label for="dwFormaPago">Seleccione la forma de pago:&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
+                <select class="form-control"
+                        id="dwFormaPagoCard"
+                        name="dwFormaPagoCard"
+                        style="width:200px;
+                        margin-top:-30px;
+                        margin-left:200px;">
+                    <option value="0">Seleccione</option> 
+                    <option value="visa">Visa</option> 
+                    <option value="mastercard">MasterCard</option> 
+                    <option value="americanexpress">AmericanExpress</option>  
+                </select>  
+            </div>
+        </div>
+
+        <form autocomplete="off"
+              style="margin-left:20px;
+              margin-right:20px;">
+            <label for="dcliente" style="margin-left:15px;">DETALLE DEL CLIENTE</label>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    Nombres y Apellidos
+                    <input type="text" 
+                           class="form-control" 
+                           id="txtNombres" 
+                           style="font-size:1.3rem; max-width:100%;" 
+                           disabled="disabled" />
+                </div>
+                <div class="form-group col-md-12">
+                    E-Mail de contacto
+                    <input type="text" 
+                           class="form-control" 
+                           id="txtEmail" 
+                           style="font-size:1.3rem; max-width:100%;" 
+                           disabled="disabled" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="col-md-4 mb-3">
+                        Tipo documento 
+                        <input type="text"
+                               class="form-control"
+                               id="dpdTipoDocumento"
+                               style="font-size:1.3rem;width:230px;"
+                               disabled="disabled">
+                    </div>
+                    <div class="col-md-4 mb-3"
+                         style="margin-top: -54px;
+                     margin-left:250px;">
+                        N° de documento
+                        <input type="text" 
+                               class="form-control" 
+                               id="txtDocumento" 
+                               style="font-size:1.3rem;" 
+                               disabled="disabled">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    Dirección
+                    <input type="text" 
+                           class="form-control" 
+                           id="txtubicacion" 
+                           style="font-size:1.3rem; max-width:100%;" 
+                           disabled="disabled" />
+                </div>
+            </div>
+        </form>
+        <div class='line'></div>
+        <div style="margin-left:20px; margin-right:20px; margin-top:8px;">
+            <label style="margin-left:15px; font-size:20px;"><string>TOTAL A PAGAR</string></label>
+            <label style="margin-left:225px; font-size: 20px;">S/.</label> 
+            <strong><span style='float:right; 
+                          font-size:25px;
+                          margin-right:40px;' 
+                          id="total_amount"></span></strong>
+        </div> 
+        <div class='line'></div>
+        <form autocomplete="off"
+              style="margin-left:20px;
+              margin-right:20px;">
+            <label for="dclientemp" style="margin-left:15px;">GENERAR COMPRA</label>
+
+            <div class="credit-info-content">
+                <img src='~/Content/MercadoPago/img/logos/logo-visa.jpg' 
+                     height='80' class='credit-card-image' id='credit-card-image' />
+            </div>  
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    Titular de la tarjeta
+                    <input type="text" 
+                           class='form-control' 
+                           id="txtnombre_titular" 
+                           style="max-width:100%;
+                           font-size:1.3rem; " 
+                           onkeypress="return soloLetras(event)"/>
+                </div> 
+                <div class="form-group col-md-12">
+                    Número de la tarjeta
+                    <input type="text" 
+                           class='form-control' 
+                           id="txtnumero_tarjeta" 
+                           style="max-width:100%;
+                           font-size:1.3rem; " 
+                           placeholder="0123 456 789 125 558" maxlength="16"/>
+                </div>
+            </div> 
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="col-md-4 mb-3">
+                        Año
+                        <select class="form-control" 
+                                id="anio"  
+                                style="width:120px;" placeholder="Año"> 
+                            <option>Seleccione</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3"
+                         style="margin-top: -54px;
+                         margin-left:140px;">
+                        Mes
+                        <select class="form-control" 
+                                id="mes"  
+                                style="width:120px;" placeholder="Mes"> 
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3" 
+                         style="margin-top:-54px;
+                         margin-left:280px; 
+                         ">
+                        CVV&nbsp;<img id="horizontal_logo" 
+                                      style="width:16px;
+                                      height:16px; 
+                                      cursor:pointer; 
+                                      margin-top:-4px;" 
+                                      src="~/Content/MercadoPago/img/exclamation.png" 
+                                      />
+                        <input type="text" 
+                               class="form-control" 
+                               id="txtcvc" 
+                               style="font-size:1.3rem; width:120px;" 
+                               placeholder="CVV" maxlength="4"/>
+                    </div>
+                    <div class="col-md-4 mb-3"
+                         style="margin-top:-54px;
+                         margin-left:422px;
+                         ">
+                        N° Cuotas 
+                        <input type="text"
+                               class="form-control"
+                               id="txtCuotas"
+                               style="font-size:1.3rem;"
+                               placeholder="Cuotas" maxlength="3" value="0"/>
+                    </div>
+                    <div class="form-group" style="margin-top:15px;">
+                        <p id="loading-message" style="margin-left:15px"><strong>*Recordar que al procesar el pago, no se debe actualizar la página web.</strong></p> 
+                    </div> 
+                    <div class="form-group"> 
+                        <div class="col-md-4"> 
+                            <button id="btnCerrarCheckout" type="button" class="btn btn-danger" style="width:130px;height:40px;" onclick="parentCloseModalDetail();">&nbsp;Cancelar&nbsp;</button>
+                            <button type="button" 
+                                    class="btn btn-success" 
+                                    style="height:40px; 
+                                    width:72%; 
+                                    margin-top:-63px;margin-left:142px;" 
+                                    id="btnPago"
+                                    onclick="registerPayment();"
+                                    >Pagar</button>
+                            
+                            @*<button type="button"
+                                    class="btn btn-success"
+                                    style="height:40px;
+                                    width:100%;
+                                    "
+                                    id="btnCerrarFrm"
+                                    onclick="registerPayment();">
+                                Pagar
+                            </button>*@
+                        </div> 
+                    </div> 
+                    <div id="cardcvv" style="margin-left:70px;">
+                        <img class="imgstyle"
+                             src="~/Content/MercadoPago/img/informativo.png"
+                             alt="Alternate Text"
+                             id="imgcvv" />
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                style="margin-top: -60px;
+                                margin-left: 128px;"
+                                id="btnOcultar"
+                                onclick="getInformationCvv(2);">
+                            Ocultar imagen
+                        </button>
+                    </div>
+                </div>  
+            </div>  
+        </form> 
+    </div>
+     
+    <div class="row" id="frmResponsePayment">
+
+        <div class="content">
+            <div class="row">
+                <div class="row justify-content-md-center">
+                    <div class="col-md-4 product-detail">
+                        <div class="form-group"
+                             style="margin-top:-180%;">
+                            <label style="margin-left:30px; font-size:25px;"><strong>Detalle del Pago</strong></label><br />
+                            <img src=""
+                                 height='80' class='credit-card-image' id='img-respuesta-api' 
+                                 style="margin-top:25px;"/>
+                            <div style="margin-left:190px;">
+                                <p><b>N° de Pago: </b><span id="payment-id"></span></p>
+                                <p><b>Estado del pago: </b><span id="payment-status"></span></p> 
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12"
+                     style="margin-top:-800px;">
+                    <label style="margin-left:15px; font-size:25px;"><strong>Reporte final</strong></label><br />
+                    <div id="ifrReporte" 
+                         class="well" 
+                         style="width: 100%; height: 100%; padding:0;">
+                        <iframe id="icrystalReport" 
+                                src="" frameborder="0" 
+                                marginheight="1" 
+                                marginwidth="1" 
+                                scrolling="auto"
+                                onload="javascript: waitingDialog.hide();" 
+                                style="zoom:90%; 
+                                width: 100%; 
+                                height: calc(100vh - 100px); 
+                                margin-bottom:0px"> 
+                        </iframe>
+                    </div>
+                </div>
+
+                <div style="margin-left:190px;">
+                    <a href="@Url.Action("Lista","Pedido")" class="btn btn-primary">Volver a Pedidos</a>
+                </div> 
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div class="modal fade" id="myModalInfoTime" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel" style="color:white">Alerta de errores</h4>
+                </div>
+                <div class="modal-body" style="height:100% auto;">
+                    <div id="divInfoTime">
+                        <label style="color:#343434;font-weight:bold">Considera las siguientes validaciones:</label>
+                        <div class="row">
+                            <form role="form">
+                                <div class="row" style="margin-bottom: 15px;">
+                                    <div class="col-sm-12">
+                                        <div class="form-group alignCenter">
+                                            <ul id="lista-error" class="list-option pl-4"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="margin-top:-30px">
+                        <button id="btnCerrarInfo" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+
+    <script>
+        $(window).load(function () {
+            $("#loading").fadeOut("slow");
+        });
+
+        $(document).ready(function () {
+            var listProducts = [];
+            getInfoByUser();
+            getInformationCvv(2);
+            getDayMonthCard();
+            changeCardPayment("0");
+            document.getElementById("frmResponsePayment").style.visibility = "hidden";
+        });
+
+        $('#horizontal_logo').click(function () {
+            getInformationCvv(1);
+        })
+
+        $('#dwFormaPagoCard').change(function () {
+            changeCardPayment($(this).val());
+        })
+
+        
+
+        function getInformationCvv(value) {
+            if (value == 1) {
+                document.getElementById("cardcvv").style.visibility = "visible";
+            } else {
+                document.getElementById("cardcvv").style.visibility = "hidden";
+
+            }
+        }
+         
+
+        function getDayMonthCard() {
+            var today = new Date();
+            var anioMinimo = today.getFullYear();
+            var anioMaximo = 2030;
+            var anio = 0;
+
+            var comboAnio = document.getElementById("anio");
+
+            for (let i = anioMinimo; i <= anioMaximo; i++) {
+                let option = document.createElement("option");
+                option.setAttribute("value", i);
+
+                let optionText = document.createTextNode(i);
+                option.appendChild(optionText);
+                comboAnio.appendChild(option);
+            }
+
+            var array = [
+              "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"
+            ];
+
+            var comboMes = document.getElementById("mes");
+            debugger
+            for (let i = 0; i < array.length; i++) {
+                var option = document.createElement("option");
+                option.setAttribute("value", i);
+                var itexto = "Seleccione";
+
+                switch (i) {
+                    case 1: itexto = "1";
+                        break;
+                    case 2: itexto = "2";
+                        break;
+                    case 3: itexto = "3";
+                        break;
+                    case 4: itexto = "4";
+                        break;
+                    case 5: itexto = "5";
+                        break;
+                    case 6: itexto = "6";
+                        break;
+                    case 7: itexto = "7";
+                        break;
+                    case 8: itexto = "8";
+                        break;
+                    case 9: itexto = "9";
+                        break;
+                    case 10: itexto = "10";
+                        break;
+                    case 11: itexto = "11";
+                        break;
+                    case 12: itexto = "12";
+                        break;
+                }
+
+                var optionText = document.createTextNode(itexto);
+                option.appendChild(optionText);
+                comboMes.appendChild(option);
+            }
+
+        }
+
+        function changeCardPayment(valueSelect) {
+            if (valueSelect === "0") {
+                document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/noimagencard.png";
+                $("#txtnombre_titular").prop("disabled", true);
+                $("#txtnumero_tarjeta").prop("disabled", true);
+                $("#anio").prop("disabled", true);
+                $("#mes").prop("disabled", true);
+                $("#txtcvc").prop("disabled", true);
+                $("#horizontal_logo").prop("disabled", true);
+                $("#btnPago").prop("disabled", true);
+                $("#txtCuotas").prop("disabled", true);
+            }
+            else if (valueSelect === "visa") {
+                document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/logo-visa.jpg";
+                $("#txtnombre_titular").prop("disabled", false);
+                $("#txtnumero_tarjeta").prop("disabled", false);
+                $("#anio").prop("disabled", false);
+                $("#mes").prop("disabled", false);
+                $("#txtcvc").prop("disabled", false);
+                $("#horizontal_logo").prop("disabled", false);
+                $("#txtCuotas").prop("disabled", false);
+                $("#btnPago").prop("disabled", false);
+            }
+            else if (valueSelect === "mastercard") {
+                document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/2vbqk5lcpi7hjoc/MasterCard_Logo.svg.png";
+                $("#txtnombre_titular").prop("disabled", false);
+                $("#txtnumero_tarjeta").prop("disabled", false);
+                $("#anio").prop("disabled", false);
+                $("#mes").prop("disabled", false);
+                $("#txtcvc").prop("disabled", false);
+                $("#horizontal_logo").prop("disabled", false);
+                $("#txtCuotas").prop("disabled", false);
+                $("#btnPago").prop("disabled", false);
+            }
+            else if (valueSelect === "americanexpress") {
+                document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/f5hyn6u05ktql8d/amex-icon-6902.png";
+                $("#txtnombre_titular").prop("disabled", false);
+                $("#txtnumero_tarjeta").prop("disabled", false);
+                $("#anio").prop("disabled", false);
+                $("#mes").prop("disabled", false);
+                $("#txtcvc").prop("disabled", false);
+                $("#horizontal_logo").prop("disabled", false);
+                $("#txtCuotas").prop("disabled", false);
+                $("#btnPago").prop("disabled", false);
+            }
+        }
+
+        function getPayValidate() {
+            var cardholder = $("#txtnombre_titular").val();
+            var cardnumber = $("#txtnumero_tarjeta").val();
+            var anio = $("#anio").val();
+            var mes = $("#mes").val();
+            var cvv = $("#txtcvc").val();
+            var cuotas = $("#txtCuotas").val();
+            //var p = document.createElement("p");
+            debugger;
+            var errors = [];
+
+            if (cardholder == null || cardholder == '') { errors.push('Debe ingresar el nombre del titular de la tarjeta.'); }
+            if (cardnumber == null || cardnumber == '') { errors.push('Debe ingresar un número de tarjeta.'); }
+            if (anio == "Seleccione") { errors.push('Debes seleccionar el Año de vencimiento de tu tarjeta.'); }
+            if (mes == "0") { errors.push('Debes seleccionar el Mes de vencimiento de tu tarjeta.'); }
+            if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
+
+            for (i = 0; i < errors.length; i++) {
+                var content = errors[i];
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(content));
+                document.getElementById("lista-error").appendChild(li);
+            }
+
+            if (errors.length > 0) {
+                $("#loading").fadeOut("slow");
+                $('#myModalInfoTime').modal('show');
+                errors.splice();
+                return false;
+            }
+
+            return true;
+        }
+
+        $('#txtnumero_tarjeta').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        $('#txtCuotas').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        $('#txtcvc').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        $('#txtCuotas').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function soloLetras(e) {
+            key = e.keyCode || e.which;
+            tecla = String.fromCharCode(key).toLowerCase();
+            letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+            especiales = [8, 37, 39, 46];
+
+            tecla_especial = false
+            for (var i in especiales) {
+                if (key == especiales[i]) {
+                    tecla_especial = true;
+                    break;
+                }
+            }
+
+            if (letras.indexOf(tecla) == -1 && !tecla_especial)
+                return false;
+        }
+
+
+        function getInfoByUser() {
+            document.getElementById("txtNombres").value = document.getElementById("nombreCompletoUsuario").innerHTML;;
+            document.getElementById("txtEmail").value = document.getElementById("emailcontacto").innerHTML;
+            document.getElementById("dpdTipoDocumento").value = document.getElementById("tipo_documento").innerHTML;
+            document.getElementById("txtDocumento").value = document.getElementById("numerodocumento").innerHTML;
+            document.getElementById("txtubicacion").value = document.getElementById("direccion").innerHTML;
+            var _totalpago = document.getElementById("totalpago").innerHTML;
+            if (_totalpago == "0") { document.getElementById("total_amount").innerHTML = "0.00"; }
+            else { document.getElementById("total_amount").innerHTML = _totalpago; }
+        }
+
+        function registerPayment() {
+            $("#loading").fadeIn("slow");
+            if (getPayValidate()) {
+                var token_public = document.getElementById("mercadopagopublickey").innerHTML;
+                var mercadopago = new MercadoPago(token_public);
+                var nombreCompletoTitular = $("#txtnombre_titular").val();
+                var nombreTitular = document.getElementById("nombreTitular").innerHTML;
+                var apellidoTitular = document.getElementById("apellidoTitular").innerHTML;
+                var numeroTarjeta = $("#txtnumero_tarjeta").val();
+                var emailCliente = $("#txtEmail").val();
+                var fechaExpiracionAnio = $("#anio").val();
+                var fechaExpiracionMes = $("#mes").val();
+                var codigoSeguridad = $("#txtcvc").val();
+                var tipoDocumento = $("#dpdTipoDocumento").val();
+                var numeroDocumento = $("#txtDocumento").val(); 
+                getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento);
+            }
+        }
+ 
+        function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
+                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
+                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("LiquidarPedido", "Pedido")',
+                data: { tipo_des: tipo_des, agencia: agencia, destino: destino, direccion_agencia: agencia_direccion, direccion: direccion, referencia: referencia, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
+                success: function (data) {
+                    waitingDialog.hide();
+                    if ((data.Success).toString() == "true") {
+                        debugger;
+                        listProducts = data.Products; 
+                        enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
+                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, data.Message, listProducts);  
+                    } else {
+                        toastr.error(data.Message, "Error");
+                        $("#loading").fadeOut("slow");
+                    } 
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
+                    $("#loading").fadeOut("slow");
+                }
+            });
+        }
+         
+        function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
+              tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
+                data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts },
+                success: function (data) {
+                    debugger;
+                    if ((data.Success).toString() == "true") {
+                        //toastr.success(data.Message, "Proceso Exitoso!!");
+                        responsePaymentProcessed(data.Status, data.data.id, data.Message);
+                    } else { 
+                        toastr.error(data.Message, 'Error');
+                        $("#loading").fadeOut("slow");
+                    } 
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
+                    $("#loading").fadeOut("slow");
+                }
+            });
+
+        }
+
+        function parentCloseModalDetail() {
+            parent.parentCloseModalDetailCardCvvView();
+            return false;
+        }
+
+        //Reporte
+        function responsePaymentProcessed(status, idpayment, message) { 
+            document.getElementById("frmRequestPayment").style.visibility = "hidden";
+            document.getElementById("frmResponsePayment").style.visibility = "visible";
+            debugger
+            switch (status) {
+                case "1":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-pending-api.png";
+                    document.getElementById('payment-id').innerHTML = idpayment;
+                    document.getElementById('payment-status').innerHTML = message;
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "2":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-success-api.png";
+                    document.getElementById('payment-id').innerHTML = idpayment;
+                    document.getElementById('payment-status').innerHTML = message;
+                    $("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                    $("#loading").fadeOut("slow");
+                    break;
+                default:
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-pending-api.png";
+                    document.getElementById('payment-id').innerHTML = idpayment;
+                    document.getElementById('payment-status').innerHTML = message;
+                    $("#loading").fadeOut("slow");
+                    break;
+
+            } 
+        }
+
+        function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SetCardToken", "PasarelaPago")',
+                data: { 'token_public': token_public, 'numeroTarjeta': numeroTarjeta, 'codigoSeguridad': codigoSeguridad, 'fechaExpiracionMes': fechaExpiracionMes, 'fechaExpiracionAnio': fechaExpiracionAnio, 'nombreCompletoTitular': nombreCompletoTitular, 'numeroDocumento': numeroDocumento, 'tipoDocumento': tipoDocumento },
+                success: function (data) {
+                    var nombreTitular = document.getElementById("nombreTitular").innerHTML;
+                    var apellidoTitular = document.getElementById("apellidoTitular").innerHTML;
+                    var emailCliente = $("#txtEmail").val();
+                    var tipoDocumento = $("#dpdTipoDocumento").val();
+                    var numeroDocumento = $("#txtDocumento").val();
+                    var zipCode = "01";
+                    var street_name = $("#txtubicacion").val();
+                    var state_name = document.getElementById("departamento").innerHTML;
+                    var city_name = document.getElementById("provincia").innerHTML;
+                    var installments = $("#txtCuotas").val();
+                    var payment_method_id = $("#dwFormaPagoCard").val();
+                    var importeTotal = document.getElementById("total_amount").innerHTML; 
+                    var tokenCard = data.data;
+                    var numerocelular = document.getElementById("celular").innerHTML;
+
+                    var tipo_des = document.getElementById("tipo_des").innerHTML;
+                    var referencia = document.getElementById("referencia").innerHTML;
+                    var agencia = document.getElementById("agencia").innerHTML;
+                    var destino = document.getElementById("destino").innerHTML;
+                    var agencia_direccion = document.getElementById("agencia_direccion").innerHTML;
+
+                    var liq_tipo_prov = document.getElementById("liq_tipo_prov").innerHTML;
+                    var liq_provincia = document.getElementById("liq_provincia").innerHTML;
+
+                    var direccion = document.getElementById("direccion").innerHTML;
+
+                    proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
+                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
+                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log('Error interno en el servidor');
+                    $("#loading").fadeOut("slow");
+                }
+            });
+
+        }
+
+        function parseName(input) {
+            var fullName = input || "";
+            var result = {};
+
+            if (fullName.length > 0) {
+                var nameTokens = fullName.match(/[A-ZÁ-ÚÑÜ][a-zá-úñü]+|([aeodlsz]+\s+)+[A-ZÁ-ÚÑÜ][a-zá-úñü]+/g) || [];
+
+                if (nameTokens.length > 3) {
+                    result.name = nameTokens.slice(0, 2).join(' ');
+                } else {
+                    result.name = nameTokens.slice(0, 1).join(' ');
+                }
+
+                if (nameTokens.length > 2) {
+                    result.lastName = nameTokens.slice(-2, -1).join(' ');
+                    result.secondLastName = nameTokens.slice(-1).join(' ');
+                } else {
+                    result.lastName = nameTokens.slice(-1).join(' ');
+                    result.secondLastName = "";
+                }
+            }
+
+            return result;
+        }
+
+    </script>
+</body>
+</html>

@@ -1,12 +1,16 @@
 ﻿using CapaDato.Control;
 using CapaDato.Menu;
 using CapaEntidad.Control;
+using CapaEntidad.PasarelaPago;
 using CapaEntidad.Util;
+using CapaPresentacion.Api;
+using CapaPresentacion.Common;
 using CapaPresentacion.Models.Control;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -94,6 +98,16 @@ namespace CapaPresentacion.Controllers
 
                 if (return_action.Length == 0)
                 {
+                    var _restServicesApi = new RestServicesApi();
+                    var auth = new Authetication
+                    {
+                        password = model.Password,
+                        username = model.Usuario
+                        
+                    };
+                    var response = _restServicesApi.PostInvoque<Authetication, ResponseDto>(
+                        auth, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoAuth], null, "POST", "Auth");
+                    Settings.ACCESS_TOKEN_API_CATALOGO_PAGO = response.response.Data;
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -101,7 +115,7 @@ namespace CapaPresentacion.Controllers
                     /*validamos las opciones del menu de acceso*/
                     var data = new Dat_Menu();
                     var items = data.navbarItems(_usuario.usu_id).ToList();
-                    Session[Ent_Global._session_menu_user] = items;
+                    Session[Ent_Global._session_menu_user] = items; 
                     return RedirectToAction(return_action, return_controller);
                     /*************************************/
                 }
