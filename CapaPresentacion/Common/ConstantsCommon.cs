@@ -20,5 +20,11 @@
             public const string GET = "GET";
             public const string DELETE = "DELETE";
         }
+
+        public struct Credentials_CatalogoPago
+        {
+            public const string User = "user_catalogo";
+            public const string Password = "password_catalogo";
+        }
     }
 }
