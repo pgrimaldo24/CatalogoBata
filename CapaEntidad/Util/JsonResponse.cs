@@ -12,7 +12,11 @@ namespace CapaEntidad.Util
 
         public bool Success { get; set; }
 
+        public string Status { get; set; }
+        
         public object Data { get; set; }
         public int IdPrincipal { get; set; }
+
+        public object Products { get; set; }
     }
 }
