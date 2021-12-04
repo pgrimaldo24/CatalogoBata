@@ -98,7 +98,7 @@ namespace CapaPresentacion.Controllers
                 
                 var response = _restServicesApi.PostInvoque<CardToken, CardTokenResponseDto>(cardToken,
                     ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoProccessCardToken], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, "POST", "CardToken"); 
-                return Json(new { data = response.response.Data.id }, JsonRequestBehavior.AllowGet);
+                return Json(new { Status = response.response.Status, LastFourDigits = response.response.Data.last_four_digits, Message = response.response.Message, data = response.response.Data.id }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

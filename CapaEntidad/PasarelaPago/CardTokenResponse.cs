@@ -31,6 +31,7 @@
         public string public_key { get; set; }
         public int expiration_month { get; set; }
         public int expiration_year { get; set; }
+        public string last_four_digits { get; set; }
         public CardHolder cardholder { get; set; }
         public string status { get; set; }
         public string date_created { get; set; }

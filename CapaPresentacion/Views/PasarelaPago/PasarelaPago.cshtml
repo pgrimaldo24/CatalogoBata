@@ -504,9 +504,8 @@
         })
 
         $('#dwTipoDocumentoPayment').change(function () {
-            if ($(this).val() == "0") {
-                $("#txtDocumentoPayment").prop("disabled", true);
-            }
+            if ($(this).val() == "0") { $("#txtDocumentoPayment").prop("disabled", true); }
+            else { $("#txtDocumentoPayment").prop("disabled", false); }
         })
 
 
@@ -611,7 +610,7 @@
                 $("#txtDocumentoPayment").prop("disabled", false);
                 $("#txtApellidos_titular").prop("disabled", false);
             }
-            else if (valueSelect === "mastercard") {
+            else if (valueSelect === "master") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/2vbqk5lcpi7hjoc/MasterCard_Logo.svg.png";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
@@ -650,7 +649,7 @@
             var cuotas = $("#txtCuotas").val();
 
             var tipodoc = $("#dwTipoDocumentoPayment").val();
-            var document = $("#txtDocumentoPayment").val();
+            var document_titular = $("#txtDocumentoPayment").val();
             //var p = document.createElement("p");
 
             var errors = [];
@@ -661,7 +660,7 @@
             if (mes == "0") { errors.push('Debes seleccionar el Mes de vencimiento de tu tarjeta.'); }
             if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
             if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
-            if (document == "" || document == null) { errors.push('Debe ingresar un número de documento.'); }
+            if (document_titular == "" || document_titular == null) { errors.push('Debe ingresar un número de documento.'); }
 
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
@@ -727,12 +726,8 @@
         }
 
         function showListaPedido() {
-
-            //window.location.href = '/Lista/Pedido';
             $("#loading").fadeIn("slow");
             parent.parentHrefPopup();
-            $("#loading").fadeOut("slow");
-            //return false;
         }
 
         function registerPayment() {
@@ -756,16 +751,17 @@
 
         function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                     tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
-                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia) {
+                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago) {
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("LiquidarPedido", "Pedido")',
-                data: { tipo_des: tipo_des, agencia: agencia, destino: destino, direccion_agencia: agencia_direccion, direccion: direccion, referencia: referencia, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
+                data: { tipo_des: tipo_des, agencia: agencia, destino: destino, direccion_agencia: agencia_direccion, direccion: direccion, referencia: referencia, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, _formaPago: formaPago },
                 success: function (data) {
                     waitingDialog.hide();
                     if ((data.Success).toString() == "true") {
-                        debugger;
-                        listProducts = data.Products;
+                        debugger
+                        var numero_orden = data.Message;
+                        listProducts = data.Products; 
                         enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                   tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, "milladeleon.elba@testuser.com", numerocelular, data.Message, listProducts);
                     } else {
@@ -788,13 +784,11 @@
                 type: "POST",
                 url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
                 data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts },
-                success: function (data) {
-                    debugger;
-                    if ((data.Success).toString() == "true") {
-                        //toastr.success(data.Message, "Proceso Exitoso!!");
+                success: function (data) { 
+                    if ((data.Success).toString() == "true") { 
                         responsePaymentProcessed(data.Status, data.Data.id, data.Message);
                     } else {
-                        toastr.error(data.Message, 'Error');
+                        toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
                         $("#loading").fadeOut("slow");
                     }
                 },
@@ -816,7 +810,6 @@
         function responsePaymentProcessed(status, idpayment, message) {
             document.getElementById("frmRequestPayment").style.visibility = "hidden";
             document.getElementById("frmResponsePayment").style.visibility = "visible";
-            debugger
             switch (status) {
                 case "1":
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
@@ -872,10 +865,15 @@
                     var liq_provincia = document.getElementById("liq_provincia").innerHTML;
 
                     var direccion = document.getElementById("direccion").innerHTML;
-
-                    proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
-                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia);
+                    debugger;
+                    if (data.Status = 0 || data.LastFourDigits != null) {
+                        proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
+                                   tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
+                                   direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, "MercadoPago");
+                    } else {
+                        toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
+                        $("#loading").fadeOut("slow");
+                    }  
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log('Error interno en el servidor');
