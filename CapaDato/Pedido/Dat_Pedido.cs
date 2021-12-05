@@ -463,7 +463,7 @@ namespace CapaDato.Pedido
                                                decimal _varpercepcion, Int32 _estado, string _ped_id = "", string _liq = "", Int32 _liq_dir = 0,
                                                Int32 _PagPos = 0, string _PagoPostarjeta = "", string _PagoNumConsignacion = "", decimal _PagoTotal = 0,
                                                DataTable dtpago = null, Boolean _pago_credito = false, Decimal _porc_percepcion = 0, List<Order_Dtl_Temp>
-                                                order_dtl_temp = null, string strTipoPago = "N")
+                                                order_dtl_temp = null, string strTipoPago = "N", string _formaPago = "")
         {
             string[] resultDoc = new string[2];
             string sqlquery = "USP_Insertar_Modifica_Liquidacion";
@@ -569,7 +569,8 @@ namespace CapaDato.Pedido
                 cmd.Parameters.AddWithValue("@Liq_Direccion", direccion);
                 cmd.Parameters.AddWithValue("@Liq_Referencia", referencia);
 
-
+                /*Mercado pago*/
+                cmd.Parameters.AddWithValue("@mercadopago", _formaPago);
 
                 //da = new SqlDataAdapter(cmd);
                 //da.Fill(ds);

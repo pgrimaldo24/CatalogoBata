@@ -269,10 +269,14 @@ namespace CapaPresentacion.Controllers
             }
             return validaartcatag;
         }
-        //procesoenvio catalogo(nropedido)
-        //{
-        //    ActualizarManifiesto la base de pagos de catalogo
-        //}
+    
+        private string LiquidarPedidoMercadoPago()
+        {
+
+
+            return "";
+        }
+
         public ActionResult LiquidarPedido(string tipo_des,string agencia,string destino,string direccion_agencia,string direccion,string referencia,
                                            string liq_tipo_prov,string liq_provincia, decimal _usu = 0, 
                                            decimal _idCust = 0, string _reference = "", decimal _discCommPctg = 0,
@@ -280,9 +284,11 @@ namespace CapaPresentacion.Controllers
                                            decimal _varpercepcion = 0, Int32 _estado = 1, string _ped_id = "", string _liq = "", Int32 _liq_dir = 0,
                                            Int32 _PagPos = 0, string _PagoPostarjeta = "", string _PagoNumConsignacion = "", decimal _PagoTotal = 0,
                                            /*DataTable dtpago = null*/ List<Ent_Documents_Trans> ListPago=null, Boolean _pago_credito = false, Decimal _porc_percepcion = 0, List<Order_Dtl_Temp>
-                                           order_dtl_temp = null, string strTipoPago = "N")
+                                           order_dtl_temp = null, string strTipoPago = "N", string _formaPago = "")
         {
 
+
+            var oJRespuesta = new JsonResponse();
             string[] noOrder;
             Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
             Ent_Persona cust = (Ent_Persona)Session[_session_customer];
@@ -312,13 +318,14 @@ namespace CapaPresentacion.Controllers
                     talla = item._size
                 });
             }
-            Ent_Liquidacion liq = (Ent_Liquidacion)Session[_session_lnfo_liquidacion];
+             
             /*Armamos los documentos de pago (nota de credito) utilizados en la liquidacion*/
             DataTable dtpago = new DataTable();
             dtpago.Columns.Add("Liq_Id", typeof(string));
             dtpago.Columns.Add("Doc_Tra_Id", typeof(string));
             dtpago.Columns.Add("Monto", typeof(Double));
 
+            
             if (Session[_session_notas_persona] == null)
             {
                 List<Ent_Pago_NCredito> _listNC = new List<Ent_Pago_NCredito>();
@@ -328,30 +335,57 @@ namespace CapaPresentacion.Controllers
             listNC = (List<Ent_Pago_NCredito>)Session[_session_notas_persona];
 
 
-            if (listNC != null) { 
+            if (listNC != null)
+            {
 
-                foreach (Ent_Pago_NCredito dTx in listNC.Where(n=>n.Consumido==true).ToList())
+                foreach (Ent_Pago_NCredito dTx in listNC.Where(n => n.Consumido == true).ToList())
                 {
                     dtpago.Rows.Add("", dTx.Rhv_return_nro, dTx.Importe);
                 }
             }
 
-            /*fin de los documentos de pago*/
-            if (string.IsNullOrEmpty(liq.liq_Id))
+            if (_formaPago.Equals("MercadoPago"))
             {
-                noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des,agencia,destino,direccion_agencia,direccion,referencia,
-                                                     liq_tipo_prov,liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0, string.Empty, string.Empty, order, header._percepcion,
-                                                    _estado, _ped_id, _liq, _liq_dir, _PagPos, _PagoPostarjeta, _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito,
-                                                    cust._percepcion, order_dtl_temp, cust._vartipopago);
+                var liqMp = new Ent_Liquidacion();
+                liqMp = (Ent_Liquidacion)Session[_session_lnfo_liquidacion];
+
+                if (string.IsNullOrEmpty(liqMp.liq_Id))
+                {
+                    //insert
+                    noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des, agencia, destino, direccion_agencia, direccion, referencia,
+                    liq_tipo_prov, liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0,
+                    string.Empty, string.Empty, order, header._percepcion, _estado, _ped_id, _liq, _liq_dir, _PagPos, _PagoPostarjeta,
+                    _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito, cust._percepcion, order_dtl_temp, cust._vartipopago, _formaPago);
+                }
+                else
+                {
+                    //update
+                    noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des, agencia, destino, direccion_agencia, direccion, referencia,
+                    liq_tipo_prov, liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0, 
+                    string.Empty, string.Empty, order, header._percepcion, 2, liqMp.ped_Id, liqMp.liq_Id, _liq_dir, _PagPos, _PagoPostarjeta, 
+                    _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito, cust._percepcion, order_dtl_temp, cust._vartipopago, _formaPago);
+                }
             }
             else
             {
-                noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des,agencia,destino, direccion_agencia,direccion, referencia,
-                                           liq_tipo_prov,liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0, string.Empty, string.Empty, order, header._percepcion,
-                                                    2, liq.ped_Id, liq.liq_Id, _liq_dir, _PagPos, _PagoPostarjeta, _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito,
-                                                    cust._percepcion, order_dtl_temp, cust._vartipopago);
+                Ent_Liquidacion liq = (Ent_Liquidacion)Session[_session_lnfo_liquidacion];
+                /*fin de los documentos de pago*/
+                if (string.IsNullOrEmpty(liq.liq_Id))
+                {
+                    noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des, agencia, destino, direccion_agencia, direccion, referencia,
+                    liq_tipo_prov, liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0,
+                    string.Empty, string.Empty, order, header._percepcion, _estado, _ped_id, _liq, _liq_dir, _PagPos, _PagoPostarjeta, 
+                    _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito, cust._percepcion, order_dtl_temp, cust._vartipopago, _formaPago);
+                }
+                else
+                {
+                    noOrder = datPedido.Gua_Mod_Liquidacion(tipo_des, agencia, destino, direccion_agencia, direccion, referencia,
+                    liq_tipo_prov, liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0,
+                    string.Empty, string.Empty, order, header._percepcion, 2, liq.ped_Id, liq.liq_Id, _liq_dir, _PagPos, _PagoPostarjeta, 
+                    _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito, cust._percepcion, order_dtl_temp, cust._vartipopago, _formaPago);
+                }
             }
-            var oJRespuesta = new JsonResponse();
+             
 
             if ((noOrder[0]).ToString() != "-1")
             {
@@ -359,24 +393,21 @@ namespace CapaPresentacion.Controllers
                 oJRespuesta.Data = true;
                 oJRespuesta.Success = true;
                 oJRespuesta.Products = order;
-                //var API=API.SERVICIO(
                 GetCRLiquidacion((noOrder[0]).ToString());
-
-
             }
-            else {
+            else
+            {
 
                 oJRespuesta.Message = (noOrder[1]).ToString();
                 oJRespuesta.Data = false;
                 oJRespuesta.Success = false;
-                
+
             }
+
             return Json(oJRespuesta, JsonRequestBehavior.AllowGet);
+            
         }
-
-
-
-
+           
         private void GetCRLiquidacion(string liq, bool download = false)
         {
             
