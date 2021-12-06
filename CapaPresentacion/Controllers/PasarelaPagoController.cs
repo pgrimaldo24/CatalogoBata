@@ -268,7 +268,7 @@ namespace CapaPresentacion.Controllers
                 //jsonResponse.Status = "2"; //response.response.Status.ToString();
                 //jsonResponse.Message = "Pago Aceptado correctamente"; //response.response.Message.ToString();
                 jsonResponse.Status = response.response.Status.ToString();
-                jsonResponse.Message =response.response.Message.ToString();
+                jsonResponse.Message = response.response.Message.ToString();
                 jsonResponse.Success = true;
                 jsonResponse.Data = payment;
 
