@@ -1468,80 +1468,80 @@ else
 
         $("#btnliquidar").click(function () {
 
-            /*validar datos adicionales para el envio de productos*/
-            var tipo_des = $('#dwdespacho').val();
-            if (tipo_des == '0') {
-                toastr.error('Seleccione el tipo de despacho', 'Mensaje');
-                $('#dwdespacho').focus();
-                return;
-            }
-            /*si la condicion es lima-callao entonces esta activa las casillas de la condicion*/
-            if (dataArray_cliente.bas_tipo_dis == 'LC') {
-                var direccion = $('#txtdireccion').val().trim().trimLeft().trimRight();
-                var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
+            ///*validar datos adicionales para el envio de productos*/
+            //var tipo_des = $('#dwdespacho').val();
+            //if (tipo_des == '0') {
+            //    toastr.error('Seleccione el tipo de despacho', 'Mensaje');
+            //    $('#dwdespacho').focus();
+            //    return;
+            //}
+            ///*si la condicion es lima-callao entonces esta activa las casillas de la condicion*/
+            //if (dataArray_cliente.bas_tipo_dis == 'LC') {
+            //    var direccion = $('#txtdireccion').val().trim().trimLeft().trimRight();
+            //    var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
 
-                if (direccion.length == 0) {
-                    $("#chkdireccion").prop("checked", true);
-                    $('#txtdireccion').prop("disabled", false);
-                    toastr.error('Ingrese la direccion del despacho', 'Mensaje');
-                    $('#txtdireccion').focus();
-                    return;
-                }
+            //    if (direccion.length == 0) {
+            //        $("#chkdireccion").prop("checked", true);
+            //        $('#txtdireccion').prop("disabled", false);
+            //        toastr.error('Ingrese la direccion del despacho', 'Mensaje');
+            //        $('#txtdireccion').focus();
+            //        return;
+            //    }
 
-                if (referencia.length == 0) {
-                    $("#chkreferencia").prop("checked", true);
-                    $('#txtreferencia').prop("disabled", false);
-                    toastr.error('Ingrese la referencia del despacho', 'Mensaje');
-                    $('#txtreferencia').focus();
-                    return;
-                }
-            } else {
-                var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
-                var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
-                var agencia_direccion = $('#txtagencia_dir').val().trim().trimLeft().trimRight();
+            //    if (referencia.length == 0) {
+            //        $("#chkreferencia").prop("checked", true);
+            //        $('#txtreferencia').prop("disabled", false);
+            //        toastr.error('Ingrese la referencia del despacho', 'Mensaje');
+            //        $('#txtreferencia').focus();
+            //        return;
+            //    }
+            //} else {
+            //    var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
+            //    var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
+            //    var agencia_direccion = $('#txtagencia_dir').val().trim().trimLeft().trimRight();
 
-                if (agencia.length == 0) {
-                    $("#chkagencia").prop("checked", true);
-                    $('#txtagencia').prop("disabled", false);
-                    toastr.error('Ingrese la Agencia del despacho', 'Mensaje');
-                    $('#txtagencia').focus();
-                    return;
-                }
+            //    if (agencia.length == 0) {
+            //        $("#chkagencia").prop("checked", true);
+            //        $('#txtagencia').prop("disabled", false);
+            //        toastr.error('Ingrese la Agencia del despacho', 'Mensaje');
+            //        $('#txtagencia').focus();
+            //        return;
+            //    }
 
-                if (destino.length == 0) {
-                    $("#chkdestino").prop("checked", true);
-                    $('#txtdestino').prop("disabled", false);
-                    toastr.error('Ingrese el destino del despacho', 'Mensaje');
-                    $('#txtdestino').focus();
-                    return;
-                }
+            //    if (destino.length == 0) {
+            //        $("#chkdestino").prop("checked", true);
+            //        $('#txtdestino').prop("disabled", false);
+            //        toastr.error('Ingrese el destino del despacho', 'Mensaje');
+            //        $('#txtdestino').focus();
+            //        return;
+            //    }
 
-                //if (agencia_direccion.length == 0) {
-                //    $("#chkagencia_dir").prop("checked", true);
-                //    $('#txtagencia_dir').prop("disabled", false);
-                //    toastr.error('Ingrese la direccion de la agencia del despacho', 'Mensaje');
-                //    $('#txtagencia_dir').focus();
-                //    return;
-                //}
-            }
+            //    //if (agencia_direccion.length == 0) {
+            //    //    $("#chkagencia_dir").prop("checked", true);
+            //    //    $('#txtagencia_dir').prop("disabled", false);
+            //    //    toastr.error('Ingrese la direccion de la agencia del despacho', 'Mensaje');
+            //    //    $('#txtagencia_dir').focus();
+            //    //    return;
+            //    //}
+            //}
 
-            var prov = '';
-            var lider_bas_tipo_dis = '';
-            if (tipo_des == '01') {
-                prov = dataArray_cliente.bas_provincia;
-                if (prov.length == 0) {
-                    toastr.error('El cliente no tiene provincia, por favor actualize su provincia', 'Mensaje');
-                    return;
-                }
-            }
-            else {
-                prov = dataArray_cliente.lider_provincia;
-                if (prov.length == 0) {
-                    toastr.error('El Lider del cliente no tiene provincia, por favor actualize la provincia del lider', 'Mensaje');
-                    return;
-                }
-            }
-
+            //var prov = '';
+            //var lider_bas_tipo_dis = '';
+            //if (tipo_des == '01') {
+            //    prov = dataArray_cliente.bas_provincia;
+            //    if (prov.length == 0) {
+            //        toastr.error('El cliente no tiene provincia, por favor actualize su provincia', 'Mensaje');
+            //        return;
+            //    }
+            //}
+            //else {
+            //    prov = dataArray_cliente.lider_provincia;
+            //    if (prov.length == 0) {
+            //        toastr.error('El Lider del cliente no tiene provincia, por favor actualize la provincia del lider', 'Mensaje');
+            //        return;
+            //    }
+            //}
+            if (!getValidarInformacionCliente()) return;
             GenerarPedido();
 
 
@@ -3966,7 +3966,7 @@ else
 
         function envioInformacionUsuario() {
             debugger
-           if (!getDetallePedido()) {  
+           //if (!getDetallePedido()) {  
                 var numerodocumento = document.getElementById("numerodocumento").innerHTML;
                 var totalpago = document.getElementById("totalpago").innerHTML;
                 var tipo_des = $('#dwdespacho').val(); 
@@ -3989,7 +3989,7 @@ else
                 if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" } 
                 $("#frameMercadoPago").attr("src", "../PasarelaPago/PasarelaPago?numerodocumento=" + numerodocumento + "&totalpago= " + totalpago + " &tipo_des= " + tipo_des + " &referencia= " + referencia + " &agencia= " + agencia + " &destino=" + destino + " &agencia_direccion=" + agencia_direccion + "&liq_tipo_prov=" + liq_tipo_prov + "&liq_provincia=" + liq_provincia );
                 $("#mdlMercadoPago").modal({ backdrop: 'static', keyboard: false });
-            }  
+            //}  
         }
          
           

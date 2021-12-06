@@ -530,11 +530,17 @@ namespace CapaDato.Pedido
                 cmd.Parameters.AddWithValue("@strTipoPago", strTipoPago);
 
                 cmd.Parameters.AddWithValue("@Estado", _estado);
-                cmd.Parameters.AddWithValue("@Ped_Id", _ped_id);
+                //cmd.Parameters.AddWithValue("@Ped_Id", _ped_id);
+                cmd.Parameters.Add("@Ped_Id", SqlDbType.VarChar, 12);
+                cmd.Parameters["@Ped_Id"].Value = _ped_id;
+                cmd.Parameters["@Ped_Id"].Direction = ParameterDirection.InputOutput;
+
                 //cmd.Parameters.AddWithValue("@LiqId", _liq);
                 cmd.Parameters.Add("@LiqId", SqlDbType.VarChar, 12);
                 cmd.Parameters["@LiqId"].Value = _liq;
                 cmd.Parameters["@LiqId"].Direction = ParameterDirection.InputOutput;
+
+
                 cmd.Parameters.AddWithValue("@Liq_BasId", _idCust);
                 cmd.Parameters.AddWithValue("@Liq_ComisionP", _discCommPctg);
                 cmd.Parameters.AddWithValue("@Liq_PercepcionM", _varpercepcion);
@@ -577,6 +583,7 @@ namespace CapaDato.Pedido
 
                 cmd.ExecuteNonQuery();
                 resultDoc[0] = cmd.Parameters["@LiqId"].Value.ToString();
+                resultDoc[1]= cmd.Parameters["@Ped_Id"].Value.ToString();
             }
             catch (Exception ex)
             {

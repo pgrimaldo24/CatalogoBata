@@ -10,6 +10,54 @@ namespace CapaDato.Financiera
 {
     public class Dat_Pago
     {
+
+        public string registra_pago_mercado_pago(string liq_id,string num_consignacion,decimal total,decimal usu,string estado_mercado_pago)
+        {
+            string sqlquery = "USP_GENERAR_CRUCE_PAGO_MERCADO_PAGO";
+            string mensaje = "";
+            try
+            {
+                using (SqlConnection cn=new SqlConnection(Ent_Conexion.conexion))
+                {
+                    try
+                    {
+                        if (cn.State == 0) cn.Open();
+                        using (SqlCommand cmd = new SqlCommand(sqlquery, cn))
+                        {
+                            cmd.CommandTimeout = 0;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@liq_id",liq_id);
+                            cmd.Parameters.AddWithValue("@Pago_numconsigacion", num_consignacion);
+                            cmd.Parameters.AddWithValue("@Pago_Total", total);
+                            cmd.Parameters.AddWithValue("@Liq_Usu", usu);
+                            cmd.Parameters.AddWithValue("@estado_mercado_pago", estado_mercado_pago);
+
+                            cmd.Parameters.Add("@str_mensaje", SqlDbType.VarChar, 1000);
+                            cmd.Parameters["@str_mensaje"].Direction = ParameterDirection.Output;                            
+
+                            cmd.ExecuteNonQuery();
+
+                            mensaje = cmd.Parameters["@str_mensaje"].Value.ToString();
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        if (cn != null)
+                            if (cn.State == ConnectionState.Open) cn.Close();
+                        throw exc;
+                    }
+                    if (cn != null)
+                        if (cn.State == ConnectionState.Open) cn.Close();
+                }
+            }
+            catch (Exception exc)
+            {
+
+                throw exc;
+            }
+            return mensaje;
+        }
+
         public bool ValOperacion(Ent_Pago ent)
         {
             string sqlquery = "USP_Existe_OP";

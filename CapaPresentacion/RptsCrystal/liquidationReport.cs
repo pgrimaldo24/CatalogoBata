@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CapaPresentacion.RptsCrystal.Rep {
+namespace CapaPresentacion.RptsCrystal {
     using System;
     using System.ComponentModel;
     using CrystalDecisions.Shared;
@@ -41,7 +41,7 @@ namespace CapaPresentacion.RptsCrystal.Rep {
         
         public override string FullResourceName {
             get {
-                return "CapaPresentacion.RptsCrystal.Rep.liquidationReport.rpt";
+                return "CapaPresentacion.RptsCrystal.liquidationReport.rpt";
             }
             set {
                 // Do nothing

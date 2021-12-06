@@ -1,4 +1,5 @@
-﻿using CapaDato.PasarelaPago;
+﻿using CapaDato.Financiera;
+using CapaDato.PasarelaPago;
 using CapaEntidad.Control;
 using CapaEntidad.Financiera;
 using CapaEntidad.Menu;
@@ -27,7 +28,7 @@ namespace CapaPresentacion.Controllers
     {
         // GET: ProcessPayment
         Dat_PasarelaPago pasarelaPagoDao = new Dat_PasarelaPago();
-        public ActionResult PasarelaPago(string numerodocumento, decimal totalpago, string tipo_des, string referencia, 
+        public ActionResult PasarelaPago(string numerodocumento, decimal totalpago, string tipo_des, string referencia,
             string agencia, string destino, string agencia_direccion, string liq_tipo_prov, string liq_provincia)
         {
             //if (_usuario.Equals(null)) { return RedirectToAction("Login", "Control", new { returnUrl = return_view }); }
@@ -76,14 +77,43 @@ namespace CapaPresentacion.Controllers
             //} 
         }
 
-        
-           
-        [HttpPost] 
+
+
+        [HttpPost]
         public ActionResult SetCardToken(string token_public, string numeroTarjeta, string codigoSeguridad, int fechaExpiracionMes, int fechaExpiracionAnio, string nombreCompletoTitular, string numeroDocumento, string tipoDocumento)
         {
             try
             {
-                var _restServicesApi = new RestServicesApi();  
+                //var _restServicesApi = new RestServicesApi();
+
+                Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+
+
+                var _restServicesApi = new RestServicesApi();
+
+                #region<Obteniendo el token>
+                var auth = new Authetication
+                {
+                    password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
+                    username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
+                    usuarioWeb = _usuario.usu_login,
+                };
+                var response_token = _restServicesApi.Authentication<Authetication, ResponseDto>(
+                    auth, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoAuth], null, "POST", "Auth");
+
+                if (response_token != null)
+                {
+                    if (!string.IsNullOrEmpty(response_token.response.Data))
+                    {
+                        Settings.ACCESS_TOKEN_API_CATALOGO_PAGO = response_token.response.Data;
+                    }
+                }
+                else
+                {
+                    return Json(new { estado = "-1", Message = "Error de comunicación con el método SetCardToken" });
+                }
+                #endregion
+
                 var cardToken = new CardToken();
                 cardToken.cardholder = new CardHolderDto();
                 cardToken.cardholder.identification = new IndetificationDto();
@@ -95,27 +125,50 @@ namespace CapaPresentacion.Controllers
                 cardToken.cardholder.name = nombreCompletoTitular;
                 cardToken.cardholder.identification.number = numeroDocumento;
                 cardToken.cardholder.identification.type = tipoDocumento;
-                
+
                 var response = _restServicesApi.PostInvoque<CardToken, CardTokenResponseDto>(cardToken,
-                    ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoProccessCardToken], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, "POST", "CardToken"); 
-                return Json(new { Status = response.response.Status, LastFourDigits = response.response.Data.last_four_digits, Message = response.response.Message, data = response.response.Data.id }, JsonRequestBehavior.AllowGet);
+                    ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoProccessCardToken], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, "POST", "CardToken");
+
+                if (response == null)
+                {
+                    return Json(new { estado = "-1", Message = "Error de comunicación con el método del PostInvoque." });
+                }
+                else
+                {
+                    if (response.response.Data == null)
+                    {
+                        return Json(new { Status = response.response.Status, Message = "La tarjeta es inválida, verifica tus datos." }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+
+                        if (response.response.Data.last_four_digits == null)
+                        {
+                            return Json(new { Status = response.response.Status, LastFourDigits = response.response.Data.last_four_digits, Message = "La tarjeta es inválida, verifica tus datos.", data = response.response.Data.id }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new { Status = response.response.Status, LastFourDigits = response.response.Data.last_four_digits, Message = response.response.Message, data = response.response.Data.id }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
-                return Json(new { estado = "-1", mensaje = "Error de comunicación con el método SetCardToken; " + ex.Message });
+                return Json(new { estado = "-1", Message = "Error de comunicación con el método SetCardToken; " + ex.Message });
             }
-          
+
         }
 
         public Ent_Persona GetInformacionUsuario(string dni)
         {
             try
-            { 
+            {
                 var info = pasarelaPagoDao.GetInformacionUsuario(dni);
                 return info;
             }
             catch (Exception e)
-            { 
+            {
                 throw e;
             }
         }
@@ -124,23 +177,24 @@ namespace CapaPresentacion.Controllers
         public ActionResult GetMasterStatus(string key)
         {
             try
-            { 
-               var response = pasarelaPagoDao.ListaEstadoMercadoPago(key);
-               return Json(new { data = response }, JsonRequestBehavior.AllowGet);
+            {
+                var response = pasarelaPagoDao.ListaEstadoMercadoPago(key);
+                return Json(new { data = response }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
-            { 
+            {
                 throw e;
             }
         }
 
         [HttpPost]
         public ActionResult PostProccessPayment(string nombreTitular, string apellidoTitular, string zipCode, string street_name, string state_name, string city_name, int installments, string tipoDocumento,
-            string numeroDocumento, string payment_method_id, string tokenCard, decimal importeTotal, string emailCliente, string numerocelular, string external_reference , List<Ent_Order_Dtl> listProducts)
+            string numeroDocumento, string payment_method_id, string tokenCard, decimal importeTotal, string emailCliente, string numerocelular, string external_reference, List<Ent_Order_Dtl> listProducts)
         {
             var jsonResponse = new JsonResponse();
+            string mensaje_premio = "";
             try
-            { 
+            {
                 var _restServicesApi = new RestServicesApi();
                 var request = new PaymentRequest();
                 var metadaData = new MetadataDto();
@@ -156,7 +210,7 @@ namespace CapaPresentacion.Controllers
                 AdditionalInfoDto item;
                 request.additional_info.payer.phone = new PhoneDto();
                 request.metadata = new MetadataDto();
-                
+
                 foreach (var products in listProducts)
                 {
                     item = new AdditionalInfoDto
@@ -211,22 +265,32 @@ namespace CapaPresentacion.Controllers
                     status = response.response.Data.status
                 };
 
+                //jsonResponse.Status = "2"; //response.response.Status.ToString();
+                //jsonResponse.Message = "Pago Aceptado correctamente"; //response.response.Message.ToString();
                 jsonResponse.Status = response.response.Status.ToString();
-                jsonResponse.Message = response.response.Message.ToString();
+                jsonResponse.Message =response.response.Message.ToString();
                 jsonResponse.Success = true;
                 jsonResponse.Data = payment;
+
+
+                #region<Si el pago se realizo correctamente entonces cambiamos los estados>  
+                Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+                Dat_Pago cruce_pago = new Dat_Pago();
+                mensaje_premio = cruce_pago.registra_pago_mercado_pago(external_reference, payment.id.ToString(), importeTotal, _usuario.usu_id, jsonResponse.Status);
+                #endregion
+
             }
             catch (Exception e)
             {
                 jsonResponse.Status = "0";
                 jsonResponse.Message = e.Message;
                 jsonResponse.Success = false;
-                return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message , Success = jsonResponse.Success }, JsonRequestBehavior.AllowGet);
+                return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success , Data = jsonResponse.Data }, JsonRequestBehavior.AllowGet);
+            return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success, Data = jsonResponse.Data,Mensaje_Premio= mensaje_premio }, JsonRequestBehavior.AllowGet);
         }
- 
+
 
         #region modal card information
         public ActionResult CardInformationCvv()
@@ -234,7 +298,7 @@ namespace CapaPresentacion.Controllers
             return View();
         }
         #endregion
-        
+
         #region method private 
         private bool GetValidarPermisosXRol()
         {
@@ -244,7 +308,7 @@ namespace CapaPresentacion.Controllers
             valida_rol = valida_controller.AccesoMenu(menu, this);
             return valida_rol;
         }
-         
+
         #endregion
 
     }

@@ -356,6 +356,15 @@ namespace CapaPresentacion.Controllers
                     liq_tipo_prov, liq_provincia, _usuario.usu_id, Convert.ToDecimal(cust.Bas_id), string.Empty, cust._commission, 0,
                     string.Empty, string.Empty, order, header._percepcion, _estado, _ped_id, _liq, _liq_dir, _PagPos, _PagoPostarjeta,
                     _PagoNumConsignacion, _PagoTotal, dtpago, _pago_credito, cust._percepcion, order_dtl_temp, cust._vartipopago, _formaPago);
+
+                    /*en este caso para que grabe el mismo numero de pedido que se genero*/
+                    if ((noOrder[0]).ToString() != "-1")
+                    {
+                        liqMp.liq_Id = (noOrder[0]).ToString();
+                        liqMp.ped_Id = (noOrder[1]).ToString();
+                        Session[_session_lnfo_liquidacion] = liqMp;
+                    }
+
                 }
                 else
                 {

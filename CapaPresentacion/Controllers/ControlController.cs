@@ -98,20 +98,25 @@ namespace CapaPresentacion.Controllers
 
                 if (return_action.Length == 0)
                 {
-                    var _restServicesApi = new RestServicesApi();
-                    var auth = new Authetication
-                    {
-                        password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
-                        username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
-                        usuarioWeb = model.Usuario
-                    };
-                    var response = _restServicesApi.Authentication<Authetication, ResponseDto>(
-                        auth, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoAuth], null, "POST", "Auth");
-                    if (!string.IsNullOrEmpty(response.response.Data))
-                    {
-                        Settings.ACCESS_TOKEN_API_CATALOGO_PAGO = response.response.Data;
-                    }
+                    //var _restServicesApi = new RestServicesApi();
                     
+                    //var auth = new Authetication
+                    //{
+                    //    password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
+                    //    username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
+                    //    usuarioWeb = model.Usuario
+                    //};
+                    //var response = _restServicesApi.Authentication<Authetication, ResponseDto>(
+                    //    auth, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoAuth], null, "POST", "Auth");
+
+                    //if (response != null)
+                    //{
+                    //    if (!string.IsNullOrEmpty(response.response.Data))
+                    //    {
+                    //        Settings.ACCESS_TOKEN_API_CATALOGO_PAGO = response.response.Data;
+                    //    }
+                    //}
+                                        
                     return RedirectToAction("Index", "Home");
                 }
                 else

@@ -20,7 +20,7 @@ namespace CapaPresentacion.Api
             {
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
                 var request = WebRequest.Create(detailUrlKey) as HttpWebRequest;
-                request.Method = typeRequest; 
+                request.Method = typeRequest;                
                 ASCIIEncoding encoder = new ASCIIEncoding();
 
                 request.Headers = GetHeaders(false ? ParameterHeaderOsb(obj, token) : ParameterHeader(obj, token));

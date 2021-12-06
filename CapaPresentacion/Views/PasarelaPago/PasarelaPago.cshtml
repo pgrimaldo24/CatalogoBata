@@ -149,7 +149,7 @@
     <div class="loader" id="loading"></div>
 
     <br />
-    <div class="row" id="frmRequestPayment">
+    <div class="row" id="frmRequestPayment" style="visibility:visible">
         <div class="col-md-5">
             <div class="form-group" style="margin-left:20px; margin-right:20px;">
                 <label for="dwFormaPago">Seleccione la forma de pago:&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
@@ -375,7 +375,7 @@
                             </button>*@
                         </div> 
                     </div> 
-                    <div id="cardcvv" style="margin-left:70px;">
+                    <div id="cardcvv" hidden="hidden" style="margin-left:70px;">
                         <img class="imgstyle"
                              src="~/Content/MercadoPago/img/informativo.png"
                              alt="Alternate Text"
@@ -402,7 +402,7 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-4 product-detail">
                         <div class="form-group"
-                             style="margin-top:-205%;">
+                             style="margin-top:5%;">
                             <label style="margin-left:40px; font-size:25px;"><strong>Detalle del Pago</strong></label><br />
                             <img src=""
                                  height='80' class='credit-card-image' id='img-respuesta-api' 
@@ -410,12 +410,13 @@
                             <div style="margin-left:70px;">
                                 <p><b>N° de Pago: </b><span id="payment-id"></span></p>
                                 <p><b>Estado del pago: </b><span id="payment-status"></span></p> 
+                                <p><b>N° de Pedido: </b><span id="nropedido"></span></p> 
                             </div>  
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12"
-                     style="margin-top:-950px; padding:23px;">
+                <div class="col-md-12" id="div_reporte"
+                     style="margin-top:0px; padding:23px;">
                     <label style="margin-left:15px; font-size:25px;"><strong>Reporte final</strong></label><br />
                     <div id="ifrReporte" 
                          class="well" 
@@ -429,7 +430,8 @@
                                 style="zoom:90%; 
                                 width: 100%; 
                                 height: calc(100vh - 100px); 
-                                margin-bottom:0px"> 
+                                margin-bottom:0px;
+                                margin-top:0px"> 
                         </iframe>
                     </div>
                 </div>
@@ -492,7 +494,9 @@
             getInformationCvv(2);
             getDayMonthCard();
             changeCardPayment("0");
-            document.getElementById("frmResponsePayment").style.visibility = "hidden";
+            $("#frmRequestPayment").show();
+            $("#frmResponsePayment").hide();
+            //document.getElementById("frmResponsePayment").style.visibility = "hidden";
         });
 
         $('#horizontal_logo').click(function () {
@@ -639,6 +643,7 @@
                 $("#txtApellidos_titular").prop("disabled", false);
             }
         }
+      
 
         function getPayValidate() {
             var cardholder = $("#txtnombre_titular").val();
@@ -661,6 +666,15 @@
             if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
             if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
             if (document_titular == "" || document_titular == null) { errors.push('Debe ingresar un número de documento.'); }
+            
+
+            /*borrar elementos*/
+            var lis = document.querySelectorAll('#lista-error li');
+            for (var i = 0; li = lis[i]; i++) {
+                li.parentNode.removeChild(li);
+            }
+
+           
 
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
@@ -668,6 +682,8 @@
                 li.appendChild(document.createTextNode(content));
                 document.getElementById("lista-error").appendChild(li);
             }
+
+          
 
             if (errors.length > 0) {
                 $("#loading").fadeOut("slow");
@@ -786,7 +802,10 @@
                 data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts },
                 success: function (data) { 
                     if ((data.Success).toString() == "true") { 
-                        responsePaymentProcessed(data.Status, data.Data.id, data.Message);
+                        responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);                        
+                        if (data.Mensaje_Premio != '') {
+                            toastr.success(data.Mensaje_Premio);
+                        }
                     } else {
                         toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
                         $("#loading").fadeOut("slow");
@@ -807,27 +826,39 @@
         }
 
         //Reporte
-        function responsePaymentProcessed(status, idpayment, message) {
-            document.getElementById("frmRequestPayment").style.visibility = "hidden";
-            document.getElementById("frmResponsePayment").style.visibility = "visible";
+        function responsePaymentProcessed(status, idpayment, message,nropedido) {
+            //document.getElementById("frmRequestPayment").style.visibility = "hidden";
+            $("#frmRequestPayment").hide();
+            //document.getElementById("frmResponsePayment").style.visibility = "visible";
+            $("#frmResponsePayment").show();
+            $("#div_reporte").hide();
+            //div_reporte
+
+
             switch (status) {
                 case "1":
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
+                    document.getElementById('nropedido').innerHTML = nropedido;
+
+                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
                     $("#loading").fadeOut("slow");
                     break;
                 case "2":
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-success-api.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
-                    $("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                    document.getElementById('nropedido').innerHTML = nropedido;
+                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
                     $("#loading").fadeOut("slow");
                     break;
                 default:
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
+                    document.getElementById('nropedido').innerHTML = nropedido;
+                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
                     $("#loading").fadeOut("slow");
                     break;
 
@@ -871,7 +902,9 @@
                                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
                                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, "MercadoPago");
                     } else {
-                        toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
+
+                        //toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
+                        toastr.error(data.Message, 'Mensaje');
                         $("#loading").fadeOut("slow");
                     }  
                 },
