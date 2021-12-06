@@ -853,7 +853,7 @@
                         var numero_orden = data.Message;
                         listProducts = data.Products; 
                         enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, "milladeleon.elba@testuser.com", numerocelular, data.Message, listProducts, street_number);
+                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, data.Message, listProducts, street_number);
                     } else {
                         toastr.error(data.Message, "Error");
                         $("#loading").fadeOut("slow");
@@ -956,7 +956,7 @@
                     var city_name = document.getElementById("provincia").innerHTML;
                     var installments = $("#txtCuotas").val();
                     var street_number = $("#txtNumeroDireccion").val();
-                    debugger
+                    
                     var payment_method_id = tipo_pago;
                     var importeTotal = document.getElementById("total_amount").innerHTML;
                     var tokenCard = data.data;
