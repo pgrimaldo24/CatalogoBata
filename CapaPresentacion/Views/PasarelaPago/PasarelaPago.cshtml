@@ -545,7 +545,7 @@
             ];
 
             var comboMes = document.getElementById("mes");
-            debugger
+ 
             for (let i = 0; i < array.length; i++) {
                 var option = document.createElement("option");
                 option.setAttribute("value", i);
@@ -775,7 +775,7 @@
                 success: function (data) {
                     waitingDialog.hide();
                     if ((data.Success).toString() == "true") {
-                        debugger
+
                         var numero_orden = data.Message;
                         listProducts = data.Products; 
                         enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
@@ -896,7 +896,7 @@
                     var liq_provincia = document.getElementById("liq_provincia").innerHTML;
 
                     var direccion = document.getElementById("direccion").innerHTML;
-                    debugger;
+           
                     if (data.Status = 0 || data.LastFourDigits != null) {
                         proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
