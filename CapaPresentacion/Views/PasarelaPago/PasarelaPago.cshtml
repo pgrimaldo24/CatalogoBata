@@ -150,6 +150,22 @@
 
     <br />
     <div class="row" id="frmRequestPayment" style="visibility:visible">
+        <label for="tipopago" style="margin-left:35px;">Seleccione el tipo de Tarjeta<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
+        <div class="form-row" style="margin-left:123px;">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktc">
+                <label class="form-check-label" for="chkTc">
+                    Tarjeta de Crédito
+                </label>
+            </div>
+            <div class="form-check" style="margin-top:-27px; margin-left:200px;">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktd" checked>
+                <label class="form-check-label" for="chkTd">
+                    Tarjeta de Débito
+                </label>
+            </div>
+        </div>
+        <br />
         <div class="col-md-5">
             <div class="form-group" style="margin-left:20px; margin-right:20px;">
                 <label for="dwFormaPago">Seleccione la forma de pago:&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
@@ -158,11 +174,21 @@
                         name="dwFormaPagoCard"
                         style="width:200px;
                         margin-top:-30px;
-                        margin-left:200px;">
+                        margin-left:200px;" disabled="disabled">
                     <option value="0">Seleccione</option>
                     <option value="visa">Visa</option>
                     <option value="master">MasterCard</option>
-                    <option value="americanexpress">AmericanExpress</option> 
+                    <option value="amex">AmericanExpress</option> 
+                </select>  
+                <select class="form-control"
+                        id="dwFormaPagoCardDeb"
+                        name="dwFormaPagoCardDeb"
+                        style="width:200px;
+                        margin-top:-34px;
+                        margin-left:200px;" disabled="disabled">
+                    <option value="0">Seleccione</option>
+                    <option value="debvisa">Visa</option>
+                    <option value="debmaster">MasterCard</option> 
                 </select>  
             </div>
         </div>
@@ -179,15 +205,7 @@
                            id="txtNombres" 
                            style="font-size:1.3rem; max-width:100%;" 
                            disabled="disabled" />
-                </div>
-                <div class="form-group col-md-12">
-                    E-Mail de contacto
-                    <input type="text" 
-                           class="form-control" 
-                           id="txtEmail" 
-                           style="font-size:1.3rem; max-width:100%;" 
-                           disabled="disabled" />
-                </div>
+                </div> 
             </div> 
 
             <div class="form-row">
@@ -209,19 +227,9 @@
                                style="font-size:1.3rem;" disabled="disabled">
                     </div>
                 </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    Dirección
-                    <input type="text" 
-                           class="form-control" 
-                           id="txtubicacion" 
-                           style="font-size:1.3rem; max-width:100%;" 
-                           disabled="disabled" />
-                </div>
-            </div>
+            </div> 
         </form>
+        <br />
         <div class='line'></div>
         <div style="margin-left:20px; margin-right:20px; margin-top:8px;">
             <label style="margin-left:15px; font-size:20px;"><string>TOTAL A PAGAR</string></label>
@@ -319,7 +327,7 @@
                     <div class="col-md-4 mb-3"
                          style="margin-top:-54px;
                          margin-left:422px;
-                         ">
+                         " id="nrcuotas">
                         N° Cuotas 
                         <input type="text"
                                class="form-control"
@@ -334,19 +342,42 @@
                                     id="dwTipoDocumentoPayment"
                                     name="dwTipoDocumentoPayment" style="width:240px;">
                                 <option value="0">Seleccione</option>
-                                <option value="DNI">DNI</option>
-                                <option value="RUC">RUC</option>
-                                <option value="CARNETEXT">CARNET EXT</option>
+                                <option value="DNI">DNI</option> 
                             </select>
                         </div>
                         <div class="col-md-4 mb-3"
                              style="margin-top: -54px;
-                     margin-left:250px;">
+                            margin-left:250px;">
                             N° de documento
                             <input type="text"
                                    class="form-control"
                                    id="txtDocumentoPayment"
                                    style="font-size:1.3rem;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            E-Mail de contacto
+                            <input type="text"
+                                   class="form-control"
+                                   id="txtEmail"
+                                   style="font-size:1.3rem; max-width:100%;"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            Dirección
+                            <input type="text"
+                                   class="form-control"
+                                   id="txtubicacion"
+                                   style="font-size:1.3rem;"/>
+                        </div>
+                        <div class="col-md-12" style="margin-top:-54px;margin-left:290px;width:250px">
+                            N° dirección
+                            <input type="text"
+                                   class="form-control"
+                                   id="txtNumeroDireccion"
+                                   style="font-size:1.3rem;"/>
                         </div>
                     </div>
                     <div class="form-group" style="margin-top:15px;">
@@ -362,17 +393,7 @@
                                     margin-top:-63px;margin-left:142px;" 
                                     id="btnPago"
                                     onclick="registerPayment();"
-                                    >Pagar</button>
-                            
-                            @*<button type="button"
-                                    class="btn btn-success"
-                                    style="height:40px;
-                                    width:100%;
-                                    "
-                                    id="btnCerrarFrm"
-                                    onclick="registerPayment();">
-                                Pagar
-                            </button>*@
+                                    >Pagar</button> 
                         </div> 
                     </div> 
                     <div id="cardcvv" hidden="hidden" style="margin-left:70px;">
@@ -402,7 +423,7 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-4 product-detail">
                         <div class="form-group"
-                             style="margin-top:5%;">
+                             style="margin-top:0%;">
                             <label style="margin-left:40px; font-size:25px;"><strong>Detalle del Pago</strong></label><br />
                             <img src=""
                                  height='80' class='credit-card-image' id='img-respuesta-api' 
@@ -436,7 +457,7 @@
                     </div>
                 </div>
 
-                <div style="margin-left:25px;">
+                <div style="margin-left:25px; margin-left:25px;">
                     <button type="button"
                             class="btn btn-success" 
                             id="btnPedido"
@@ -487,8 +508,9 @@
         $(window).load(function () {
             $("#loading").fadeOut("slow");
         });
-
+        
         $(document).ready(function () {
+           
             var listProducts = [];
             getInfoByUser();
             getInformationCvv(2);
@@ -496,22 +518,62 @@
             changeCardPayment("0");
             $("#frmRequestPayment").show();
             $("#frmResponsePayment").hide();
+            $("#chktc").prop("checked", false);
+            $("#chktd").prop("checked", false);
             //document.getElementById("frmResponsePayment").style.visibility = "hidden";
+            document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
         });
+
+        var tipo_pago;
 
         $('#horizontal_logo').click(function () {
             getInformationCvv(1);
         })
 
         $('#dwFormaPagoCard').change(function () {
+            tipo_pago = $(this).val();
             changeCardPayment($(this).val());
         })
 
-        $('#dwTipoDocumentoPayment').change(function () {
+        $('#dwFormaPagoCardDeb').change(function () {
+            tipo_pago = $(this).val();
+            changeCardPayment($(this).val());
+        })
+
+        $('#dwTipoDocumentoPayment').change(function () { 
             if ($(this).val() == "0") { $("#txtDocumentoPayment").prop("disabled", true); }
             else { $("#txtDocumentoPayment").prop("disabled", false); }
         })
 
+
+        $('#chktc').click(function () {
+            //alert('tc')
+            getValidarTipoPago("tc");
+            document.getElementById("nrcuotas").style.visibility = "visible";
+        })
+
+        $('#chktd').click(function () {
+            //alert('td')
+            getValidarTipoPago("td");
+            document.getElementById("nrcuotas").style.visibility = "hidden";
+        })
+        
+        function getValidarTipoPago(valid) {
+            switch (valid) {
+                case "tc": 
+                    $("#dwFormaPagoCard").prop("disabled", false);
+                    document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
+                    document.getElementById("dwFormaPagoCard").style.visibility = "visible";
+                    
+                    break;
+                case "td":
+                    $("#dwFormaPagoCardDeb").prop("disabled", false);
+                    document.getElementById("dwFormaPagoCard").style.visibility = "hidden";
+                    document.getElementById("dwFormaPagoCardDeb").style.visibility = "visible"; 
+                    break;
+            }
+
+        }
 
         function getInformationCvv(value) {
             if (value == 1) {
@@ -545,7 +607,7 @@
             ];
 
             var comboMes = document.getElementById("mes");
-            debugger
+ 
             for (let i = 0; i < array.length; i++) {
                 var option = document.createElement("option");
                 option.setAttribute("value", i);
@@ -599,8 +661,11 @@
                 $("#dwTipoDocumentoPayment").prop("disabled", true);
                 $("#txtDocumentoPayment").prop("disabled", true);
                 $("#txtApellidos_titular").prop("disabled", true);
+                $("#txtEmail").prop("disabled", true);
+                $("#txtubicacion").prop("disabled", true);
+                $("#txtNumeroDireccion").prop("disabled", true);
             }
-            else if (valueSelect === "visa") {
+            else if (valueSelect === "visa" || valueSelect === "debvisa") { 
                 document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/logo-visa.jpg";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
@@ -613,8 +678,11 @@
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
                 $("#txtApellidos_titular").prop("disabled", false);
+                $("#txtEmail").prop("disabled", false);
+                $("#txtubicacion").prop("disabled", false);
+                $("#txtNumeroDireccion").prop("disabled", false);
             }
-            else if (valueSelect === "master") {
+            else if (valueSelect === "master" || valueSelect === "debmaster") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/2vbqk5lcpi7hjoc/MasterCard_Logo.svg.png";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
@@ -627,8 +695,12 @@
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
                 $("#txtApellidos_titular").prop("disabled", false);
+                $("#txtEmail").prop("disabled", false);
+                $("#txtubicacion").prop("disabled", false);
+                $("#txtNumeroDireccion").prop("disabled", false);
+                
             }
-            else if (valueSelect === "americanexpress") {
+            else if (valueSelect === "amex") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/f5hyn6u05ktql8d/amex-icon-6902.png";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
@@ -641,6 +713,9 @@
                 $("#dwTipoDocumentoPayment").prop("disabled", false);
                 $("#txtDocumentoPayment").prop("disabled", false);
                 $("#txtApellidos_titular").prop("disabled", false);
+                $("#txtEmail").prop("disabled", false);
+                $("#txtubicacion").prop("disabled", false);
+                $("#txtNumeroDireccion").prop("disabled", false);
             }
         }
       
@@ -656,7 +731,9 @@
             var tipodoc = $("#dwTipoDocumentoPayment").val();
             var document_titular = $("#txtDocumentoPayment").val();
             //var p = document.createElement("p");
-
+            var email = $("#txtEmail").val();
+            var direccion = $("#txtubicacion").val();
+            var numerodirecion = $("#txtNumeroDireccion").val();
             var errors = [];
 
             if (cardholder == null || cardholder == "") { errors.push('Debe ingresar el nombre del titular de la tarjeta.'); }
@@ -666,25 +743,22 @@
             if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
             if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
             if (document_titular == "" || document_titular == null) { errors.push('Debe ingresar un número de documento.'); }
-            
+            if (email == "" || email == null) { errors.push('Debe ingresar un email.'); }
+            if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); } 
 
             /*borrar elementos*/
             var lis = document.querySelectorAll('#lista-error li');
             for (var i = 0; li = lis[i]; i++) {
                 li.parentNode.removeChild(li);
             }
-
-           
-
+             
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
                 var li = document.createElement("li");
                 li.appendChild(document.createTextNode(content));
                 document.getElementById("lista-error").appendChild(li);
             }
-
-          
-
+             
             if (errors.length > 0) {
                 $("#loading").fadeOut("slow");
                 $('#myModalInfoTime').modal('show');
@@ -732,10 +806,10 @@
 
         function getInfoByUser() {
             document.getElementById("txtNombres").value = document.getElementById("nombreCompletoUsuario").innerHTML;;
-            document.getElementById("txtEmail").value = document.getElementById("emailcontacto").innerHTML;
+            //document.getElementById("txtEmail").value = document.getElementById("emailcontacto").innerHTML;
             document.getElementById("dpdTipoDocumento").value = document.getElementById("tipo_documento").innerHTML;
             document.getElementById("txtDocumento").value = document.getElementById("numerodocumento").innerHTML;
-            document.getElementById("txtubicacion").value = document.getElementById("direccion").innerHTML;
+            //document.getElementById("txtubicacion").value = document.getElementById("direccion").innerHTML;
             var _totalpago = document.getElementById("totalpago").innerHTML;
             if (_totalpago == "0") { document.getElementById("total_amount").innerHTML = "0.00"; }
             else { document.getElementById("total_amount").innerHTML = _totalpago; }
@@ -767,7 +841,7 @@
 
         function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                     tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
-                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago) {
+                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number) {
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("LiquidarPedido", "Pedido")',
@@ -775,11 +849,11 @@
                 success: function (data) {
                     waitingDialog.hide();
                     if ((data.Success).toString() == "true") {
-                        debugger
+                  
                         var numero_orden = data.Message;
                         listProducts = data.Products; 
                         enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, "milladeleon.elba@testuser.com", numerocelular, data.Message, listProducts);
+                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, "milladeleon.elba@testuser.com", numerocelular, data.Message, listProducts, street_number);
                     } else {
                         toastr.error(data.Message, "Error");
                         $("#loading").fadeOut("slow");
@@ -794,12 +868,12 @@
         }
 
         function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-              tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts) {
+              tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
 
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
-                data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts },
+                data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
                 success: function (data) { 
                     if ((data.Success).toString() == "true") { 
                         responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);                        
@@ -881,7 +955,9 @@
                     var state_name = document.getElementById("departamento").innerHTML;
                     var city_name = document.getElementById("provincia").innerHTML;
                     var installments = $("#txtCuotas").val();
-                    var payment_method_id = $("#dwFormaPagoCard").val();
+                    var street_number = $("#txtNumeroDireccion").val();
+                    debugger
+                    var payment_method_id = tipo_pago;
                     var importeTotal = document.getElementById("total_amount").innerHTML;
                     var tokenCard = data.data;
                     var numerocelular = document.getElementById("celular").innerHTML;
@@ -896,11 +972,12 @@
                     var liq_provincia = document.getElementById("liq_provincia").innerHTML;
 
                     var direccion = document.getElementById("direccion").innerHTML;
-                    debugger;
+                 
+                  
                     if (data.Status = 0 || data.LastFourDigits != null) {
                         proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
-                                   direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, "MercadoPago");
+                                   direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, "MercadoPago", street_number);
                     } else {
 
                         //toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
