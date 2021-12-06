@@ -189,7 +189,7 @@ namespace CapaPresentacion.Controllers
 
         [HttpPost]
         public ActionResult PostProccessPayment(string nombreTitular, string apellidoTitular, string zipCode, string street_name, string state_name, string city_name, int installments, string tipoDocumento,
-            string numeroDocumento, string payment_method_id, string tokenCard, decimal importeTotal, string emailCliente, string numerocelular, string external_reference, List<Ent_Order_Dtl> listProducts)
+            string numeroDocumento, string payment_method_id, string tokenCard, decimal importeTotal, string emailCliente, string numerocelular, string external_reference, List<Ent_Order_Dtl> listProducts, string street_number)
         {
             var jsonResponse = new JsonResponse();
             string mensaje_premio = "";
@@ -210,6 +210,8 @@ namespace CapaPresentacion.Controllers
                 AdditionalInfoDto item;
                 request.additional_info.payer.phone = new PhoneDto();
                 request.metadata = new MetadataDto();
+
+                if (installments.Equals("") || installments.Equals(null)) installments = 1;
 
                 foreach (var products in listProducts)
                 {
@@ -235,13 +237,13 @@ namespace CapaPresentacion.Controllers
 
                 request.additional_info.payer.address.zip_code = zipCode;
                 request.additional_info.payer.address.street_name = street_name;
-                request.additional_info.payer.address.street_number = "";
+                request.additional_info.payer.address.street_number = street_number;
                 request.metadata = metadaData;
                 request.additional_info.shipments.receiver_address.zip_code = zipCode;
                 request.additional_info.shipments.receiver_address.state_name = state_name;
                 request.additional_info.shipments.receiver_address.city_name = city_name;
                 request.additional_info.shipments.receiver_address.street_name = street_name;
-                request.additional_info.shipments.receiver_address.street_number = "";
+                request.additional_info.shipments.receiver_address.street_number = street_number;
                 request.binary_mode = true;
                 request.capture = true;
                 request.external_reference = external_reference.ToString();
