@@ -150,6 +150,7 @@ namespace CapaPresentacion.Controllers
 
 
                     ViewBag.Liqui = oLiquidacion;
+                    ViewBag.ActivaMcoPago = (_usuario.usu_mercado_pago)?"1":"0";
 
                     Session[_session_lnfo_liquidacion] = oLiquidacion;
 

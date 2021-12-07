@@ -72,7 +72,7 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url('/Content/MercadoPago/img/loading-cargando.gif') 50% 50% no-repeat rgb(249,249,249);
+            background: url('../Content/MercadoPago/img/loading-cargando.gif') 50% 50% no-repeat rgb(249,249,249);
             opacity: .8;
         }
 
@@ -120,58 +120,93 @@
             position: relative;
         }
 
-           .control_indicator {
-            position: absolute;
-            top: 2px;
-            left: 0;
-            height: 20px;
-            width: 20px;
-            background: #e6e6e6;
-            border: 1px solid #B1BAC1;
-            border-radius: undefinedpx;
-        }
-        .control:hover input ~ .control_indicator,
-        .control input:focus ~ .control_indicator {
-            background: #cccccc;
-        }
+       .table thead {
+        background-color: #5799bf;
+        color: #fff;
+    }
 
-        .control input:checked ~ .control_indicator {
-            background: #156aac;
-        }
-        .control:hover input:not([disabled]):checked ~ .control_indicator,
-        .control input:checked:focus ~ .control_indicator {
-            background: #0e6647d;
-        }
-        .control input:disabled ~ .control_indicator {
-            background: #e6e6e6;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        .control_indicator:after {
-            box-sizing: unset;
-            content: '';
-            position: absolute;
-            display: none;
-        }
-        .control input:checked ~ .control_indicator:after {
-            display: block;
-        }
-        .control-radio .control_indicator {
-            border-radius: 50%;
-        }
+    .boton-xs-td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
 
-        .control-radio .control_indicator:after {
-            left: 6px;
-            top: 6px;
-            height: 6px;
-            width: 6px;
-            border-radius: 50%;
-            background: #ffffff;
-            transition: background 250ms;
-        }
-        .control-radio input:disabled ~ .control_indicator:after {
-            background: #7b7b7b;
-        }
+    .alignRight {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .alignCenter {
+        text-align: left;
+        vertical-align: middle;
+    }
+    /*[style RadioBox]*/
+        .control {
+        font-family: arial;
+        display: block;
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 10px;
+        padding-top: 3px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .control input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+    .control_indicator {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background: #e6e6e6;
+        border: 1px solid #B1BAC1;
+        border-radius: undefinedpx;
+    }
+    .control:hover input ~ .control_indicator,
+    .control input:focus ~ .control_indicator {
+        background: #cccccc;
+    }
+
+    .control input:checked ~ .control_indicator {
+        background: #156aac;
+    }
+    .control:hover input:not([disabled]):checked ~ .control_indicator,
+    .control input:checked:focus ~ .control_indicator {
+        background: #0e6647d;
+    }
+    .control input:disabled ~ .control_indicator {
+        background: #e6e6e6;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .control_indicator:after {
+        box-sizing: unset;
+        content: '';
+        position: absolute;
+        display: none;
+    }
+    .control input:checked ~ .control_indicator:after {
+        display: block;
+    }
+    .control-radio .control_indicator {
+        border-radius: 50%;
+    }
+
+    .control-radio .control_indicator:after {
+        left: 6px;
+        top: 6px;
+        height: 6px;
+        width: 6px;
+        border-radius: 50%;
+        background: #ffffff;
+        transition: background 250ms;
+    }
+    .control-radio input:disabled ~ .control_indicator:after {
+        background: #7b7b7b;
+    }
     </style>
 </head>
 <body>
@@ -203,41 +238,28 @@
 
     <br />
     <div class="row" id="frmRequestPayment" style="visibility:visible">
-        <label for="tipopago" style="margin-left:35px;">Seleccione el tipo de Tarjeta<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
-        <div class="form-row" style="margin-left:123px;">
-            <div class="form-check">
-                
-                <label class="form-check-label" for="chkTc" style="cursor:pointer;">
+        <label for="tipopago" style="margin-left:35px;">Seleccione el tipo de Tarjeta<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>      
+
+        <div class="row" style="margin-left:123px;margin-top:10px;">
+            @*<div class="form-check">*@
+            <div class="col-md-4 ">
+                <label class="control control-radio">
                     Tarjeta de Crédito
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktc">
-                </label>
-            </div>
-            <div class="form-check" style="margin-top:-27px; margin-left:200px;">
-               
-                <label class="form-check-label" for="chkTd">
-                    Tarjeta de Débito
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktd" checked>
-                </label>
-            </div>
-        </div>
-        @*<div class="row" style="margin-top: 10px;">
-            <div class="col-md-4 ">
-                <label class="control control-radio">
-                    Monto
-                    <input id="rdMonto" type="radio" name="radio" />
+                    <input type="radio" name="flexRadioDefault" id="chktc">
                     <div class="control_indicator"></div>
                 </label>
             </div>
-            <div class="col-md-4">
-                <label class="control control-radio">
-                    Unidad
-                    <input id="rdUnidad" type="radio" name="radio" />
-                    <div class="control_indicator"></div>
-                </label>
-            </div>
-            <div class="col-md-4 ">
-            </div>
-        </div>*@
+                
+                @*</div>*@
+                <div class="form-check" style="margin-top:-27px; margin-left:200px;">
+
+                    <label class="control control-radio">
+                        Tarjeta de Débito
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktd" checked>
+                        <div class="control_indicator"></div>
+                    </label>
+                </div>
+            </div>      
         <br />
         <div class="col-md-5">
             <div class="form-group" style="margin-left:20px; margin-right:20px;">
@@ -319,7 +341,7 @@
             <label for="dclientemp" style="margin-left:15px;">GENERAR COMPRA</label>
 
             <div class="credit-info-content">
-                <img src='~/Content/MercadoPago/img/logos/logo-visa.jpg' 
+                <img src='../Content/MercadoPago/img/logos/logo-visa.jpg' 
                      height='80' class='credit-card-image' id='credit-card-image' />
             </div>  
 
@@ -389,7 +411,7 @@
                                       height:16px; 
                                       cursor:pointer; 
                                       margin-top:-4px;" 
-                                      src="~/Content/MercadoPago/img/exclamation.png" 
+                                      src="../Content/MercadoPago/img/logos/noimagencard.png"
                                       />
                         <input type="text" 
                                class="form-control" 
@@ -721,7 +743,7 @@
 
         function changeCardPayment(valueSelect) {
             if (valueSelect === "0") {
-                document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/noimagencard.png";
+                document.getElementById('credit-card-image').src = "../Content/MercadoPago/img/logos/noimagencard.png";
                 $("#txtnombre_titular").prop("disabled", true);
                 $("#txtnumero_tarjeta").prop("disabled", true);
                 $("#anio").prop("disabled", true);
@@ -738,7 +760,7 @@
                 $("#txtNumeroDireccion").prop("disabled", true);
             }
             else if (valueSelect === "visa" || valueSelect === "debvisa") { 
-                document.getElementById('credit-card-image').src = "/Content/MercadoPago/img/logos/logo-visa.jpg";
+                document.getElementById('credit-card-image').src = "../Content/MercadoPago/img/logos/logo-visa.jpg";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
                 $("#anio").prop("disabled", false);

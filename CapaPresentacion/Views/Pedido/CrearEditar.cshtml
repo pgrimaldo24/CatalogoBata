@@ -533,8 +533,8 @@ else
 
     <script>
         var dataArray_cliente;
-        $(document).ready(function () { 
-            
+        $(document).ready(function () {
+
            dataArray_cliente = function () { return @Html.Raw(Json.Encode(ViewBag.infoProm)); }();
             var formapago = $("#dwFormaPago").val();
             if (formapago == "005") { $("#btnMercadoPago").prop("disabled", false); }
@@ -544,11 +544,11 @@ else
 
             $('#txtdireccion').prop("disabled", true);
             $('#txtreferencia').prop("disabled", true);
-            
-            
+
+
             setInterval("validarTotalPago();",1000);
-            
-            
+
+
             document.getElementById("txtagencia").className = "form-control";
             document.getElementById("txtagencia_dir").className = "form-control";
             document.getElementById("txtdestino").className = "form-control";
@@ -558,6 +558,15 @@ else
 
             var operacion = "@ViewBag.operacion";
 
+            var ActivaMcoPago="@ViewBag.ActivaMcoPago";
+
+           
+
+            if (ActivaMcoPago=="1"){
+                $("#btnMercadoPago").show();
+            }else{
+                $("#btnMercadoPago").hide();
+            }
 
 
             if (operacion == 'Nuevo') {
@@ -570,7 +579,7 @@ else
             }
             else {
                 var dataArray_liq = function () { return @Html.Raw(Json.Encode(ViewBag.Liqui)); }();
-                
+
                 $('#dwdespacho').val((dataArray_liq.liq_tipo_des.length == 0) ? '0' : dataArray_liq.liq_tipo_des);
                 $('#dwdespacho').selectpicker('refresh');
                 var span_envio = document.getElementById("doc-nom-persona");
@@ -689,17 +698,17 @@ else
         });
 
 
-        $("#btnMercadoPago").click(function () { 
+        $("#btnMercadoPago").click(function () {
             if (getValidarInformacionCliente()) {
                 envioInformacionUsuario();
-            }  
+            }
         });
-         
+
         $('#dwFormaPago').change(function () {
             habilitarMercadoPago($(this).val());
         })
 
-        function validarTotalPago() { 
+        function validarTotalPago() {
             var total_precio = document.getElementById("grantotalList").innerHTML;
             if (total_precio == "0.00") { $("#btnMercadoPago").prop("disabled", true); }
             else { $("#btnMercadoPago").prop("disabled", false); }
@@ -715,11 +724,11 @@ else
             return false;
         }
 
-        function habilitarMercadoPago(valor) { 
+        function habilitarMercadoPago(valor) {
             if (valor == "005") { $("#btnMercadoPago").prop("disabled", false); }
             else { $("#btnMercadoPago").prop("disabled", true); }
         }
-         
+
         function getValidarInformacionCliente() {
             /*validar datos adicionales para el envio de productos*/
             var tipo_des = $('#dwdespacho').val();
@@ -767,7 +776,7 @@ else
                     toastr.error('Ingrese el destino del despacho', 'Mensaje');
                     $('#txtdestino').focus();
                     return false;
-                } 
+                }
             }
 
             var prov = '';
@@ -785,8 +794,8 @@ else
                     toastr.error('El Lider del cliente no tiene provincia, por favor actualize la provincia del lider', 'Mensaje');
                     return false;
                 }
-            } 
-           
+            }
+
             return true;
         }
 

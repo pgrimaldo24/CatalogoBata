@@ -27,5 +27,7 @@ namespace CapaEntidad.Control
 
         public string usu_flete { get; set; }
         public string usu_asesor { get; set; }
+
+        public Boolean usu_mercado_pago { get; set; }
     }
 }

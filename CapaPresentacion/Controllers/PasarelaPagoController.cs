@@ -249,7 +249,7 @@ namespace CapaPresentacion.Controllers
                 request.capture = true;
                 request.external_reference = external_reference.ToString();
                 request.installments = installments;
-                request.notification_url = "https://prueba.com";
+                request.notification_url = "https://posperu.bgr.pe/Ws_Multivende/Api/ApiBataPos/Update_Data_Bata";
                 request.payer.email = emailCliente;
                 request.payer.identification.type = tipoDocumento;
                 request.payer.identification.number = numeroDocumento;
