@@ -119,6 +119,59 @@
             border-bottom-right-radius: 30px;
             position: relative;
         }
+
+           .control_indicator {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background: #e6e6e6;
+            border: 1px solid #B1BAC1;
+            border-radius: undefinedpx;
+        }
+        .control:hover input ~ .control_indicator,
+        .control input:focus ~ .control_indicator {
+            background: #cccccc;
+        }
+
+        .control input:checked ~ .control_indicator {
+            background: #156aac;
+        }
+        .control:hover input:not([disabled]):checked ~ .control_indicator,
+        .control input:checked:focus ~ .control_indicator {
+            background: #0e6647d;
+        }
+        .control input:disabled ~ .control_indicator {
+            background: #e6e6e6;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .control_indicator:after {
+            box-sizing: unset;
+            content: '';
+            position: absolute;
+            display: none;
+        }
+        .control input:checked ~ .control_indicator:after {
+            display: block;
+        }
+        .control-radio .control_indicator {
+            border-radius: 50%;
+        }
+
+        .control-radio .control_indicator:after {
+            left: 6px;
+            top: 6px;
+            height: 6px;
+            width: 6px;
+            border-radius: 50%;
+            background: #ffffff;
+            transition: background 250ms;
+        }
+        .control-radio input:disabled ~ .control_indicator:after {
+            background: #7b7b7b;
+        }
     </style>
 </head>
 <body>
@@ -153,18 +206,38 @@
         <label for="tipopago" style="margin-left:35px;">Seleccione el tipo de Tarjeta<i class="glyphicon glyphicon-money"></i>&nbsp;&nbsp;</label>
         <div class="form-row" style="margin-left:123px;">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktc">
-                <label class="form-check-label" for="chkTc">
+                
+                <label class="form-check-label" for="chkTc" style="cursor:pointer;">
                     Tarjeta de Crédito
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktc">
                 </label>
             </div>
             <div class="form-check" style="margin-top:-27px; margin-left:200px;">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktd" checked>
+               
                 <label class="form-check-label" for="chkTd">
                     Tarjeta de Débito
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="chktd" checked>
                 </label>
             </div>
         </div>
+        @*<div class="row" style="margin-top: 10px;">
+            <div class="col-md-4 ">
+                <label class="control control-radio">
+                    Monto
+                    <input id="rdMonto" type="radio" name="radio" />
+                    <div class="control_indicator"></div>
+                </label>
+            </div>
+            <div class="col-md-4">
+                <label class="control control-radio">
+                    Unidad
+                    <input id="rdUnidad" type="radio" name="radio" />
+                    <div class="control_indicator"></div>
+                </label>
+            </div>
+            <div class="col-md-4 ">
+            </div>
+        </div>*@
         <br />
         <div class="col-md-5">
             <div class="form-group" style="margin-left:20px; margin-right:20px;">
@@ -340,8 +413,7 @@
                             Tipo documento
                             <select class="form-control"
                                     id="dwTipoDocumentoPayment"
-                                    name="dwTipoDocumentoPayment" style="width:240px;">
-                                <option value="0">Seleccione</option>
+                                    name="dwTipoDocumentoPayment" style="width:240px;"> 
                                 <option value="DNI">DNI</option> 
                             </select>
                         </div>
@@ -527,7 +599,7 @@
         var tipo_pago;
 
         $('#horizontal_logo').click(function () {
-            getInformationCvv(1);
+            //getInformationCvv(1);
         })
 
         $('#dwFormaPagoCard').change(function () {

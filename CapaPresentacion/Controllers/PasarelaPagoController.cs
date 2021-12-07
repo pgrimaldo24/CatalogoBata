@@ -122,7 +122,8 @@ namespace CapaPresentacion.Controllers
                 cardToken.security_code = codigoSeguridad;
                 cardToken.expiration_month = fechaExpiracionMes;
                 cardToken.expiration_year = fechaExpiracionAnio;
-                cardToken.cardholder.name = nombreCompletoTitular;
+                /*CAMBIAR NOMBRE PARA PRD*/
+                cardToken.cardholder.name = "APRO";
                 cardToken.cardholder.identification.number = numeroDocumento;
                 cardToken.cardholder.identification.type = tipoDocumento;
 
