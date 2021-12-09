@@ -25,6 +25,7 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")  
+
     <style>
         .footer-bata {
             margin: 0 0 0 65%;
@@ -406,13 +407,14 @@
                          style="margin-top:-54px;
                          margin-left:280px; 
                          ">
-                        CVV&nbsp;<img id="horizontal_logo" 
+                        CVV&nbsp;
+                        @*<img id="horizontal_logo" 
                                       style="width:16px;
                                       height:16px; 
                                       cursor:pointer; 
                                       margin-top:-4px;" 
                                       src="../Content/MercadoPago/img/logos/noimagencard.png"
-                                      />
+                                      />*@
                         <input type="text" 
                                class="form-control" 
                                id="txtcvc" 
@@ -603,9 +605,10 @@
             $("#loading").fadeOut("slow");
         });
         
-        $(document).ready(function () {
-           
+        $(document).ready(function () { 
             var listProducts = [];
+            
+            getInformationDevice();
             getInfoByUser();
             getInformationCvv(2);
             getDayMonthCard();
@@ -614,11 +617,223 @@
             $("#frmResponsePayment").hide();
             $("#chktc").prop("checked", false);
             $("#chktd").prop("checked", false);
-            //document.getElementById("frmResponsePayment").style.visibility = "hidden";
-            document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
+            document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden"; 
         });
 
         var tipo_pago;
+        var os_device,
+            system_version,
+            ram,
+            disk_space,
+            mode,
+            free_disk_space,
+            feature_flash,
+            can_make_phone_calls,
+            can_send_sms,
+            video_camera_available,
+            cpu_count,
+            simulator,
+            device_languaje,
+            device_idiom,
+            platform,
+            device_name,
+            device_family,
+            retina_family,
+            retina_display_capable,
+            feature_camera,
+            device_model,
+            feature_front_camera,
+            resolution;
+
+        function getInformationDevice() {
+            var unknown = '-'; 
+            var screenSize = '';
+            if (screen.width) {
+                width = (screen.width) ? screen.width : '';
+                height = (screen.height) ? screen.height : '';
+                screenSize += '' + width + "x" + height;
+            }
+             
+            var nVer = navigator.appVersion;
+            var nAgt = navigator.userAgent;
+            var browser = navigator.appName;
+            var _version = '' + parseFloat(navigator.appVersion);
+            var majorVersion = parseInt(navigator.appVersion, 10);
+            var nameOffset, verOffset, ix;
+ 
+            if ((verOffset = nAgt.indexOf('Opera')) != -1) {
+                browser = 'Opera';
+                _version = nAgt.substring(verOffset + 6);
+                if ((verOffset = nAgt.indexOf('Version')) != -1) {
+                    _version = nAgt.substring(verOffset + 8);
+                }
+            }
+         
+            if ((verOffset = nAgt.indexOf('OPR')) != -1) {
+                browser = 'Opera';
+                _version = nAgt.substring(verOffset + 4);
+            }
+   
+            else if ((verOffset = nAgt.indexOf('Edge')) != -1) {
+                browser = 'Microsoft Edge';
+                _version = nAgt.substring(verOffset + 5);
+            }
+   
+            else if ((verOffset = nAgt.indexOf('MSIE')) != -1) {
+                browser = 'Microsoft Internet Explorer';
+                _version = nAgt.substring(verOffset + 5);
+            }
+       
+            else if ((verOffset = nAgt.indexOf('Chrome')) != -1) {
+                browser = 'Chrome';
+                _version = nAgt.substring(verOffset + 7);
+            }
+   
+            else if ((verOffset = nAgt.indexOf('Safari')) != -1) {
+                browser = 'Safari';
+                _version = nAgt.substring(verOffset + 7);
+                if ((verOffset = nAgt.indexOf('Version')) != -1) {
+                    _version = nAgt.substring(verOffset + 8);
+                }
+            }
+      
+            else if ((verOffset = nAgt.indexOf('Firefox')) != -1) {
+                browser = 'Firefox';
+                _version = nAgt.substring(verOffset + 8);
+            }
+         
+            else if (nAgt.indexOf('Trident/') != -1) {
+                browser = 'Microsoft Internet Explorer';
+                _version = nAgt.substring(nAgt.indexOf('rv:') + 3);
+            }
+       
+            else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) {
+                browser = nAgt.substring(nameOffset, verOffset);
+                _version = nAgt.substring(verOffset + 1);
+                if (browser.toLowerCase() == browser.toUpperCase()) {
+                    browser = navigator.appName;
+                }
+            }
+      
+            if ((ix = _version.indexOf(';')) != -1) _version = _version.substring(0, ix);
+            if ((ix = _version.indexOf(' ')) != -1) _version = _version.substring(0, ix);
+            if ((ix = _version.indexOf(')')) != -1) _version = _version.substring(0, ix);
+
+            majorVersion = parseInt('' + _version, 10);
+            if (isNaN(majorVersion)) {
+                _version = '' + parseFloat(navigator.appVersion);
+                majorVersion = parseInt(navigator.appVersion, 10);
+            }
+             
+            var mobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(nVer); 
+            var cookieEnabled = (navigator.cookieEnabled) ? true : false;
+
+            if (typeof navigator.cookieEnabled == 'undefined' && !cookieEnabled) {
+                document.cookie = 'testcookie';
+                cookieEnabled = (document.cookie.indexOf('testcookie') != -1) ? true : false;
+            }
+ 
+            var os = unknown;
+            var clientStrings = [
+                { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/ },
+                { s: 'Windows 8.1', r: /(Windows 8.1|Windows NT 6.3)/ },
+                { s: 'Windows 8', r: /(Windows 8|Windows NT 6.2)/ },
+                { s: 'Windows 7', r: /(Windows 7|Windows NT 6.1)/ },
+                { s: 'Windows Vista', r: /Windows NT 6.0/ },
+                { s: 'Windows Server 2003', r: /Windows NT 5.2/ },
+                { s: 'Windows XP', r: /(Windows NT 5.1|Windows XP)/ },
+                { s: 'Windows 2000', r: /(Windows NT 5.0|Windows 2000)/ },
+                { s: 'Windows ME', r: /(Win 9x 4.90|Windows ME)/ },
+                { s: 'Windows 98', r: /(Windows 98|Win98)/ },
+                { s: 'Windows 95', r: /(Windows 95|Win95|Windows_95)/ },
+                { s: 'Windows NT 4.0', r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/ },
+                { s: 'Windows CE', r: /Windows CE/ },
+                { s: 'Windows 3.11', r: /Win16/ },
+                { s: 'Android', r: /Android/ },
+                { s: 'Open BSD', r: /OpenBSD/ },
+                { s: 'Sun OS', r: /SunOS/ },
+                { s: 'Chrome OS', r: /CrOS/ },
+                { s: 'Linux', r: /(Linux|X11(?!.*CrOS))/ },
+                { s: 'iOS', r: /(iPhone|iPad|iPod)/ },
+                { s: 'Mac OS X', r: /Mac OS X/ },
+                { s: 'Mac OS', r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/ },
+                { s: 'QNX', r: /QNX/ },
+                { s: 'UNIX', r: /UNIX/ },
+                { s: 'BeOS', r: /BeOS/ },
+                { s: 'OS/2', r: /OS\/2/ },
+                { s: 'Search Bot', r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/ }
+            ];
+
+
+
+            for (var id in clientStrings) {
+                var cs = clientStrings[id];
+                if (cs.r.test(nAgt)) {
+                    os = cs.s;
+                    break;
+                }
+            }
+
+            var osVersion = unknown;
+
+            if (/Windows/.test(os)) {
+                osVersion = /Windows (.*)/.exec(os)[1];
+                os = 'Windows';
+            }
+
+            switch (os) {
+                case 'Mac OS X':
+                    osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1];
+                    break;
+
+                case 'Android':
+                    osVersion = /Android ([\.\_\d]+)/.exec(nAgt)[1];
+                    break;
+
+                case 'iOS':
+                    osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer);
+                    osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
+                    break;
+            }
+             
+            var flashVersion = 'no check';
+
+
+            if (typeof swfobject != 'undefined') {
+                var fv = swfobject.getFlashPlayerVersion();
+                if (fv.major > 0) {
+                    flashVersion = fv.major + '.' + fv.minor + ' r' + fv.release;
+                }
+                else {
+                    flashVersion = unknown;
+                }
+            } 
+             
+
+            os_device = os;
+            system_version = osVersion;
+            ram = 0;
+            disk_space = 0;
+            model = os + ' ' + osVersion;
+            free_disk_space = 0;
+            feature_flash = false;
+            can_make_phone_calls = false;
+            can_send_sms = false;
+            video_camera_available = true;
+            cpu_count = 0;
+            simulator = true;
+            device_languaje = navigator.language;
+            device_idiom = mobile;
+            platform = navigator.platform;
+            if (mobile == true) { device_name = "Phone"; device_model = "Phone"; }
+            else { device_name = "PC" + "-" + os; device_model = "PC" + "-" + os; }
+            device_family = 0;
+            retina_display_capable = true;
+            feature_camera = false; 
+            feature_front_camera = false;
+            resolution = screenSize; 
+             
+        }
 
         $('#horizontal_logo').click(function () {
             //getInformationCvv(1);
@@ -638,7 +853,6 @@
             if ($(this).val() == "0") { $("#txtDocumentoPayment").prop("disabled", true); }
             else { $("#txtDocumentoPayment").prop("disabled", false); }
         })
-
 
         $('#chktc').click(function () {
             //alert('tc')
@@ -677,7 +891,6 @@
 
             }
         }
-
 
         function getDayMonthCard() {
             var today = new Date();
@@ -812,8 +1025,7 @@
                 $("#txtNumeroDireccion").prop("disabled", false);
             }
         }
-      
-
+   
         function getPayValidate() {
             var cardholder = $("#txtnombre_titular").val();
             var cardnumber = $("#txtnumero_tarjeta").val();
@@ -897,7 +1109,6 @@
                 return false;
         }
 
-
         function getInfoByUser() {
             document.getElementById("txtNombres").value = document.getElementById("nombreCompletoUsuario").innerHTML;;
             //document.getElementById("txtEmail").value = document.getElementById("emailcontacto").innerHTML;
@@ -929,13 +1140,12 @@
                 var codigoSeguridad = $("#txtcvc").val();
                 var tipoDocumento = $("#dwTipoDocumentoPayment").val();
                 var numeroDocumento = $("#txtDocumentoPayment").val();
-                getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento);
+  
+                getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution);
             }
         }
 
-        function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
-                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number) {
+        function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des, direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number){
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("LiquidarPedido", "Pedido")',
@@ -961,9 +1171,7 @@
             });
         }
 
-        function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-              tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
-
+        function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
@@ -1033,11 +1241,22 @@
             }
         }
 
-        function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento) {
+        function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution) {
+            var listDevice = []; 
+
+            listDevice.push({
+                "name": "vendor_id",
+                "value": "C2508642-79CF-44E4-A205-284A4F4DE04C"
+            },
+            {
+                "name": "uuid",
+                "value": "C2508642-79CF-44E4-A205-284A4F4DE04C"
+            });
+
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("SetCardToken", "PasarelaPago")',
-                data: { 'token_public': token_public, 'numeroTarjeta': numeroTarjeta, 'codigoSeguridad': codigoSeguridad, 'fechaExpiracionMes': fechaExpiracionMes, 'fechaExpiracionAnio': fechaExpiracionAnio, 'nombreCompletoTitular': nombreCompletoTitular, 'numeroDocumento': numeroDocumento, 'tipoDocumento': tipoDocumento },
+                data: { 'token_public': token_public, 'numeroTarjeta': numeroTarjeta, 'codigoSeguridad': codigoSeguridad, 'fechaExpiracionMes': fechaExpiracionMes, 'fechaExpiracionAnio': fechaExpiracionAnio, 'nombreCompletoTitular': nombreCompletoTitular, 'numeroDocumento': numeroDocumento, 'tipoDocumento': tipoDocumento, 'os_device': os_device, 'system_version': system_version, 'ram': ram, 'disk_space': disk_space, 'model': model, 'free_disk_space': free_disk_space, 'feature_flash': feature_flash, 'can_make_phone_calls': can_make_phone_calls, 'can_send_sms': can_send_sms, 'video_camera_available': video_camera_available, 'cpu_count': cpu_count, 'simulator': simulator, 'device_languaje': device_languaje, 'device_idiom': device_idiom, 'platform': platform, 'device_name': device_name, 'device_family': device_family, 'retina_display_capable': retina_display_capable, 'feature_camera': feature_camera, 'device_model': device_model, 'feature_front_camera': feature_front_camera, 'resolution': resolution, 'vendors': listDevice },
                 success: function (data) {
                     var nombreTitular = $("#txtnombre_titular").val();
                     var apellidoTitular = $("#txtApellidos_titular").val();
@@ -1050,30 +1269,24 @@
                     var city_name = document.getElementById("provincia").innerHTML;
                     var installments = $("#txtCuotas").val();
                     var street_number = $("#txtNumeroDireccion").val();
-                    
                     var payment_method_id = tipo_pago;
                     var importeTotal = document.getElementById("total_amount").innerHTML;
                     var tokenCard = data.data;
                     var numerocelular = document.getElementById("celular").innerHTML;
-
                     var tipo_des = document.getElementById("tipo_des").innerHTML;
                     var referencia = document.getElementById("referencia").innerHTML;
                     var agencia = document.getElementById("agencia").innerHTML;
                     var destino = document.getElementById("destino").innerHTML;
                     var agencia_direccion = document.getElementById("agencia_direccion").innerHTML;
-
                     var liq_tipo_prov = document.getElementById("liq_tipo_prov").innerHTML;
                     var liq_provincia = document.getElementById("liq_provincia").innerHTML;
-
                     var direccion = document.getElementById("direccion").innerHTML;
                  
-                  
                     if (data.Status = 0 || data.LastFourDigits != null) {
                         proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
                                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, "MercadoPago", street_number);
                     } else {
-
                         //toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
                         toastr.error(data.Message, 'Mensaje');
                         $("#loading").fadeOut("slow");
