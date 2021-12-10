@@ -494,7 +494,7 @@ else
     </div>
 </div>
  
-<div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+@*<div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
     <div class="modal-dialog">
         <div class="modal-content"> 
             <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;"> 
@@ -506,10 +506,18 @@ else
                             onload="javascript: waitingDialog.hide();" style="zoom:90%; width: 100%; height: calc(100vh - 100px); margin-bottom:0px"></iframe>
                 </div>
             </div> 
-            <div class="modal-footer" style="margin-top:-30px">
+            <div class="modal-footer" style="margin-top:-30px">*@
                 @*<button id="btnCerrarCheckout" type="button" class="btn btn-default" data-dismiss="modal" style="width:130px;">&nbsp;Cerrar&nbsp;</button>*@
                 @*<a href="@Url.Action("Lista","Pedido")" class="btn btn-primary">Volver a Pedidos</a>*@
-            </div> 
+            @*</div> 
+        </div>
+    </div>
+</div>*@
+<div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id='myModalContentPago'></div>
+
         </div>
     </div>
 </div>
@@ -715,7 +723,7 @@ else
         }
 
         function parentCloseModalDetailCardCvvView() {
-            $('#frmmercadopago').attr('src', '');
+            //$('#frmmercadopago').attr('src', '');
             $('#mdlMercadoPago').modal('hide');
         }
 
@@ -3995,9 +4003,33 @@ else
                 if (referencia == null || referencia == '') { referencia = "0" }
                 if (agencia == null || agencia == '') { agencia = "0" }
                 if (destino == null || destino == '') { destino = "0" }
-                if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" } 
-                $("#frameMercadoPago").attr("src", "../PasarelaPago/PasarelaPago?numerodocumento=" + numerodocumento + "&totalpago= " + totalpago + " &tipo_des= " + tipo_des + " &referencia= " + referencia + " &agencia= " + agencia + " &destino=" + destino + " &agencia_direccion=" + agencia_direccion + "&liq_tipo_prov=" + liq_tipo_prov + "&liq_provincia=" + liq_provincia );
-                $("#mdlMercadoPago").modal({ backdrop: 'static', keyboard: false });
+                if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
+
+                var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";            
+                waitingDialog.show('Espere un momento por favor');            
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: TeamDetailPostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
+                    datatype: "json",
+                    cache: true,
+                    success: function (data) {                    
+                        waitingDialog.hide();
+                        $('#myModalContentPago').html(data);                     
+                        $('#mdlMercadoPago').modal(options);
+                        $('#mdlMercadoPago').modal('show');
+
+                    },
+                    error: function () {
+                        waitingDialog.hide();
+                        alert("Dynamic content load failed.");
+                    }
+                });
+
+                //$("#frameMercadoPago").attr("src", "../PasarelaPago/PasarelaPago?numerodocumento=" + numerodocumento + "&totalpago= " + totalpago + " &tipo_des= " + tipo_des + " &referencia= " + referencia + " &agencia= " + agencia + " &destino=" + destino + " &agencia_direccion=" + agencia_direccion + "&liq_tipo_prov=" + liq_tipo_prov + "&liq_provincia=" + liq_provincia );
+                //$("#mdlMercadoPago").modal({ backdrop: 'static', keyboard: false });
             //}  
         }
          

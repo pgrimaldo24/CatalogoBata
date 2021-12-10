@@ -28,6 +28,45 @@ namespace CapaPresentacion.Controllers
     {
         // GET: ProcessPayment
         Dat_PasarelaPago pasarelaPagoDao = new Dat_PasarelaPago();
+
+        public ActionResult PasarelaPago2(string numerodocumento, decimal totalpago, string tipo_des, string referencia,
+            string agencia, string destino, string agencia_direccion, string liq_tipo_prov, string liq_provincia)
+        {
+            var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+            var actionName = this.ControllerContext.RouteData.GetRequiredString("action");
+            var controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");
+            var return_view = actionName + "|" + controllerName;
+            var token_access = ConfigurationManager.AppSettings[ConstantsCommon.TokenMercadoPago.PUBLIC_KEY_MERCADO_PAGO];
+
+            ViewBag.numerodocumento = numerodocumento.Trim();
+            ViewBag.tipo_des = tipo_des;
+            ViewBag.referencia = referencia.Trim();
+            ViewBag.agencia = agencia.Trim();
+            ViewBag.destino = destino.Trim();
+            ViewBag.agencia_direccion = agencia_direccion.Trim();
+
+            var person = GetInformacionUsuario(numerodocumento.Trim());
+            ViewBag.nombres = person.NombreCompleto.Trim().ToString();
+            ViewBag.apellidos = person.ApellidoCompleto.Trim();
+            ViewBag.nombreCompletoUsuario = person.NombreCompleto.Trim() + ' ' + person.ApellidoCompleto.Trim();
+            ViewBag.direccion = person.Bas_Direccion.Trim();
+            ViewBag.tipo_documento = person.TipoDocumento.Trim();
+            ViewBag.celular = person.Bas_Celular.Trim();
+            ViewBag.email = person.Bas_Correo.Trim();
+            ViewBag.departamento = person.Departamento.Trim();
+            ViewBag.provincia = person.Provincia.Trim();
+            ViewBag.liq_tipo_prov = liq_tipo_prov;
+            ViewBag.liq_provincia = liq_provincia;
+
+            if (totalpago.Equals("") || totalpago.Equals(0) || totalpago.Equals(null))
+                ViewBag.totalpago = 0;
+            else
+                ViewBag.totalpago = totalpago;
+            ViewBag.mercadoPagoPublicKey = token_access;
+
+            return View();
+        }
+
         public ActionResult PasarelaPago(string numerodocumento, decimal totalpago, string tipo_des, string referencia,
             string agencia, string destino, string agencia_direccion, string liq_tipo_prov, string liq_provincia)
         {
