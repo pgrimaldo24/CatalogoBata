@@ -425,8 +425,8 @@ namespace CapaPresentacion.Controllers
 
             foreach (var item in card.vendor_ids)
             {
-                vendor.name = string.Empty;
-                vendor.value = string.Empty;
+                vendor.name = item.name;
+                vendor.value = item.value;
                 cardToken.device.fingerprint.vendor_ids.Add(vendor);
             }
 
