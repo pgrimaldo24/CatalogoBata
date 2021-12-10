@@ -602,7 +602,7 @@
 
         $(document).ready(function () {
             var listProducts = [];
-
+            console.log(uuidv4());
             getInformationDevice();
             getInfoByUser();
             getInformationCvv(2);
@@ -614,6 +614,8 @@
             $("#chktd").prop("checked", false);
             document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
         });
+
+
 
         var tipo_pago;
         var os_device,

@@ -553,7 +553,24 @@ else
     </div>
 </div>
 
-
+<div class="modal fade" id="mdlNotificacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
+                <h4 class="modal-title" id="myModalLabel" style="color:white">Notificación - Mercado Pago</h4>
+            </div>
+            <div class="modal-body" style="height:100% auto;">
+                <div id="frmnotificacion" class="well" style="width: 100%; height: 100%; padding:0; background-color: #fff; border-color:#fff">
+                    <iframe id="frmnotificacionmp" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
+                            style="zoom:90%; width: 100%; height: calc(45vh - 45px); margin-bottom:0px"></iframe>
+                </div>
+            </div>
+            @*<div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-primary">Cerrar</button>
+            </div>*@
+        </div>
+    </div>
+</div>
 
 
 @Html.Hidden("lblIdLiquidacion", Model.liq_Id)
@@ -761,15 +778,8 @@ else
             $('#mdlMercadoPago').modal('hide');
         }
 
-    
-
-        function parentHrefPopup(status) {
-            debugger;
-            var _status = status;
-            window.location.href = "@Url.Action("Lista", "Pedido")/" + status;
-            return false;
-        }
-
+     
+        
        
 
         function habilitarMercadoPago(valor) {
@@ -4022,55 +4032,81 @@ else
         /*FIN DEL LISTADO DE LAS NOTAS DE CREDITO*/
 
         function envioInformacionUsuario() {
-            debugger
-           //if (!getDetallePedido()) {
-                var numerodocumento = document.getElementById("numerodocumento").innerHTML;
-                var totalpago = document.getElementById("totalpago").innerHTML;
-                var tipo_des = $('#dwdespacho').val();
-                var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
-                var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
-                var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
-                var agencia_direccion = $('#txtagencia_dir').val().trim().trimLeft().trimRight();
-                var list_productos = glistOtderDtlTem;
-                var liq_tipo_prov = '';
-                var liq_provincia = '';
+            var numerodocumento = document.getElementById("numerodocumento").innerHTML;
+            var totalpago = document.getElementById("totalpago").innerHTML;
+            var tipo_des = $('#dwdespacho').val();
+            var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
+            var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
+            var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
+            var agencia_direccion = $('#txtagencia_dir').val().trim().trimLeft().trimRight();
+            var list_productos = glistOtderDtlTem;
+            var liq_tipo_prov = '';
+            var liq_provincia = '';
 
-                liq_tipo_prov = dataArray_cliente.bas_tipo_dis;
-                liq_provincia = dataArray_cliente.bas_provincia;
+            liq_tipo_prov = dataArray_cliente.bas_tipo_dis;
+            liq_provincia = dataArray_cliente.bas_provincia;
 
-                if (totalpago == '' || totalpago == null) { totalpago = 0 }
-                if (tipo_des == null || tipo_des == '') { tipo_des = "0" }
-                if (referencia == null || referencia == '') { referencia = "0" }
-                if (agencia == null || agencia == '') { agencia = "0" }
-                if (destino == null || destino == '') { destino = "0" }
-                if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
+            if (totalpago == '' || totalpago == null) { totalpago = 0 }
+            if (tipo_des == null || tipo_des == '') { tipo_des = "0" }
+            if (referencia == null || referencia == '') { referencia = "0" }
+            if (agencia == null || agencia == '') { agencia = "0" }
+            if (destino == null || destino == '') { destino = "0" }
+            if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
 
-                var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";
-                waitingDialog.show('Espere un momento por favor');
-                var options = { "backdrop": "static", keyboard: true };
-                $.ajax({
-                    type: "GET",
-                    url: TeamDetailPostBackURL,
-                    contentType: "application/json; charset=utf-8",
-                    data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
-                    datatype: "json",
-                    cache: true,
-                    success: function (data) {
-                        waitingDialog.hide();
-                        $('#myModalContentPago').html(data);
-                        $('#mdlMercadoPago').modal(options);
-                        $('#mdlMercadoPago').modal('show');
+            var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";
+            waitingDialog.show('Espere un momento por favor');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
+                datatype: "json",
+                cache: true,
+                success: function (data) {
+                    waitingDialog.hide();
+                    $('#myModalContentPago').html(data);
+                    $('#mdlMercadoPago').modal(options);
+                    $('#mdlMercadoPago').modal('show');
 
-                    },
-                    error: function () {
-                        waitingDialog.hide();
-                        alert("Dynamic content load failed.");
-                    }
-                });
+                },
+                error: function () {
+                    waitingDialog.hide();
+                    alert("Dynamic content load failed.");
+                }
+            });
+        }
 
-                //$("#frameMercadoPago").attr("src", "../PasarelaPago/PasarelaPago?numerodocumento=" + numerodocumento + "&totalpago= " + totalpago + " &tipo_des= " + tipo_des + " &referencia= " + referencia + " &agencia= " + agencia + " &destino=" + destino + " &agencia_direccion=" + agencia_direccion + "&liq_tipo_prov=" + liq_tipo_prov + "&liq_provincia=" + liq_provincia );
-                //$("#mdlMercadoPago").modal({ backdrop: 'static', keyboard: false });
-            //}
+        function parentHrefPopup(status) {
+            debugger;
+            var _status = status;
+            var TeamDetailPostBackURL ="@Url.Action("Lista", "Pedido")";
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { 'status': _status },
+                datatype: "json",
+                cache: true,
+                success: function (data) {
+                    waitingDialog.hide();
+                    $('#mdlMercadoPago').modal('hide');
+                    $("#frmnotificacionmp").attr("src", "../Pedido/NotificationMercadoPago?status=" + notification);
+                    $("#mdlNotificacion").modal({ backdrop: 'static', keyboard: false });
+                },
+                error: function () {
+                    waitingDialog.hide();
+                    alert("Dynamic content load failed.");
+                }
+            });
+            //window.location.href = "@Url.Action("Lista", "Pedido")/" + status;
+            return false;
+        }
+
+        function parentNotificationPedido(){
+            //$('#mdlMercadoPago').modal('hide');
+            window.location.href = "@Url.Action("Lista", "Pedido")";
+            return false;
         }
 
 

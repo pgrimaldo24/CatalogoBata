@@ -223,17 +223,24 @@
                     </div>
                     <div class='line'></div>
                     <div class="row">
-                        <div class="col-md-5">
-                            <label style="font-size:20px;"><string>TOTAL A PAGAR</string></label>
+                        <div class="col-md-4">
+                            <label class="label-form-custom" style="font-size:15px;"><string>TOTAL A PAGAR:</string></label>&nbsp;&nbsp;&nbsp; 
                         </div>
-                        <div class="col-md-1">
+                        @*<div class="col-md-1"> 
+                        </div>
+                        <div class="col-md-1"> 
+                        </div>*@
+                        @*<div class="col-md-1">
                             <label style="font-size:25px;"><string>S/.</string></label>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group form-group-sm">                                
+                        </div>*@
+                        <div class="col-md-8" style="text-align:end;">
+                            <div class="form-group">                                
                                 <strong>
-                                    <span style='font-size:25px;'
-                                          id="total_amount">S/.120.34</span>
+                                    <strong>
+                                       <span style="font-size: 20px;">S/.</span>
+                                        <span style='font-size:20px;'
+                                              id="total_amount"></span>
+                                    </strong>
                                 </strong>
                             </div>
                         </div>
@@ -242,7 +249,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group form-group-sm">
-                                <label for="dclientemp" style="margin-left:15px;">GENERAR COMPRA</label>
+                                <label for="dclientemp">GENERAR COMPRA</label>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -250,6 +257,7 @@
                                  height='80' class='credit-card-image' id='credit-card-image' />
                         </div>
                     </div>
+                    <br />
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group form-group-sm">
@@ -415,8 +423,8 @@
                         </div>                       
                     </div>
                  </div>                 
-                    <br />
-</form>
+            <br />
+            </form>
         </div>
         <div class="modal-footer" id="footer_modal">
             @*<a href="@Url.Action("Lista","Pedido")" class="btn btn-primary" style="width:100%">Volver a Pedidos</a>*@
@@ -424,7 +432,8 @@
                     class="btn btn-success"
                     id="btnPedido"
                     onclick="showListaPedido();" style="width:100%;">
-                Volver a Pedidos
+                Finalizar la Compra
+                <img src="" id="hug_loading" style="max-height: 30px; margin-left:10px;" />
             </button>         
         </div>
         <br />
@@ -476,9 +485,18 @@
         $("#frmResponsePayment").hide();
         $("#chktc").prop("checked", false);
         $("#chktd").prop("checked", false);
-
+        console.log(uuidv4());
         document.getElementById('dwFormaPagoCardDeb').style.display = 'none';
     });
+
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    
 
     var tipo_pago;
     function modal_mensaje() {
@@ -663,14 +681,14 @@
 
     $('#chktc').click(function () {
         //alert('tc')
-        getValidarTipoPago("tc");       
-        $("#nrcuotas").show();        
+        getValidarTipoPago("tc");
+        $("#nrcuotas").show();
     })
 
     $('#chktd').click(function () {
         //alert('td')
         getValidarTipoPago("td");
-        $("#nrcuotas").hide();        
+        $("#nrcuotas").hide();
     })
     $('#txtnumero_tarjeta').on('input', function () {
         this.value = this.value.replace(/[^0-9]/g, '');
@@ -767,7 +785,7 @@
 
                 var direccion = document.getElementById("direccion").innerHTML;
 
-
+                debugger;
                 if (data.Status = 0 || data.LastFourDigits != null) {
                     proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
@@ -787,36 +805,33 @@
 
     }
 
-      
-    function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-              tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
 
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
-            data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
-            success: function (data) {
-                if ((data.Success).toString() == "true") {
-                    //responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);
-                    //if (data.Mensaje_Premio != '') {
-                    //    toastr.success(data.Mensaje_Premio);
-                    //}
-                    getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
-                } else {
-                    toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
+        function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
+                data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
+                success: function (data) {
+                    if ((data.Success).toString() == "true") {
+                        debugger;
+                        getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
+                    } else {
+                        toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
+                        $("#loading").fadeOut("slow");
+                    }
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
                     $("#loading").fadeOut("slow");
                 }
-            },
-            error: function (xhr) {
-                waitingDialog.hide();
-                toastr.error(xhr, 'Mensaje');
-                $("#loading").fadeOut("slow");
-            }
-        });
+            });
 
-    }
+        }
 
     function getwebhooks(idpayment, Mensaje_Premio, Status, Message, external_reference, notification_url) {
+        debugger;
         $.ajax({
             type: "POST",
             url: '@Url.Action("GetWebhookStatus", "PasarelaPago")',
@@ -851,7 +866,7 @@
             success: function (data) {
                 waitingDialog.hide();
                 if ((data.Success).toString() == "true") {
-
+                    debugger;
                     var numero_orden = data.Message;
                     listProducts = data.Products;
                     enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
@@ -916,7 +931,7 @@
 
         return true;
     }
-    function responsePaymentProcessed(status, idpayment, message, nropedido) {
+    function responsePaymentProcessed(status, idpayment, message, nropedido, status_notification) {
         $("#frmRequestPayment").hide();
         $("#frmResponsePayment").show();
 
@@ -949,10 +964,12 @@
         }
     }
     function showListaPedido() {
-        $("#loading").fadeIn("slow");
+        debugger;
+        document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
         $("#btnPedido").prop("disabled", true);
-        parent.parentHrefPopup(notification); 
-        //window.location.href = "@Url.Action("Lista", "Pedido")"; 
+        parent.parentHrefPopup(notification);
+        
+        //window.location.href = "@Url.Action("Lista", "Pedido")";
     }
     function getInformationDevice() {
         var unknown = '-';

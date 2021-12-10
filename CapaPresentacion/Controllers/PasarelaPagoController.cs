@@ -223,7 +223,7 @@ namespace CapaPresentacion.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetWebhookStatus(int idpayment)
+        public ActionResult GetWebhookStatus(long idpayment)
         {
             var jsonResponse = new JsonResponse();
             try
@@ -232,7 +232,7 @@ namespace CapaPresentacion.Controllers
                 var response = new WebhooksDto();
                 var webhook = new WebhooksRequestDto() { id = idpayment };
                 response = _restServicesApi.PostInvoque<WebhooksRequestDto, WebhooksDto>(
-                       webhook, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoGetWebhooks], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, ConstantsCommon.TypeRequest.GET, ConstantsCommon.Method.GETWEBHOOKS);
+                       webhook, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoGetWebhooks], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, ConstantsCommon.TypeRequest.POST, ConstantsCommon.Method.GETWEBHOOKS);
 
                 jsonResponse.Status = response.response.Status.ToString();
                 jsonResponse.Message = response.response.Message.ToString();
@@ -336,7 +336,7 @@ namespace CapaPresentacion.Controllers
                 request.capture = true;
                 request.external_reference = external_reference.ToString();
                 request.installments = installments;
-                request.notification_url = ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.UrlAprobado];
+                request.notification_url = ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.NotificationWebhooksMercadoPago];
                 request.payer.email = emailCliente;
                 request.payer.identification.type = tipoDocumento;
                 request.payer.identification.number = numeroDocumento;
@@ -353,7 +353,7 @@ namespace CapaPresentacion.Controllers
                 {
                     id = response.response.Data.id,
                     status = response.response.Data.status,
-                    notification_url = ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.UrlAprobado]
+                    notification_url = response.response.Data.notification_url
                 }; 
 
                 jsonResponse.Status = response.response.Status.ToString();

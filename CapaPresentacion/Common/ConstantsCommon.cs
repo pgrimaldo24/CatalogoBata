@@ -8,7 +8,7 @@
             public const string EndPointCatalogoPagoProccessPayment = "EndPointCatalogoPagoProccessPayment";
             public const string EndPointCatalogoPagoProccessCardToken = "EndPointCatalogoPagoCardToken";
             public const string EndPointCatalogoPagoGetWebhooks = "EndPointCatalogoPagoGetWebhooks";
-            public const string UrlAprobado = "UrlAprobado";
+            public const string NotificationWebhooksMercadoPago = "NotificationWebhooksMercadoPago";
         }
 
         public struct TokenMercadoPago

@@ -58,6 +58,16 @@
         @*<p><b>Notificación del pago realizado.</b></p>*@
         <p><b><span id="payment-id"></span></b></p>
     </div>
+    <br />
+    <div class="modal-footer" id="footer_modal">
+        @*<a href="@Url.Action("Lista","Pedido")" class="btn btn-primary" style="width:100%">Volver a Pedidos</a>*@
+        <button type="button"
+                class="btn btn-success"
+                id="btnCerrar"
+                onclick="showLista_Pedido();" style="width:100%;"> Cerrar 
+            <img src="" id="hug_loading" style="max-height: 30px; margin-left:10px;" />
+        </button>
+    </div>
 </body>
 </html>
 <script>
@@ -127,8 +137,10 @@
             }
         });
 
-        function parentCloseModalDetail() {
-            parent.parentNotification();
+        function showLista_Pedido() {
+            document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
+            $("#btnPedido").prop("disabled", true);
+            parent.parentNotificationPedido();
             return false;
         }
 </script>
