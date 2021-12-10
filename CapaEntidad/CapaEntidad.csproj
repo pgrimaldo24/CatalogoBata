@@ -83,7 +83,9 @@
     <Compile Include="Maestros\Ent_Documento_Tipo.cs" />
     <Compile Include="Maestros\Ent_Lugar.cs" />
     <Compile Include="Maestros\Ent_Persona_Tipo.cs" />
+    <Compile Include="PasarelaPago\AuthDto.cs" />
     <Compile Include="PasarelaPago\Authetication.cs" />
+    <Compile Include="PasarelaPago\CardDto.cs" />
     <Compile Include="PasarelaPago\CardToken.cs" />
     <Compile Include="PasarelaPago\CardTokenResponse.cs" />
     <Compile Include="PasarelaPago\EntEstados.cs" />

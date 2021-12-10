@@ -86,6 +86,10 @@
     .overf{
         overflow-wrap:break-word;
     }
+
+    .credit-card-image {
+            max-height: 18px;
+        }
 </style>
 @*<link href="~/Content/plugins/iCheck/custom.css" rel="stylesheet" />
 <link href="~/Content/plugins/iCheck/custom.css" rel="stylesheet" />*@
@@ -396,8 +400,13 @@ else
                                     <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
                                 </button>
 
-                                <button class="btn btn-primary" type="button" id="btnMercadoPago" name="btnMercadoPago" title="btnMercadoPago">
-                                    <span class="fa fa-hashtag"></span>&nbsp;Pagar con Mercado Pago
+                               
+                                <button class="btn btn-primary" type="button" id="btnMercadoPago" name="btnMercadoPago" title="Pagar cno Mercado Pago">
+                                    <img class="credit-card-image"
+                                         src="~/Content/MercadoPago/img/logomp.png"
+                                         alt="Alternate Text"
+                                         id="imgcvv">
+                                    Pagar con Mercado Pago
                                 </button>
                             }
                             else
