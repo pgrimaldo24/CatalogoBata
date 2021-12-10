@@ -43,56 +43,61 @@
         -webkit-border-radius: 10px 10px 10px 10px;
         border: 2px;
     }
+
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         /* display: none; <- Crashes Chrome on hover */
         -webkit-appearance: none;
         margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
     }
-    .btn-tabla{
-        width:23px !important;        
+
+    .btn-tabla {
+        width: 23px !important;
     }
 
     input[type=number] {
-        -moz-appearance:textfield; /* Firefox */
+        -moz-appearance: textfield; /* Firefox */
     }
-    .w-ct{
-        width :100%;
+
+    .w-ct {
+        width: 100%;
         font-weight: 600;
     }
-    .table > tbody > tr > td{
-        vertical-align : middle;
+
+    .table > tbody > tr > td {
+        vertical-align: middle;
     }
-    .precio{
-        text-align:right;
+
+    .precio {
+        text-align: right;
     }
+
     .dataTables_filter {
         text-align: left !important;
     }
-    .table thead{
+
+    .table thead {
         background-color: #e8e8e8;
     }
-    .modal-pad{
+
+    .modal-pad {
         padding-bottom: 10px;
-    padding-top: 10px;
+        padding-top: 10px;
     }
     /*.modal-header{
         background-color:#d33724 !important;
     }*/
-    .row-p{
+    .row-p {
         padding-top: 3px;
         padding-bottom: 3px;
     }
-    .overf{
-        overflow-wrap:break-word;
-    }
 
-    .credit-card-image {
-            max-height: 18px;
-        }
+    .overf {
+        overflow-wrap: break-word;
+    }
 </style>
 @*<link href="~/Content/plugins/iCheck/custom.css" rel="stylesheet" />
-<link href="~/Content/plugins/iCheck/custom.css" rel="stylesheet" />*@
+    <link href="~/Content/plugins/iCheck/custom.css" rel="stylesheet" />*@
 
 <link href="@Url.Content("~/Content/plugins/iCheck/custom.css")" rel="stylesheet" type="text/css" />
 
@@ -104,13 +109,13 @@ else
 {
     <p class="text-warning">Modificando liquidacion:  @ViewBag.IdLiquidacion</p>
 }
- 
+
 <span style="display:none;" value="@persona.Bas_Correo" id="emailcontacto">@persona.Bas_Correo</span>
 <span style="display:none;" value="@persona.Bas_Documento" id="numerodocumento">@persona.Bas_Documento</span>
-<span style="display:none;" value="@persona.Ubicacion" id="ubicacion">@persona.Ubicacion</span> 
-<span style="display:none;" value="@persona.NombreCompleto" id="nombresapellidos">@persona.NombreCompleto</span> 
-<span style="display:none;" value="" id="urlFotoProducto"></span> 
-<span style="display:none;" id="totalpago"></span> 
+<span style="display:none;" value="@persona.Ubicacion" id="ubicacion">@persona.Ubicacion</span>
+<span style="display:none;" value="@persona.NombreCompleto" id="nombresapellidos">@persona.NombreCompleto</span>
+<span style="display:none;" value="" id="urlFotoProducto"></span>
+<span style="display:none;" id="totalpago"></span>
 <div class="row">
     <div class="col-md-5">
         <div class="box box-widget collapsed-box">
@@ -178,7 +183,7 @@ else
         <div class="box box-widget">
             <div class="box-header with-border">
                 <div class="user-block">
-                    <img class="img-circle" src="../Content/images/camion.png"  alt="User Image">
+                    <img class="img-circle" src="../Content/images/camion.png" alt="User Image">
                     <span class="username" id="doc-nom-persona" style="color:#f88989">Requerido la Informacion de Envio</span>
 
                 </div>
@@ -196,13 +201,13 @@ else
                     <div class="col-md-3" style="padding-left: 25px;">
                         <div id="prm" class="form-group" disabled>
                             <label for="txtagencia" style="color: #3d566e;">Tipo de Despacho</label>
-                            <div class="input-group">                              
-                                @Html.DropDownList("dwdespacho", new SelectList(ViewBag.despacho, "desp_cod", "desp_des", "-1"), new { @class = "selectpicker", @data_live_search = "true", @id = "dwdespacho", @name = "dwdespacho", @onchange="select_tipo();", @data_actions_box = "true", @data_selected_text_format = "count > 2" })                               
+                            <div class="input-group">
+                                @Html.DropDownList("dwdespacho", new SelectList(ViewBag.despacho, "desp_cod", "desp_des", "-1"), new { @class = "selectpicker", @data_live_search = "true", @id = "dwdespacho", @name = "dwdespacho", @onchange = "select_tipo();", @data_actions_box = "true", @data_selected_text_format = "count > 2" })
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-3" id="divagencia"  style="padding-left: 25px;">
+                    <div class="col-md-3" id="divagencia" style="padding-left: 25px;">
                         <div id="prm" class="form-group" disabled>
                             <label for="txtagencia" style="color: #3d566e;">Agencia</label>
                             <div class="input-group">
@@ -224,7 +229,7 @@ else
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3" hidden="hidden"  id="divdireccion_agencia"  style="padding-left: 25px;visibility:hidden">
+                    <div class="col-md-3" hidden="hidden" id="divdireccion_agencia" style="padding-left: 25px;visibility:hidden">
                         <div id="prm" class="form-group" disabled>
                             <label for="txtagencia_dir" style="color: #3d566e;">Direccion de Agencia</label>
                             <div class="input-group">
@@ -235,7 +240,7 @@ else
                             </div>
                         </div>
                     </div>
-                  
+
 
                     <div class="col-md-4" id="divdireccion" style="padding-left: 25px;">
                         <div id="prm" class="form-group" disabled>
@@ -245,7 +250,7 @@ else
                                     <input type="checkbox" name="chkdireccion" onchange="ckeck_direccion();" id="chkdireccion" title="Activar o Desactivar la edicion" aria-label="Checkbox Input Group">
                                 </span>
                                 <input name="txtdireccion" id="txtdireccion" value="" maxlength="100" type="text" class="form-control" placeholder="" aria-label="Checkbox Input Group">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -259,17 +264,17 @@ else
                                 <input type="text" value="" maxlength="100" class="form-control" placeholder="" name="txtreferencia" id="txtreferencia" aria-label="Checkbox Input Group">
                             </div>
                         </div>
-                    </div>                   
+                    </div>
                 </div>
-               
-               
-               
+
+
+
             </div>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">             
+    <div class="col-md-12">
         <div class="box box-widget">
             <div class="box-header with-border">
                 <i class="fa fa-list"></i>&nbsp;Pedido
@@ -280,7 +285,7 @@ else
                 </div>
             </div>
             <div class="box-body">
-                <div class="row">                    
+                <div class="row">
                     <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3">
                         <label>Articulo:</label>
                         <div class="input-group">
@@ -298,7 +303,7 @@ else
                         <div class="table-responsive">
                             <table id="detPedido" class="table table-hover table-bordered dataTable">
                                 <thead>
-                                    <tr>                                        
+                                    <tr>
                                         <th>Referencia</th>
                                         <th>Articulo</th>
                                         <th>Marca</th>
@@ -313,11 +318,11 @@ else
                                     </tr>
                                 </thead>
                                 <tbody data-bind="foreach:"></tbody>
-                            </table>        
+                            </table>
                         </div>
                     </div>
-                </div>                       
-            </div>      
+                </div>
+            </div>
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-offset-5 col-sm-7 col col-md-offset-7 col-md-5">
@@ -342,16 +347,20 @@ else
                             <div class="col-xs-3 col-sm-4 col-md-4 text-right"><span id="totalImpuesto">0.00</span></div>
                         </div>
                         <div class="row row-no-gutter">
-                            <div class="col-xs-7 col-sm-5 col-md-6"><strong>(-)
-                                @if ((int)ViewBag.CountNotas > 0)
-                                {
-                                    <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalNC">Nota de Credito</button>
-    }else
-                                {
-                                    @("Nota de Credito:");
-                                }
-                                </strong></div>
-                               <div class="col-xs-2 col-sm-3 col-md-2 text-right">S/</div>
+                            <div class="col-xs-7 col-sm-5 col-md-6">
+                                <strong>
+                                    (-)
+                                    @if ((int)ViewBag.CountNotas > 0)
+                                    {
+                                        <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalNC">Nota de Credito</button>
+                                    }
+                                    else
+                                    {
+                                        @("Nota de Credito:");
+                                    }
+                                </strong>
+                            </div>
+                            <div class="col-xs-2 col-sm-3 col-md-2 text-right">S/</div>
                             <div class="col-xs-3 col-sm-4 col-md-4 text-right"><span id="totalNota">0.00</span></div>
                         </div>
                         <div class="row row-no-gutter">
@@ -376,55 +385,50 @@ else
             <div class="box-footer">
                 <div class="row">
                     @*<div class="col-md-12 text-left">
-                        <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
-                            <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
+                            <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
+                                <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
+                            </button>
+                        </div>*@
+
+                    <div class="col-md-12 text-right">
+
+                        @*<div class="col-xs-7 col-sm-5 col-md-9">*@
+                        <button class="btn btn-danger" type="button" id="btncancelar" onclick="cancelar();" name="btncancelar" title="Cancelar">
+                            <span class="glyphicon glyphicon-remove"></span>&nbsp;Cancelar Pedido
                         </button>
-                    </div>*@
-                  
-                        <div class="col-md-12 text-right">
+                        @*</div>*@
 
-                            @*<div class="col-xs-7 col-sm-5 col-md-9">*@
-                                <button class="btn btn-danger" type="button" id="btncancelar" onclick="cancelar();" name="btncancelar" title="Cancelar">
-                                    <span class="glyphicon glyphicon-remove"></span>&nbsp;Cancelar Pedido
-                                </button>
-                            @*</div>*@
-
-                            @*<button class="btn btn-warning" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
+                        @*<button class="btn btn-warning" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
                                 <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
                             </button>*@
 
 
-                            @if (ViewBag.operacion == "Nuevo")
-                            {
-                                <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
-                                    <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
-                                </button>
-
-                               
-                                <button class="btn btn-primary" type="button" id="btnMercadoPago" name="btnMercadoPago" title="Pagar cno Mercado Pago">
-                                    <img class="credit-card-image"
-                                         src="~/Content/MercadoPago/img/logomp.png"
-                                         alt="Alternate Text"
-                                         id="imgcvv">
-                                    Pagar con Mercado Pago
-                                </button>
-                            }
-                            else
-                            {
-                                <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
-                                    <span class="fa fa-pencil"></span>&nbsp;Modificar Liquidacion
-                                </button>
+                        @if (ViewBag.operacion == "Nuevo")
+                        {
+                            <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
+                                <span class="fa fa-floppy-o"></span>&nbsp;Liquidar Pedido
+                            </button>
 
                                 <button class="btn btn-primary" type="button" id="btnMercadoPago" name="btnMercadoPago" title="btnMercadoPago">
                                     <span class="fa fa-hashtag"></span>&nbsp;Pagar con Mercado Pago
                                 </button>
-                            }
+                        }
+                        else
+                        {
+                            <button class="btn btn-success" type="button" id="btnliquidar" name="btnliquidar" title="Liquidar">
+                                <span class="fa fa-pencil"></span>&nbsp;Modificar Liquidacion
+                            </button>
 
-                       
+                                <button class="btn btn-primary" type="button" id="btnMercadoPago" name="btnMercadoPago" title="btnMercadoPago">
+                                    <span class="fa fa-hashtag"></span>&nbsp;Pagar con Mercado Pago
+                                </button>
+                        }
 
-                        </div>
-                    </div>  
-            </div>  
+
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -435,12 +439,12 @@ else
 </div>
 
 @*<div class="row">
-    <div class="col-md-6">
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal2">
-            Launch demo modal
-        </button>
-    </div>
-</div>*@
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal2">
+                Launch demo modal
+            </button>
+        </div>
+    </div>*@
 
 <!-- Modal -->
 <div class="modal fade" id="modalNC" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -490,7 +494,7 @@ else
                 <div class="row">
                     <div class="col-md-12">
                         <div id="ifrReporte" class="well" style="width: 100%; height: 100%; padding:0;">
-                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto" 
+                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
                                     onload="javascript: waitingDialog.hide();" style="zoom:90%; width: 100%; height: calc(100vh - 100px); margin-bottom:0px"></iframe>
                         </div>
                     </div>
@@ -502,11 +506,11 @@ else
         </div>
     </div>
 </div>
- 
+
 @*<div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
     <div class="modal-dialog">
-        <div class="modal-content"> 
-            <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;"> 
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
                 <h4 class="modal-title" id="myModalLabel" style="color:white">Checkout - Mercado Pago</h4>
             </div>
             <div class="modal-body" style="height:100% auto;">
@@ -514,14 +518,14 @@ else
                     <iframe id="frameMercadoPago" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
                             onload="javascript: waitingDialog.hide();" style="zoom:90%; width: 100%; height: calc(100vh - 100px); margin-bottom:0px"></iframe>
                 </div>
-            </div> 
+            </div>
             <div class="modal-footer" style="margin-top:-30px">*@
-                @*<button id="btnCerrarCheckout" type="button" class="btn btn-default" data-dismiss="modal" style="width:130px;">&nbsp;Cerrar&nbsp;</button>*@
-                @*<a href="@Url.Action("Lista","Pedido")" class="btn btn-primary">Volver a Pedidos</a>*@
-            @*</div> 
+@*<button id="btnCerrarCheckout" type="button" class="btn btn-default" data-dismiss="modal" style="width:130px;">&nbsp;Cerrar&nbsp;</button>*@
+@*<a href="@Url.Action("Lista","Pedido")" class="btn btn-primary">Volver a Pedidos</a>*@
+@*</div>
+            </div>
         </div>
-    </div>
-</div>*@
+    </div>*@
 <div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -536,17 +540,17 @@ else
 @Html.Hidden("lblIdPed", Model.ped_Id)
 @Html.Hidden("lblIdCust", Model.cust_Id)
 @*<script src="~/Scripts/bootstrap.min.js"></script>
-<script src="~/ScriptsSelect/bootstrap-select.js"></script>*@
+    <script src="~/ScriptsSelect/bootstrap-select.js"></script>*@
 
 @*<script src="~/Scripts/bootstrap-select.min.js"></script>
-<script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>*@
 
 @section scripts
 {
 
-<script src="~/Scripts/BI.js"></script>
-<script src="~/Scripts/Linkend/linq.min.js"></script>
-@*<script src="~/Scripts/Plugins/iCheck/icheck.min.js"></script>*@
+    <script src="~/Scripts/BI.js"></script>
+    <script src="~/Scripts/Linkend/linq.min.js"></script>
+    @*<script src="~/Scripts/Plugins/iCheck/icheck.min.js"></script>*@
 
     <script>
         var dataArray_cliente;
@@ -577,7 +581,7 @@ else
 
             var ActivaMcoPago="@ViewBag.ActivaMcoPago";
 
-           
+
 
             if (ActivaMcoPago=="1"){
                 $("#btnMercadoPago").show();
@@ -1005,7 +1009,7 @@ else
                             return;
 
                         };
-                        
+
                         /*si en el detlla hay percepcion*/
                         var validapercep = Enumerable.from(data.info)
                           .groupBy(
@@ -1044,18 +1048,18 @@ else
                             toastr.error("No se genero la liquidacion, porque no hay suficiente stock en el producto: " + data.stk.articulo + " Talla: " + data.stk.talla, "Alerta");
                             return;
                         }
-                        
-                      
+
+
                         //if (valida == 0) {
                             grabar_liquidacion();
                         //}
-                        
+
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {              
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
                     toastr.error("Error al consultar.", "Alerta");
                 }
-            });            
+            });
         }
 
         function cancelar() {
@@ -1100,7 +1104,7 @@ else
                     }
                 });
             });
-             
+
             $("#txtArticulo").keyup(function (event) {
                 if (event.keyCode === 13) {
                     event.preventDefault();
@@ -1207,7 +1211,7 @@ else
                 "fnServerData": function (sSource, aoData, fnCallback) {
                     $.getJSON(sSource, aoData, function (json) {
                         var header = json.header;
-                        $("#cantitdades").html(header._qtys); 
+                        $("#cantitdades").html(header._qtys);
                         $("#opeGratuitas").html(header._subTotalOPG.toFixed(2));
                         $("#subTotalList").html(header._subTotalDesc.toFixed(2));
                         $("#totalImpuesto").html(header._taxesDesc.toFixed(2));
@@ -2458,7 +2462,7 @@ else
             document.getElementById("totalList").innerHTML = 'S/. ' + Total;
             document.getElementById("grantotalList").innerHTML = 'S/. ' + GranTotal;
             document.getElementById("EtiqtotalPercepcion").innerHTML = '&nbsp;<i class="fa fa-info-circle"></i>&nbsp;<b>Percepcion ' + gCustomer.percepcion + '%</b>:';
- 
+
             document.getElementById("totalpago").innerHTML = 'S/. ' + GranTotal;
 
         }
@@ -3987,15 +3991,15 @@ else
 
             }
 
-        } 
+        }
         /*FIN DEL LISTADO DE LAS NOTAS DE CREDITO*/
 
         function envioInformacionUsuario() {
             debugger
-           //if (!getDetallePedido()) {  
+           //if (!getDetallePedido()) {
                 var numerodocumento = document.getElementById("numerodocumento").innerHTML;
                 var totalpago = document.getElementById("totalpago").innerHTML;
-                var tipo_des = $('#dwdespacho').val(); 
+                var tipo_des = $('#dwdespacho').val();
                 var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
                 var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
                 var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
@@ -4014,8 +4018,8 @@ else
                 if (destino == null || destino == '') { destino = "0" }
                 if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
 
-                var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";            
-                waitingDialog.show('Espere un momento por favor');            
+                var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";
+                waitingDialog.show('Espere un momento por favor');
                 var options = { "backdrop": "static", keyboard: true };
                 $.ajax({
                     type: "GET",
@@ -4024,9 +4028,9 @@ else
                     data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
                     datatype: "json",
                     cache: true,
-                    success: function (data) {                    
+                    success: function (data) {
                         waitingDialog.hide();
-                        $('#myModalContentPago').html(data);                     
+                        $('#myModalContentPago').html(data);
                         $('#mdlMercadoPago').modal(options);
                         $('#mdlMercadoPago').modal('show');
 
@@ -4039,10 +4043,10 @@ else
 
                 //$("#frameMercadoPago").attr("src", "../PasarelaPago/PasarelaPago?numerodocumento=" + numerodocumento + "&totalpago= " + totalpago + " &tipo_des= " + tipo_des + " &referencia= " + referencia + " &agencia= " + agencia + " &destino=" + destino + " &agencia_direccion=" + agencia_direccion + "&liq_tipo_prov=" + liq_tipo_prov + "&liq_provincia=" + liq_provincia );
                 //$("#mdlMercadoPago").modal({ backdrop: 'static', keyboard: false });
-            //}  
+            //}
         }
-         
-          
+
+
         function getDetallePedido() {
             waitingDialog.show("Espere por favor...")
             $.ajax({
@@ -4105,6 +4109,5 @@ else
             });
         }
 
-</script>
+    </script>
 }
-    
