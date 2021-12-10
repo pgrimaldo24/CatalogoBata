@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
@@ -267,6 +268,11 @@ namespace CapaPresentacion.Controllers
 
             return result;
         }
-
+        [HttpPost]
+        public ActionResult Webhooks(String Query_String)
+        {
+            //return new HttpStatusCodeResult(200);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
     }
 }
