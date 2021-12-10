@@ -14,7 +14,7 @@
     };
 }
 
-@*@Scripts.Render("~/bundles/bootstrap")*@
+ 
 <style>
     #dwcliente {
         width: 200px;
@@ -58,7 +58,7 @@
     }
 </style>
 <p class="text-primary">Creación y modificación de pedidos en borrador, creación y consulta de liquidaciones, consulta de facturas y devoluciones.</p>
-
+<span style="display:none;" value="@ViewBag.status_notification" id="status_notification">@ViewBag.status_notification</span>
 <div class="row">
     <div class="col-md-12">
         @*@using (Ajax.BeginForm("ListaPcPedidos", options))
@@ -375,14 +375,8 @@
             </div>
             <!-- /.tab-content -->
         </div>
-    </div>
+    </div> 
 </div>
-
-@*<script src="~/Scripts/Plugins/iCheck/icheck.min.js"></script>
-
-//"~/Scripts/bootstrap-select.min.js",
-//"~/ScriptsSelect/bootstrap-select.js",
-*@
 
 <div class="modal fade" id="CRLiquidacion" tabindex="-1" role="dialog" aria-labelledby="CRLiquidacion">
     <div class="modal-dialog modal-lg" role="document">
@@ -391,8 +385,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="ifrReporte" class="well" style="width: 100%; height: 100%; padding:0;">
-                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto" 
-                                    onload="javascript: waitingDialog.hide();" style="zoom:90%; width: 100%; height: calc(100vh - 100px);"></iframe>
+                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
+                                     style="zoom:90%; width: 100%; height: calc(100vh - 100px);"></iframe>
                         </div>
                     </div>
                 </div>
@@ -403,6 +397,32 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="mdlNotificacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
+                <h4 class="modal-title" id="myModalLabel" style="color:white">Notificación - Mercado Pago</h4>
+            </div>
+            <div class="modal-body" style="height:100% auto;">
+                <div id="frmnotificacion" class="well" style="width: 100%; height: 100%; padding:0; background-color: #fff; border-color:#fff">
+                    <iframe id="frmnotificacionmp" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
+                             style="zoom:90%; width: 100%; height: calc(32vh - 32px); margin-bottom:0px"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-primary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script src="~/Scripts/Plugins/iCheck/icheck.min.js"></script>
+
+//"~/Scripts/bootstrap-select.min.js",
+//"~/ScriptsSelect/bootstrap-select.js",
+*@ 
+
 <script src="~/Scripts/bootstrap-select.min.js"></script>
 <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
 
@@ -599,6 +619,13 @@
     var FechaFin=$("#dtpFechaFin").val();
     var rows_selected = [];
     $(document).ready(function () {
+        debugger
+        var status_notification_mp = document.getElementById("status_notification").innerHTML;
+        if (status_notification_mp !== "" || status_notification_mp !== undefined || status_notification_mp !== null) {
+            console.log(status_notification_mp);
+        }else {
+            notificationMercadoPago(status_notification_mp);
+        }
 
         $("#datepickerIni").datepicker({
             autoclose: true,
@@ -610,7 +637,7 @@
             todayHighlight: true
         }).datepicker("setDate", "0");
 
-        debugger
+ 
         tabla_flete.DataTable({
             "dom": 't<"row"<"col-md-6"f><"col-md-6"p>>',
             "iDisplayLength": 1500,
@@ -746,6 +773,17 @@
 
 
     });
+
+
+    function parentNotification() {
+        $('#frmnotificacionmp').attr('src', '');
+        $('#mdlNotificacion').modal('hide');
+    }
+
+    function notificationMercadoPago(notification) {
+        $("#frmnotificacionmp").attr("src", "../Pedido/NotificationMercadoPago?status=" + notification);
+        $("#mdlNotificacion").modal({ backdrop: 'static', keyboard: false });
+    }
 
     function numbersonly(e) {
         var unicode = e.charCode ? e.charCode : e.keyCode

@@ -604,10 +604,10 @@
         $(window).load(function () {
             $("#loading").fadeOut("slow");
         });
-        
-        $(document).ready(function () { 
+
+        $(document).ready(function () {
             var listProducts = [];
-            
+
             getInformationDevice();
             getInfoByUser();
             getInformationCvv(2);
@@ -617,7 +617,7 @@
             $("#frmResponsePayment").hide();
             $("#chktc").prop("checked", false);
             $("#chktd").prop("checked", false);
-            document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden"; 
+            document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
         });
 
         var tipo_pago;
@@ -643,24 +643,25 @@
             feature_camera,
             device_model,
             feature_front_camera,
-            resolution;
+            resolution,
+            notification;
 
         function getInformationDevice() {
-            var unknown = '-'; 
+            var unknown = '-';
             var screenSize = '';
             if (screen.width) {
                 width = (screen.width) ? screen.width : '';
                 height = (screen.height) ? screen.height : '';
                 screenSize += '' + width + "x" + height;
             }
-             
+
             var nVer = navigator.appVersion;
             var nAgt = navigator.userAgent;
             var browser = navigator.appName;
             var _version = '' + parseFloat(navigator.appVersion);
             var majorVersion = parseInt(navigator.appVersion, 10);
             var nameOffset, verOffset, ix;
- 
+
             if ((verOffset = nAgt.indexOf('Opera')) != -1) {
                 browser = 'Opera';
                 _version = nAgt.substring(verOffset + 6);
@@ -668,27 +669,27 @@
                     _version = nAgt.substring(verOffset + 8);
                 }
             }
-         
+
             if ((verOffset = nAgt.indexOf('OPR')) != -1) {
                 browser = 'Opera';
                 _version = nAgt.substring(verOffset + 4);
             }
-   
+
             else if ((verOffset = nAgt.indexOf('Edge')) != -1) {
                 browser = 'Microsoft Edge';
                 _version = nAgt.substring(verOffset + 5);
             }
-   
+
             else if ((verOffset = nAgt.indexOf('MSIE')) != -1) {
                 browser = 'Microsoft Internet Explorer';
                 _version = nAgt.substring(verOffset + 5);
             }
-       
+
             else if ((verOffset = nAgt.indexOf('Chrome')) != -1) {
                 browser = 'Chrome';
                 _version = nAgt.substring(verOffset + 7);
             }
-   
+
             else if ((verOffset = nAgt.indexOf('Safari')) != -1) {
                 browser = 'Safari';
                 _version = nAgt.substring(verOffset + 7);
@@ -696,17 +697,17 @@
                     _version = nAgt.substring(verOffset + 8);
                 }
             }
-      
+
             else if ((verOffset = nAgt.indexOf('Firefox')) != -1) {
                 browser = 'Firefox';
                 _version = nAgt.substring(verOffset + 8);
             }
-         
+
             else if (nAgt.indexOf('Trident/') != -1) {
                 browser = 'Microsoft Internet Explorer';
                 _version = nAgt.substring(nAgt.indexOf('rv:') + 3);
             }
-       
+
             else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) {
                 browser = nAgt.substring(nameOffset, verOffset);
                 _version = nAgt.substring(verOffset + 1);
@@ -714,7 +715,7 @@
                     browser = navigator.appName;
                 }
             }
-      
+
             if ((ix = _version.indexOf(';')) != -1) _version = _version.substring(0, ix);
             if ((ix = _version.indexOf(' ')) != -1) _version = _version.substring(0, ix);
             if ((ix = _version.indexOf(')')) != -1) _version = _version.substring(0, ix);
@@ -724,15 +725,15 @@
                 _version = '' + parseFloat(navigator.appVersion);
                 majorVersion = parseInt(navigator.appVersion, 10);
             }
-             
-            var mobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(nVer); 
+
+            var mobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(nVer);
             var cookieEnabled = (navigator.cookieEnabled) ? true : false;
 
             if (typeof navigator.cookieEnabled == 'undefined' && !cookieEnabled) {
                 document.cookie = 'testcookie';
                 cookieEnabled = (document.cookie.indexOf('testcookie') != -1) ? true : false;
             }
- 
+
             var os = unknown;
             var clientStrings = [
                 { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/ },
@@ -795,7 +796,7 @@
                     osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
                     break;
             }
-             
+
             var flashVersion = 'no check';
 
 
@@ -807,8 +808,8 @@
                 else {
                     flashVersion = unknown;
                 }
-            } 
-             
+            }
+
 
             os_device = os;
             system_version = osVersion;
@@ -829,10 +830,10 @@
             else { device_name = "PC" + "-" + os; device_model = "PC" + "-" + os; }
             device_family = 0;
             retina_display_capable = true;
-            feature_camera = false; 
+            feature_camera = false;
             feature_front_camera = false;
-            resolution = screenSize; 
-             
+            resolution = screenSize;
+
         }
 
         $('#horizontal_logo').click(function () {
@@ -849,7 +850,7 @@
             changeCardPayment($(this).val());
         })
 
-        $('#dwTipoDocumentoPayment').change(function () { 
+        $('#dwTipoDocumentoPayment').change(function () {
             if ($(this).val() == "0") { $("#txtDocumentoPayment").prop("disabled", true); }
             else { $("#txtDocumentoPayment").prop("disabled", false); }
         })
@@ -865,19 +866,19 @@
             getValidarTipoPago("td");
             document.getElementById("nrcuotas").style.visibility = "hidden";
         })
-        
+
         function getValidarTipoPago(valid) {
             switch (valid) {
-                case "tc": 
+                case "tc":
                     $("#dwFormaPagoCard").prop("disabled", false);
                     document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
                     document.getElementById("dwFormaPagoCard").style.visibility = "visible";
-                    
+
                     break;
                 case "td":
                     $("#dwFormaPagoCardDeb").prop("disabled", false);
                     document.getElementById("dwFormaPagoCard").style.visibility = "hidden";
-                    document.getElementById("dwFormaPagoCardDeb").style.visibility = "visible"; 
+                    document.getElementById("dwFormaPagoCardDeb").style.visibility = "visible";
                     break;
             }
 
@@ -914,7 +915,7 @@
             ];
 
             var comboMes = document.getElementById("mes");
- 
+
             for (let i = 0; i < array.length; i++) {
                 var option = document.createElement("option");
                 option.setAttribute("value", i);
@@ -972,7 +973,7 @@
                 $("#txtubicacion").prop("disabled", true);
                 $("#txtNumeroDireccion").prop("disabled", true);
             }
-            else if (valueSelect === "visa" || valueSelect === "debvisa") { 
+            else if (valueSelect === "visa" || valueSelect === "debvisa") {
                 document.getElementById('credit-card-image').src = "../Content/MercadoPago/img/logos/logo-visa.jpg";
                 $("#txtnombre_titular").prop("disabled", false);
                 $("#txtnumero_tarjeta").prop("disabled", false);
@@ -1005,7 +1006,7 @@
                 $("#txtEmail").prop("disabled", false);
                 $("#txtubicacion").prop("disabled", false);
                 $("#txtNumeroDireccion").prop("disabled", false);
-                
+
             }
             else if (valueSelect === "amex") {
                 document.getElementById('credit-card-image').src = "https://dl.dropboxusercontent.com/s/f5hyn6u05ktql8d/amex-icon-6902.png";
@@ -1025,7 +1026,7 @@
                 $("#txtNumeroDireccion").prop("disabled", false);
             }
         }
-   
+
         function getPayValidate() {
             var cardholder = $("#txtnombre_titular").val();
             var cardnumber = $("#txtnumero_tarjeta").val();
@@ -1050,21 +1051,21 @@
             if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
             if (document_titular == "" || document_titular == null) { errors.push('Debe ingresar un número de documento.'); }
             if (email == "" || email == null) { errors.push('Debe ingresar un email.'); }
-            if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); } 
+            if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); }
 
             /*borrar elementos*/
             var lis = document.querySelectorAll('#lista-error li');
             for (var i = 0; li = lis[i]; i++) {
                 li.parentNode.removeChild(li);
             }
-             
+
             for (i = 0; i < errors.length; i++) {
                 var content = errors[i];
                 var li = document.createElement("li");
                 li.appendChild(document.createTextNode(content));
                 document.getElementById("lista-error").appendChild(li);
             }
-             
+
             if (errors.length > 0) {
                 $("#loading").fadeOut("slow");
                 $('#myModalInfoTime').modal('show');
@@ -1122,12 +1123,13 @@
 
         function showListaPedido() {
             $("#loading").fadeIn("slow");
-            parent.parentHrefPopup();
+            parent.parentHrefPopup(notification);
         }
 
         function registerPayment() {
             $("#loading").fadeIn("slow");
             if (getPayValidate()) {
+                debugger;
                 var token_public = document.getElementById("mercadopagopublickey").innerHTML;
                 var mercadopago = new MercadoPago(token_public);
                 var nombreCompletoTitular = $("#txtnombre_titular").val() + ' ' + $("#txtApellidos_titular").val();
@@ -1140,12 +1142,12 @@
                 var codigoSeguridad = $("#txtcvc").val();
                 var tipoDocumento = $("#dwTipoDocumentoPayment").val();
                 var numeroDocumento = $("#txtDocumentoPayment").val();
-  
+
                 getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution);
             }
         }
 
-        function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des, direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number){
+        function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des, direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number) {
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("LiquidarPedido", "Pedido")',
@@ -1153,13 +1155,39 @@
                 success: function (data) {
                     waitingDialog.hide();
                     if ((data.Success).toString() == "true") {
-                  
+
                         var numero_orden = data.Message;
-                        listProducts = data.Products; 
-                        enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
-                                  tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, data.Message, listProducts, street_number);
+                        listProducts = data.Products;
+          
+                        var url = "../PasarelaPago/PasarelaPago?status=" + data.Data + "";
+                        enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, data.Message, listProducts, street_number);
                     } else {
                         toastr.error(data.Message, "Error");
+                        $("#loading").fadeOut("slow");
+                    }
+                },
+                error: function (xhr) {
+                    waitingDialog.hide();
+                    toastr.error(xhr, 'Mensaje');
+                    $("#loading").fadeOut("slow");
+                }
+            });
+        }
+
+        function getwebhooks(idpayment, Mensaje_Premio, Status, Message, external_reference, notification_url) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetWebhookStatus", "PasarelaPago")',
+                data: { "idpayment": idpayment },
+                success: function (data) {
+                    if ((data.Success).toString() == "true") {
+                        debugger     
+                        responsePaymentProcessed(Status, idpayment, Message, external_reference, data.Data);
+                        if (Mensaje_Premio != '') {
+                            toastr.success(Mensaje_Premio);
+                        }
+                    } else {
+                        toastr.error("Hubo un error en Webhooks.", 'Mensaje');
                         $("#loading").fadeOut("slow");
                     }
                 },
@@ -1176,12 +1204,9 @@
                 type: "POST",
                 url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
                 data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
-                success: function (data) { 
-                    if ((data.Success).toString() == "true") { 
-                        responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);                        
-                        if (data.Mensaje_Premio != '') {
-                            toastr.success(data.Mensaje_Premio);
-                        }
+                success: function (data) {
+                    if ((data.Success).toString() == "true") {
+                        getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
                     } else {
                         toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
                         $("#loading").fadeOut("slow");
@@ -1200,25 +1225,18 @@
             parent.parentCloseModalDetailCardCvvView();
             return false;
         }
-
-        //Reporte
-        function responsePaymentProcessed(status, idpayment, message,nropedido) {
-            //document.getElementById("frmRequestPayment").style.visibility = "hidden";
-            $("#frmRequestPayment").hide();
-            //document.getElementById("frmResponsePayment").style.visibility = "visible";
+         
+        function responsePaymentProcessed(status, idpayment, message, nropedido, status_notification) { 
+            $("#frmRequestPayment").hide(); 
             $("#frmResponsePayment").show();
-            $("#div_reporte").hide();
-            //div_reporte
-
-
+            $("#div_reporte").hide(); 
             switch (status) {
                 case "1":
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
                     document.getElementById('nropedido').innerHTML = nropedido;
-
-                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                    notification = status_notification; 
                     $("#loading").fadeOut("slow");
                     break;
                 case "2":
@@ -1226,23 +1244,23 @@
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
                     document.getElementById('nropedido').innerHTML = nropedido;
-                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
-                    $("#loading").fadeOut("slow");
+                    notification = status_notification;
+                    $("#loading").fadeOut("slow"); 
                     break;
                 default:
                     document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
                     document.getElementById('payment-id').innerHTML = idpayment;
                     document.getElementById('payment-status').innerHTML = message;
                     document.getElementById('nropedido').innerHTML = nropedido;
-                    //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                    notification = status_notification;
                     $("#loading").fadeOut("slow");
                     break;
 
-            }
+            } 
         }
 
         function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution) {
-            var listDevice = []; 
+            var listDevice = [];
 
             listDevice.push({
                 "name": "vendor_id",
@@ -1281,7 +1299,7 @@
                     var liq_tipo_prov = document.getElementById("liq_tipo_prov").innerHTML;
                     var liq_provincia = document.getElementById("liq_provincia").innerHTML;
                     var direccion = document.getElementById("direccion").innerHTML;
-                 
+
                     if (data.Status = 0 || data.LastFourDigits != null) {
                         proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
@@ -1290,7 +1308,7 @@
                         //toastr.error('La tarjeta es inválida, verifica tus datos.', 'Mensaje');
                         toastr.error(data.Message, 'Mensaje');
                         $("#loading").fadeOut("slow");
-                    }  
+                    }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log('Error interno en el servidor');

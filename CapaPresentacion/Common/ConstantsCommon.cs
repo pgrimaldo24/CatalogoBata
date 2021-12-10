@@ -7,6 +7,8 @@
             public const string EndPointCatalogoPagoAuth = "EndPointCatalogoPagoAuth";
             public const string EndPointCatalogoPagoProccessPayment = "EndPointCatalogoPagoProccessPayment";
             public const string EndPointCatalogoPagoProccessCardToken = "EndPointCatalogoPagoCardToken";
+            public const string EndPointCatalogoPagoGetWebhooks = "EndPointCatalogoPagoGetWebhooks";
+            public const string UrlAprobado = "UrlAprobado";
         }
 
         public struct TokenMercadoPago
@@ -44,6 +46,7 @@
         {
             public const string PROCCESS_PAYMENT = "ProccessPayment";
             public const string CARDTOKEN = "CardToken";
+            public const string GETWEBHOOKS = "Webhooks";
         }
     }
 }

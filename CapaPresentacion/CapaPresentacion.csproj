@@ -3226,6 +3226,7 @@
     <Content Include="Views\Home\Error_Roles.cshtml" />
     <Content Include="Views\PasarelaPago\CardInformationCvv.cshtml" />
     <Content Include="Views\PasarelaPago\PasarelaPago.cshtml" />
+    <Content Include="Views\Pedido\NotificationMercadoPago.cshtml" />
     <Content Include="Views\PasarelaPago\PasarelaPago2.cshtml" />
   </ItemGroup>
   <ItemGroup>

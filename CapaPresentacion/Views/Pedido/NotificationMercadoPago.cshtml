@@ -1,0 +1,134 @@
+﻿
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PasarelaPago</title>
+    @*<link href="~/Content/MercadoPago/style-pasarela-pago.css" rel="stylesheet" type="text/css" />*@
+    @*<link href="~/Content/MercadoPago/stylepayment.css" rel="stylesheet" type="text/css" />*@
+    <script src="https://sdk.mercadopago.com/js/v2" type="text/javascript"></script>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/morris/morris.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/AdminLTE/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/AdminLTE/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/AdminLTE/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    
+    <style>
+        .imgstyle {
+            width: 68%;
+            height: 68%;
+            margin-left: 12em;
+            margin-top: 30px;
+        }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('../Content/MercadoPago/img/loading-cargando.gif') 50% 50% no-repeat rgb(249,249,249);
+            opacity: .8;
+        }
+    </style>
+</head>
+<body>
+    <span style="display:none;" value="@ViewBag.status_notification" id="status_notification">@ViewBag.status_notification</span>
+    <div class="loader" id="loading"></div>
+    <div class="form-group credit-info-content"
+         style="margin-top:0%;padding-top: 35px;padding-left: 220px;"> 
+        <img src="/Content/MercadoPago/img/check-success-api.png"
+             height='100' class='credit-card-image' id='img-respuesta-api' /> 
+    </div> 
+    <div style="padding-left:0px; text-align:center; font-size:1.3em;">
+        @*<p><b>Notificación del pago realizado.</b></p>*@
+        <p><b><span id="payment-id"></span></b></p>
+    </div>
+</body>
+</html>
+<script>
+        $(window).load(function () {
+            $("#loading").fadeOut("slow");
+        });
+
+        $(document).ready(function () {
+            $("#loading").fadeIn("slow");
+            debugger
+            var valor_notification = document.getElementById('status_notification').innerHTML;
+            switch (valor_notification) {
+                case "pending":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "No se ha completado el proceso del pago todavía.";
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "approved":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/check-success-api.png";
+                    document.getElementById('payment-id').innerHTML = "El pago fue aprobado y acreditado.";
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "authorized":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El pago fue autorizado pero no capturado todavía.";
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "in_process":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El pago está en revisión.";
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "in_mediation":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El usuario inició una disputa.";
+                    $("#loading").fadeOut("slow");
+                    break;
+                case "rejected":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El pago fue rechazado. El usuario podría reintentar el pago.";
+                    $("#loading").fadeOut("slow");
+                    break;
+
+                case "cancelled":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El pago fue cancelado por una de las partes o el pago expiró..";
+                    $("#loading").fadeOut("slow");
+                    break;
+
+                case "refunded":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "El pago fue devuelto al usuario.";
+                    $("#loading").fadeOut("slow");
+                    break;
+
+                case "charged_back":
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "Se ha realizado un contracargo en la tarjeta de crédito.";
+                    $("#loading").fadeOut("slow");
+                    break;
+
+                default:
+                    document.getElementById('img-respuesta-api').src = "/Content/MercadoPago/img/infor-bata.png";
+                    document.getElementById('payment-id').innerHTML = "Actualiza la página, mensaje informativo..";
+                    $("#loading").fadeOut("slow");
+                    break;
+            }
+        });
+
+        function parentCloseModalDetail() {
+            parent.parentNotification();
+            return false;
+        }
+</script>

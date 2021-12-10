@@ -77,6 +77,7 @@ namespace CapaPresentacion.Controllers
                 //{ 
                 //    if (GetValidarPermisosXRol())
                 //    {
+
                 var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
                 var actionName = this.ControllerContext.RouteData.GetRequiredString("action");
                 var controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");
@@ -119,7 +120,6 @@ namespace CapaPresentacion.Controllers
                 else
                     ViewBag.totalpago = totalpago;
                 ViewBag.mercadoPagoPublicKey = token_access;
-
                 return View();
                 //    }
                 //    else
@@ -250,6 +250,34 @@ namespace CapaPresentacion.Controllers
 
         }
 
+        [HttpPost]
+        public ActionResult GetWebhookStatus(int idpayment)
+        {
+            var jsonResponse = new JsonResponse();
+            try
+            { 
+                var _restServicesApi = new RestServicesApi();
+                var response = new WebhooksDto();
+                var webhook = new WebhooksRequestDto() { id = idpayment };
+                response = _restServicesApi.PostInvoque<WebhooksRequestDto, WebhooksDto>(
+                       webhook, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoGetWebhooks], Settings.ACCESS_TOKEN_API_CATALOGO_PAGO, ConstantsCommon.TypeRequest.GET, ConstantsCommon.Method.GETWEBHOOKS);
+
+                jsonResponse.Status = response.response.Status.ToString();
+                jsonResponse.Message = response.response.Message.ToString();
+                jsonResponse.Success = true;
+                jsonResponse.Data = response.response.Data.status.ToString();
+
+                return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success, Data = jsonResponse.Data }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            { 
+                jsonResponse.Status = "0";
+                jsonResponse.Message = e.Message;
+                jsonResponse.Success = false;
+                return Json(new { Status = jsonResponse.Status, Message = jsonResponse.Message, Success = jsonResponse.Success }, JsonRequestBehavior.AllowGet); 
+            }
+        }
+
         public Ent_Persona GetInformacionUsuario(string dni)
         {
             try
@@ -336,7 +364,7 @@ namespace CapaPresentacion.Controllers
                 request.capture = true;
                 request.external_reference = external_reference.ToString();
                 request.installments = installments;
-                request.notification_url = "https://posperu.bgr.pe/Ws_Multivende/Api/ApiBataPos/Update_Data_Bata";
+                request.notification_url = ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.UrlAprobado];
                 request.payer.email = emailCliente;
                 request.payer.identification.type = tipoDocumento;
                 request.payer.identification.number = numeroDocumento;
@@ -352,7 +380,8 @@ namespace CapaPresentacion.Controllers
                 var payment = new DataRoot()
                 {
                     id = response.response.Data.id,
-                    status = response.response.Data.status
+                    status = response.response.Data.status,
+                    notification_url = ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.UrlAprobado]
                 }; 
 
                 jsonResponse.Status = response.response.Status.ToString();

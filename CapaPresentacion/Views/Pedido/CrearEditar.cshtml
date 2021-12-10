@@ -116,6 +116,14 @@ else
 <span style="display:none;" value="@persona.NombreCompleto" id="nombresapellidos">@persona.NombreCompleto</span>
 <span style="display:none;" value="" id="urlFotoProducto"></span>
 <span style="display:none;" id="totalpago"></span>
+ 
+<span style="display:none;" value="@persona.Bas_Correo" id="emailcontacto">@persona.Bas_Correo</span> 
+<span style="display:none;" value="@persona.Bas_Documento" id="numerodocumento">@persona.Bas_Documento</span>
+<span style="display:none;" value="@persona.Ubicacion" id="ubicacion">@persona.Ubicacion</span> 
+<span style="display:none;" value="@persona.NombreCompleto" id="nombresapellidos">@persona.NombreCompleto</span> 
+<span style="display:none;" value="" id="urlFotoProducto"></span> 
+<span style="display:none;" id="totalpago"></span> 
+
 <div class="row">
     <div class="col-md-5">
         <div class="box box-widget collapsed-box">
@@ -536,6 +544,8 @@ else
 </div>
 
 
+
+
 @Html.Hidden("lblIdLiquidacion", Model.liq_Id)
 @Html.Hidden("lblIdPed", Model.ped_Id)
 @Html.Hidden("lblIdCust", Model.cust_Id)
@@ -555,7 +565,7 @@ else
     <script>
         var dataArray_cliente;
         $(document).ready(function () {
-
+             
            dataArray_cliente = function () { return @Html.Raw(Json.Encode(ViewBag.infoProm)); }();
             var formapago = $("#dwFormaPago").val();
             if (formapago == "005") { $("#btnMercadoPago").prop("disabled", false); }
@@ -718,6 +728,7 @@ else
             }
         });
 
+        
 
         $("#btnMercadoPago").click(function () {
             if (getValidarInformacionCliente()) {
@@ -740,10 +751,16 @@ else
             $('#mdlMercadoPago').modal('hide');
         }
 
-        function parentHrefPopup() {
-            window.location.href = "@Url.Action("Lista", "Pedido")";
+    
+
+        function parentHrefPopup(status) {
+            debugger;
+            var _status = status;
+            window.location.href = "@Url.Action("Lista", "Pedido")/" + status;
             return false;
         }
+
+       
 
         function habilitarMercadoPago(valor) {
             if (valor == "005") { $("#btnMercadoPago").prop("disabled", false); }

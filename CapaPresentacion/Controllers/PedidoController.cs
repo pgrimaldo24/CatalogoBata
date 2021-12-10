@@ -239,6 +239,13 @@ namespace CapaPresentacion.Controllers
             }
             return split;
         }
+
+        public ActionResult NotificationMercadoPago(string status)
+        {
+            ViewBag.status_notification = status;
+            return View();
+        }
+
         public  Boolean fvalidaartcatalogo()
         {
             Boolean validaartcatag = false;
@@ -613,9 +620,9 @@ namespace CapaPresentacion.Controllers
             }
             this.HttpContext.Session["ReportName"] = "InvoiceReport.rpt";
         }
-        public ActionResult Lista()
+        public ActionResult Lista(string status = "")
         {
-            
+            ViewBag.status_notification = status;
             Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
             string actionName = this.ControllerContext.RouteData.GetRequiredString("action");
             string controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");
