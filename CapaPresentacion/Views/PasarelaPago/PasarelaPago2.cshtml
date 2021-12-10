@@ -743,7 +743,7 @@
     }
     function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution) {
         var listDevice = [];
-        debugger
+         
         listDevice.push({
             "name": "vendor_id",
             "value": "C2508642-79CF-44E4-A205-284A4F4DE04C"
@@ -785,7 +785,7 @@
 
                 var direccion = document.getElementById("direccion").innerHTML;
 
-                debugger;
+
                 if (data.Status = 0 || data.LastFourDigits != null) {
                     proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                                tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
@@ -807,14 +807,14 @@
 
 
         function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments, tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
-            debugger;
+       
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("PostProccessPayment", "PasarelaPago")',
                 data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
                 success: function (data) {
                     if ((data.Success).toString() == "true") {
-                        debugger;
+              
                         getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
                     } else {
                         toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
@@ -831,14 +831,12 @@
         }
 
     function getwebhooks(idpayment, Mensaje_Premio, Status, Message, external_reference, notification_url) {
-        debugger;
         $.ajax({
             type: "POST",
             url: '@Url.Action("GetWebhookStatus", "PasarelaPago")',
             data: { "idpayment": idpayment },
             success: function (data) {
                 if ((data.Success).toString() == "true") {
-                    debugger
                     responsePaymentProcessed(Status, idpayment, Message, external_reference, data.Data);
                     if (Mensaje_Premio != '') {
                         toastr.success(Mensaje_Premio);
@@ -866,7 +864,6 @@
             success: function (data) {
                 waitingDialog.hide();
                 if ((data.Success).toString() == "true") {
-                    debugger;
                     var numero_orden = data.Message;
                     listProducts = data.Products;
                     enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
@@ -964,7 +961,6 @@
         }
     }
     function showListaPedido() {
-        debugger;
         document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
         $("#btnPedido").prop("disabled", true);
         parent.parentHrefPopup(notification);
