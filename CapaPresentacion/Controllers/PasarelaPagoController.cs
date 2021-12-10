@@ -58,6 +58,17 @@ namespace CapaPresentacion.Controllers
             ViewBag.liq_tipo_prov = liq_tipo_prov;
             ViewBag.liq_provincia = liq_provincia;
 
+            #region<Obteniendo el token> 
+            var usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+            var auth = new Authetication
+            {
+                password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
+                username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
+                usuarioWeb = usuario.usu_login,
+            };
+            var token = AuthServicesApi.AuthTokenCatalogoPago(auth);
+            #endregion
+
             if (totalpago.Equals("") || totalpago.Equals(0) || totalpago.Equals(null))
                 ViewBag.totalpago = 0;
             else
@@ -103,18 +114,7 @@ namespace CapaPresentacion.Controllers
                 ViewBag.provincia = person.Provincia.Trim();
                 ViewBag.liq_tipo_prov = liq_tipo_prov;
                 ViewBag.liq_provincia = liq_provincia;
-
-                #region<Obteniendo el token> 
-                var usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
-                var auth = new Authetication
-                {
-                    password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
-                    username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
-                    usuarioWeb = usuario.usu_login,
-                };
-                var token = AuthServicesApi.AuthTokenCatalogoPago(auth);
-                #endregion
-
+                 
                 if (totalpago.Equals("") || totalpago.Equals(0) || totalpago.Equals(null))
                     ViewBag.totalpago = 0;
                 else
@@ -144,36 +144,8 @@ namespace CapaPresentacion.Controllers
         {
             try
             {
-                Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
-
-
-
+                var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
                 var _restServicesApi = new RestServicesApi();
-
-
-                #region<Obteniendo el token>
-                var auth = new Authetication
-                {
-                    password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
-                    username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
-                    usuarioWeb = _usuario.usu_login,
-                };
-                var response_token = _restServicesApi.Authentication<Authetication, ResponseDto>(
-                    auth, ConfigurationManager.AppSettings[ConstantsCommon.EndPointCatalogoPago.EndPointCatalogoPagoAuth], null, "POST", "Auth");
-
-                if (response_token != null)
-                {
-                    if (!string.IsNullOrEmpty(response_token.response.Data))
-                    {
-                        Settings.ACCESS_TOKEN_API_CATALOGO_PAGO = response_token.response.Data;
-                    }
-                }
-                else
-                {
-                    return Json(new { estado = "-1", Message = "Error de comunicación con el método SetCardToken" });
-                }
-                #endregion
-
                 var card = new CardDto(); 
                 var vendorobj = new VendorId();
                 card.vendor_ids = new List<VendorId>();

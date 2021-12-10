@@ -154,7 +154,7 @@
                 <h4 class="modal-title" id="myModalLabel" style="color:white">Checkout - Mercado Pago</h4>
             </div>
             <div style="font-size:small;overflow-y: auto;height:500px" class="modal-body" id="listaDetProms">
-                <form id="FormRegistro" name="FormRegistro">
+                <form id="FormRegistro" name="FormRegistro" style="padding:inherit;">
                     <div class="row">
                         <div class="col-md-4">
                             <label for="tipopago"><i class="glyphicon glyphicon-money"></i>Seleccione el tipo de Tarjeta</label>
@@ -167,7 +167,7 @@
                             </label>
                         </div>
                         <div class="col-md-4">
-                            <label class="control control-radio">
+                            <label class="control control-radio" style="font-size:14px;font-weight:bold;">
                                 Débito
                                 <input id="chktd" type="radio" name="flexRadioDefault" />
                                 <div class="control_indicator"></div>
@@ -211,13 +211,13 @@
                         <div class="col-md-6">
                             <div class="form-group form-group-sm">
                                 <label for="txtNombres" class="label-form-custom">Nombres y Apellidos</label>
-                                <input type="text" class="form-control" style="font-size:1.3rem; max-width:100%;" disabled="disabled"  id="txtNombres" name="txtNombres">
+                                <input type="text" class="form-control" style="max-width:100%;" disabled="disabled"  id="txtNombres" name="txtNombres">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-sm">
                                 <label for="txtDocumento" class="label-form-custom">Dni ó R.U.C</label>
-                                <input type="text" class="form-control"  id="txtDocumento" disabled="disabled" name="txtDocumento" >
+                                <input type="text" class="form-control"  id="txtDocumento" disabled="disabled" name="txtDocumento">
                             </div>
                         </div>
                     </div>
@@ -270,9 +270,8 @@
                             <input type="text"
                                    class='form-control'
                                    id="txtnumero_tarjeta"
-                                   style="max-width:100%;
-                           font-size:1.3rem; "
-                                   placeholder="0123 456 789 125 558" maxlength="16" />
+                                   style="max-width:100%; font-size:1.3rem;"
+                                   placeholder="0123 456 789 125 558" maxlength="16" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="row">
@@ -298,13 +297,14 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group form-group-sm">
-                                <label for="exampleFormControlInput1" class="label-form-custom">CSV</label>&nbsp;<img id="horizontal_logo" style="width:16px;height:16px;cursor:pointer;"
-           src="../Content/MercadoPago/img/logos/noimagencard.png" />
+                                <label for="exampleFormControlInput1" class="label-form-custom">CSV</label>&nbsp;
+                                @*<img id="horizontal_logo" style="width:16px;height:16px;cursor:pointer;"
+                                src="../Content/MercadoPago/img/logos/noimagencard.png" />*@
                                 <input type="text"
                                        class="form-control"
                                        id="txtcvc"
                                        style="font-size:1.3rem; width:120px;"
-                                       placeholder="CVV" maxlength="4" />
+                                       placeholder="CVV" maxlength="4" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="col-md-3" id="nrcuotas">
@@ -335,7 +335,7 @@
                                 <input type="text"
                                        class="form-control"
                                        id="txtDocumentoPayment"
-                                       style="font-size:1.3rem;">
+                                       style="font-size:1.3rem;" min="8" max="8" autocomplete="off">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -375,9 +375,12 @@
                 </form>
             </div>           
             <div class="modal-footer" id="footer_modal">
-
-                <button type="button" data-vista="principal" style="font-weight:bold;" data-operacion="registrar" class="btn btn-success" onclick="registerPayment();" id="btnPago"><i class="glyphicon glyphicon-ok"></i>PROCESAR PAGO</button>
-                <button type="button" id="btnCerrarCheckout" class="btn btn-danger" onclick="parentCloseModalDetail();"><i class="glyphicon glyphicon-remove"></i>&nbsp;&nbsp;&nbsp;Cancelar</button>
+                <div class="form-group col-md-1">
+                    <img src="~/Content/MercadoPago/img/horizontal_logo_mercadopago.png" style="max-height: 38px;" />
+                </div>
+                
+                <button type="button" data-vista="principal" style="font-weight:bold;" data-operacion="registrar" class="btn btn-success" onclick="registerPayment();" id="btnPago"><i class="glyphicon glyphicon-ok"></i>&nbsp;&nbsp;&nbsp;PROCESAR PAGO</button>
+                <button type="button" id="btnCerrarCheckout" class="btn btn-danger" onclick="parentCloseModalDetail();"><i class="glyphicon glyphicon-remove"></i>&nbsp;&nbsp;&nbsp;CANCELAR</button>
             </div>
           
             <br />
@@ -442,7 +445,7 @@
                         <form role="form">
                             <div class="row" style="margin-bottom: 15px;">
                                 <div class="col-sm-12">
-                                    <div class="form-group alignCenter">
+                                    <div class="form-group">
                                         <ul id="lista-error" class="list-option pl-4"></ul>
                                     </div>
                                 </div>
@@ -467,7 +470,6 @@
         var listProducts = [];
         getInformationDevice();
         getInfoByUser();
-        getInformationCvv(2);
         getDayMonthCard();
         changeCardPayment("0");
         $("#frmRequestPayment").show();
@@ -476,30 +478,20 @@
         $("#chktd").prop("checked", false);
 
         document.getElementById('dwFormaPagoCardDeb').style.display = 'none';
-        //document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
     });
+
     var tipo_pago;
     function modal_mensaje() {
         $('#myModalInfoTime').modal('hide');
     }
     function getInfoByUser() {
         document.getElementById("txtNombres").value = document.getElementById("nombreCompletoUsuario").innerHTML;;
-        //document.getElementById("txtEmail").value = document.getElementById("emailcontacto").innerHTML;
-        //document.getElementById("dpdTipoDocumento").value = document.getElementById("tipo_documento").innerHTML;
         document.getElementById("txtDocumento").value = document.getElementById("numerodocumento").innerHTML;
-        //document.getElementById("txtubicacion").value = document.getElementById("direccion").innerHTML;
         var _totalpago = document.getElementById("totalpago").innerHTML;
         if (_totalpago == "0") { document.getElementById("total_amount").innerHTML = "0.00"; }
         else { document.getElementById("total_amount").innerHTML = _totalpago; }
     }
-    function getInformationCvv(value) {
-        //if (value == 1) {
-        //    document.getElementById("cardcvv").style.visibility = "visible";
-        //} else {
-        //    document.getElementById("cardcvv").style.visibility = "hidden";
 
-        //}
-    }
     function getDayMonthCard() {
         var today = new Date();
         var anioMinimo = today.getFullYear();
@@ -641,25 +633,13 @@
         switch (valid) {
             case "tc":
                 $("#dwFormaPagoCard").prop("disabled", false);
-                //document.getElementById("dwFormaPagoCardDeb").style.visibility = "hidden";
-                //document.getElementById("dwFormaPagoCard").style.visibility = "visible";
                 document.getElementById('dwFormaPagoCardDeb').style.display = 'none';
                 document.getElementById('dwFormaPagoCard').style.display = 'block';
-                //$("#dwFormaPagoCardDeb").hidden();
-                //$("#dwFormaPagoCard").show();
-
                 break;
             case "td":
                 $("#dwFormaPagoCardDeb").prop("disabled", false);
-                //document.getElementById("dwFormaPagoCard").style.visibility = "hidden";
-                //document.getElementById("dwFormaPagoCardDeb").style.visibility = "visible";
-
                 document.getElementById('dwFormaPagoCard').style.display = 'none';
                 document.getElementById('dwFormaPagoCardDeb').style.display = 'block';
-
-                //$("#dwFormaPagoCardDeb").show();
-                //$("#dwFormaPagoCard").hidden();
-
                 break;
         }
 
@@ -730,7 +710,6 @@
         $("#loading").fadeIn("slow");
         if (getPayValidate()) {
             var token_public = document.getElementById("mercadopagopublickey").innerHTML;
-            //var mercadopago = new MercadoPago(token_public);
             var nombreCompletoTitular = $("#txtnombre_titular").val() + ' ' + $("#txtApellidos_titular").val();
             var nombreTitular = $("#txtnombre_titular").val();
             var apellidoTitular = $("#txtApellidos_titular").val();
@@ -746,7 +725,7 @@
     }
     function getTokenCard(token_public, numeroTarjeta, codigoSeguridad, fechaExpiracionMes, fechaExpiracionAnio, nombreCompletoTitular, numeroDocumento, tipoDocumento, os_device, system_version, ram, disk_space, model, free_disk_space, feature_flash, can_make_phone_calls, can_send_sms, video_camera_available, cpu_count, simulator, device_languaje, device_idiom, platform, device_name, device_family, retina_display_capable, feature_camera, device_model, feature_front_camera, resolution) {
         var listDevice = [];
-
+        debugger
         listDevice.push({
             "name": "vendor_id",
             "value": "C2508642-79CF-44E4-A205-284A4F4DE04C"
@@ -807,6 +786,8 @@
         });
 
     }
+
+      
     function enviarTransaccionServicio(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
               tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, external_reference, listProducts, street_number) {
 
@@ -816,10 +797,11 @@
             data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
             success: function (data) {
                 if ((data.Success).toString() == "true") {
-                    responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);
-                    if (data.Mensaje_Premio != '') {
-                        toastr.success(data.Mensaje_Premio);
-                    }
+                    //responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference);
+                    //if (data.Mensaje_Premio != '') {
+                    //    toastr.success(data.Mensaje_Premio);
+                    //}
+                    getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
                 } else {
                     toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
                     $("#loading").fadeOut("slow");
@@ -833,6 +815,32 @@
         });
 
     }
+
+    function getwebhooks(idpayment, Mensaje_Premio, Status, Message, external_reference, notification_url) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetWebhookStatus", "PasarelaPago")',
+            data: { "idpayment": idpayment },
+            success: function (data) {
+                if ((data.Success).toString() == "true") {
+                    debugger
+                    responsePaymentProcessed(Status, idpayment, Message, external_reference, data.Data);
+                    if (Mensaje_Premio != '') {
+                        toastr.success(Mensaje_Premio);
+                    }
+                } else {
+                    toastr.error("Hubo un error en Webhooks.", 'Mensaje');
+                    $("#loading").fadeOut("slow");
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
+                $("#loading").fadeOut("slow");
+            }
+        });
+    }
+
     function proccessPaymentMercadoPago(nombreTitular, apellidoTitular, zipCode, street_name, state_name, city_name, installments,
                    tipoDocumento, numeroDocumento, payment_method_id, tokenCard, importeTotal, emailCliente, numerocelular, tipo_des,
                    direccion, referencia, agencia, destino, agencia_direccion, liq_tipo_prov, liq_provincia, formaPago, street_number) {
@@ -882,7 +890,7 @@
         if (mes == "0") { errors.push('Debes seleccionar el Mes de vencimiento de tu tarjeta.'); }
         if (cvv == null || cvv == '') { errors.push('Debe ingresar un CVV.'); }
         if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
-        if (document_titular == "" || document_titular == null) { errors.push('Debe ingresar un número de documento.'); }
+        if (document_titular == "" || document_titular == null || document_titular.length < 8 || document_titular.length > 8) { errors.push('Debe ingresar un número de documento válido.'); }
         if (email == "" || email == null) { errors.push('Debe ingresar un email.'); }
         if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); }
 
@@ -909,13 +917,8 @@
         return true;
     }
     function responsePaymentProcessed(status, idpayment, message, nropedido) {
-        //document.getElementById("frmRequestPayment").style.visibility = "hidden";
         $("#frmRequestPayment").hide();
-        //document.getElementById("frmResponsePayment").style.visibility = "visible";
         $("#frmResponsePayment").show();
-        //$("#div_reporte").hide();
-        //div_reporte
-
 
         switch (status) {
             case "1":
@@ -923,8 +926,7 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-
-                //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
             case "2":
@@ -932,7 +934,7 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-                //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
             default:
@@ -940,17 +942,17 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-                //$("#icrystalReport").attr("src", "../AspNetForms/ReportLiquidation.aspx").load();
+                notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
 
         }
     }
     function showListaPedido() {
+        $("#loading").fadeIn("slow");
         $("#btnPedido").prop("disabled", true);
-        window.location.href = "@Url.Action("Lista", "Pedido")";
-        //$("#loading").fadeIn("slow");
-        //parent.parentHrefPopup();
+        parent.parentHrefPopup(notification); 
+        //window.location.href = "@Url.Action("Lista", "Pedido")"; 
     }
     function getInformationDevice() {
         var unknown = '-';
