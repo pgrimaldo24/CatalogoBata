@@ -389,10 +389,12 @@ namespace CapaPresentacion.Controllers
         public ActionResult WebhooksMercadoPago(string json)
         {
             var jsonresponse = new JsonResponse();
-            var jsonserial = JsonConvert.SerializeObject(json);
+            var pasarelapagoDao = new Dat_PasarelaPago();
+            var _restServicesApi = new RestServicesApi();
+            //var response = _restServicesApi.PostWebhooks<string, WebhooksResponseDto>(json);
+            var payment_created = pasarelapagoDao.InsertDataWebhooks(json);
 
 
-            
             return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
         }
 

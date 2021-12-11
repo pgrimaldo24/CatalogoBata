@@ -86,6 +86,34 @@ namespace CapaDato.PasarelaPago
             }
         }
          
+        public string InsertDataWebhooks(string request)
+        {
+            try
+            {
+                var response = string.Empty;
+                using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
+                { 
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("USP_InsertDataWebhooks", cn))
+                    {
+                        cmd.CommandTimeout = 0;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@request", request);
+                        SqlDataReader dr = cmd.ExecuteReader();
+                        while (dr.Read())
+                        {
+                            response = dr["response"].ToString();
+                        }
+                        cn.Close();
+                    }
+                }
+                return response;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
     }
 }

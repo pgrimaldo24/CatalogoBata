@@ -52,6 +52,23 @@ namespace CapaPresentacion.Api
             return result;
         }
 
+        public TResult PostWebhooks<obj, TResult>(obj request)
+        {
+            TResult result;
+            try
+            {               
+                string data = JsonConvert.SerializeObject(request);
+                result = JsonConvert.DeserializeObject<TResult>(data);
+            }
+            catch (Exception ex)
+            {
+                var exception = string.Empty;
+                TResult expcetion_response = JsonConvert.DeserializeObject<TResult>(exception);
+                return expcetion_response;
+            }
+
+            return result;
+        }
 
         public TResult Authentication<T, TResult>(T obj, string detailUrlKey, string token, string typeRequest, string nameMethod)
         {
