@@ -146,8 +146,7 @@ namespace CapaPresentacion.Controllers
             {
                 var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
                 var _restServicesApi = new RestServicesApi();
-                var card = new CardDto(); 
-                var vendorobj = new VendorId();
+                var card = new CardDto();  
                 card.vendor_ids = new List<VendorId>();
                 card.TokenPublic = token_public;
                 card.numeroTarjeta = numeroTarjeta;
@@ -182,6 +181,7 @@ namespace CapaPresentacion.Controllers
 
                 foreach (var item in vendors)
                 {
+                    var vendorobj = new VendorId();
                     vendorobj.name = item.name;
                     vendorobj.value = item.value;
                     card.vendor_ids.Add(vendorobj);
@@ -385,6 +385,17 @@ namespace CapaPresentacion.Controllers
         }
         #endregion
 
+        //[HttpPost]
+        public ActionResult WebhooksMercadoPago(string json)
+        {
+            var jsonresponse = new JsonResponse();
+            var jsonserial = JsonConvert.SerializeObject(json);
+
+
+            
+            return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
+        }
+
         #region method private 
         private bool GetValidarPermisosXRol()
         {
@@ -403,8 +414,7 @@ namespace CapaPresentacion.Controllers
             cardToken.cardholder.identification = new IndetificationDto();
             cardToken.device = new Device();
             cardToken.device.fingerprint = new Fingerprint();
-            cardToken.device.fingerprint.vendor_ids = new List<VendorId>();
-            var vendor = new VendorId();
+            cardToken.device.fingerprint.vendor_ids = new List<VendorId>(); 
             cardToken.device.fingerprint.vendor_specific_attributes = new VendorSpecificAttributes();
             //card.vendor_ids = new List<VendorId>();
 
@@ -425,6 +435,7 @@ namespace CapaPresentacion.Controllers
 
             foreach (var item in card.vendor_ids)
             {
+                var vendor = new VendorId();
                 vendor.name = item.name;
                 vendor.value = item.value;
                 cardToken.device.fingerprint.vendor_ids.Add(vendor);

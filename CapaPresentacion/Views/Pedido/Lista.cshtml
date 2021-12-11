@@ -58,7 +58,7 @@
     }
 </style>
 <p class="text-primary">Creación y modificación de pedidos en borrador, creación y consulta de liquidaciones, consulta de facturas y devoluciones.</p>
-<span style="display:none;" value="@ViewBag.status_notification" id="status_notification">@ViewBag.status_notification</span>
+@*<span style="display:none;" value="@ViewBag.status_notification" id="status_notification">@ViewBag.status_notification</span>*@
 <div class="row">
     <div class="col-md-12">
         @*@using (Ajax.BeginForm("ListaPcPedidos", options))
@@ -621,13 +621,13 @@
     var FechaFin=$("#dtpFechaFin").val();
     var rows_selected = [];
     $(document).ready(function () {
-        debugger
-        var status_notification_mp = document.getElementById("status_notification").innerHTML;
-        if (status_notification_mp !== "" || status_notification_mp !== undefined || status_notification_mp !== null) {
-            console.log(status_notification_mp);
-        }else {
-            notificationMercadoPago(status_notification_mp);
-        }
+        
+        //var status_notification_mp = document.getElementById("status_notification").innerHTML;
+        //if (status_notification_mp !== "" || status_notification_mp !== undefined || status_notification_mp !== null) {
+        //    console.log(status_notification_mp);
+        //}else {
+        //    notificationMercadoPago(status_notification_mp);
+        //}
 
         $("#datepickerIni").datepicker({
             autoclose: true,
@@ -777,15 +777,15 @@
     });
 
 
-    function parentNotification() {
-        $('#frmnotificacionmp').attr('src', '');
-        $('#mdlNotificacion').modal('hide');
-    }
+    //function parentNotification() {
+    //    $('#frmnotificacionmp').attr('src', '');
+    //    $('#mdlNotificacion').modal('hide');
+    //}
 
-    function notificationMercadoPago(notification) {
-        $("#frmnotificacionmp").attr("src", "../Pedido/NotificationMercadoPago?status=" + notification);
-        $("#mdlNotificacion").modal({ backdrop: 'static', keyboard: false });
-    }
+    //function notificationMercadoPago(notification) {
+    //    $("#frmnotificacionmp").attr("src", "../Pedido/NotificationMercadoPago?status=" + notification);
+    //    $("#mdlNotificacion").modal({ backdrop: 'static', keyboard: false });
+    //}
 
     function numbersonly(e) {
         var unicode = e.charCode ? e.charCode : e.keyCode

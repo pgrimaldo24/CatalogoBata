@@ -4077,29 +4077,9 @@ else
             });
         }
 
-        function parentHrefPopup(status) {
+        function parentHrefPopup() {
             debugger;
-            var _status = status;
-            var TeamDetailPostBackURL ="@Url.Action("Lista", "Pedido")";
-            $.ajax({
-                type: "GET",
-                url: TeamDetailPostBackURL,
-                contentType: "application/json; charset=utf-8",
-                data: { 'status': _status },
-                datatype: "json",
-                cache: true,
-                success: function (data) {
-                    waitingDialog.hide();
-                    $('#mdlMercadoPago').modal('hide');
-                    $("#frmnotificacionmp").attr("src", "../Pedido/NotificationMercadoPago?status=" + notification);
-                    $("#mdlNotificacion").modal({ backdrop: 'static', keyboard: false });
-                },
-                error: function () {
-                    waitingDialog.hide();
-                    alert("Dynamic content load failed.");
-                }
-            });
-            //window.location.href = "@Url.Action("Lista", "Pedido")/" + status;
+            window.location.href = "@Url.Action("Lista", "Pedido")";
             return false;
         }
 

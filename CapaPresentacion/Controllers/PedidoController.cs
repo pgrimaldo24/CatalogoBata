@@ -620,9 +620,9 @@ namespace CapaPresentacion.Controllers
             }
             this.HttpContext.Session["ReportName"] = "InvoiceReport.rpt";
         }
-        public ActionResult Lista(string status = "")
+        public ActionResult Lista()
         {
-            ViewBag.status_notification = status;
+            //ViewBag.status_notification = status;
             Ent_Usuario _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
             string actionName = this.ControllerContext.RouteData.GetRequiredString("action");
             string controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");

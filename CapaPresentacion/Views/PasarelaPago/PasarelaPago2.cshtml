@@ -815,8 +815,11 @@
             data: { "nombreTitular": nombreTitular, "apellidoTitular": apellidoTitular, "zipCode": zipCode, "street_name": street_name, "state_name": state_name, "city_name": city_name, "installments": installments, "tipoDocumento": tipoDocumento, "numeroDocumento": numeroDocumento, "payment_method_id": payment_method_id, "tokenCard": tokenCard, "importeTotal": importeTotal, "emailCliente": emailCliente, "numerocelular": numerocelular, "external_reference": external_reference, "listProducts": listProducts, "street_number": street_number },
             success: function (data) {
                 if ((data.Success).toString() == "true") {
-
-                    getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
+                    responsePaymentProcessed(data.Status, data.Data.id, data.Message, external_reference, data.Data);
+                    if (data.Mensaje_Premio != '') {
+                        toastr.success(data.Mensaje_Premio);
+                    }
+                    //getwebhooks(data.Data.id, data.Mensaje_Premio, data.Status, data.Message, external_reference, data.Data.notification_url);
                 } else {
                     toastr.error("Su información ha sido rechazada, intentalo nuevamente.", 'Mensaje');
                     $("#loading").fadeOut("slow");
@@ -929,7 +932,7 @@
 
         return true;
     }
-    function responsePaymentProcessed(status, idpayment, message, nropedido, status_notification) {
+    function responsePaymentProcessed(status, idpayment, message, nropedido) {
         $("#frmRequestPayment").hide();
         $("#frmResponsePayment").show();
 
@@ -939,7 +942,7 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-                notification = status_notification;
+                //notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
             case "2":
@@ -947,7 +950,7 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-                notification = status_notification;
+                //notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
             default:
@@ -955,7 +958,7 @@
                 document.getElementById('payment-id').innerHTML = idpayment;
                 document.getElementById('payment-status').innerHTML = message;
                 document.getElementById('nropedido').innerHTML = nropedido;
-                notification = status_notification;
+                //notification = status_notification;
                 $("#loading").fadeOut("slow");
                 break;
 
@@ -964,7 +967,7 @@
     function showListaPedido() {
         document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
         $("#btnPedido").prop("disabled", true);
-        parent.parentHrefPopup(notification);
+        parent.parentHrefPopup();
 
         //window.location.href = "@Url.Action("Lista", "Pedido")";
     }

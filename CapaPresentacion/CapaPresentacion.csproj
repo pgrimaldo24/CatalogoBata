@@ -3224,10 +3224,10 @@
     <Content Include="Views\Logistica\gestion_stock.cshtml" />
     <Content Include="Views\RRHH\GestionarClientes.cshtml" />
     <Content Include="Views\Home\Error_Roles.cshtml" />
-    <Content Include="Views\PasarelaPago\CardInformationCvv.cshtml" />
     <Content Include="Views\PasarelaPago\PasarelaPago.cshtml" />
     <Content Include="Views\Pedido\NotificationMercadoPago.cshtml" />
     <Content Include="Views\PasarelaPago\PasarelaPago2.cshtml" />
+    <Content Include="Views\PasarelaPago\WebhooksMercadoPago.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
