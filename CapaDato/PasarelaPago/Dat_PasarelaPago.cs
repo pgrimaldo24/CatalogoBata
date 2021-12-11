@@ -14,7 +14,7 @@ namespace CapaDato.PasarelaPago
     public class Dat_PasarelaPago
     {
         public List<EntEstados> ListaEstadoMercadoPago(string entidadKey)
-        { 
+        {
             try
             {
                 var estados = new List<EntEstados>();
@@ -45,7 +45,7 @@ namespace CapaDato.PasarelaPago
             catch (Exception e)
             {
                 throw e;
-            } 
+            }
         }
 
         public Ent_Persona GetInformacionUsuario(string dni)
@@ -55,13 +55,13 @@ namespace CapaDato.PasarelaPago
                 Ent_Persona persona = new Ent_Persona();
                 using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
                 {
-                   
+
                     cn.Open();
                     using (SqlCommand cmd = new SqlCommand("USP_ObtenerInformacionUsuario", cn))
                     {
                         cmd.CommandTimeout = 0;
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@dni", dni); 
+                        cmd.Parameters.AddWithValue("@dni", dni);
                         SqlDataReader dr = cmd.ExecuteReader();
                         while (dr.Read())
                         {
@@ -73,10 +73,10 @@ namespace CapaDato.PasarelaPago
                             persona.Bas_Celular = dr["Bas_Celular"].ToString();
                             persona.Bas_Correo = dr["Bas_Correo"].ToString();
                             persona.Departamento = dr["Dep_Descripcion"].ToString();
-                            persona.Provincia = dr["Prv_Descripcion"].ToString(); 
+                            persona.Provincia = dr["Prv_Descripcion"].ToString();
                         }
                         cn.Close();
-                    } 
+                    }
                 }
                 return persona;
             }
@@ -85,14 +85,14 @@ namespace CapaDato.PasarelaPago
                 throw e;
             }
         }
-         
+
         public string InsertDataWebhooks(string request)
         {
             try
             {
                 var response = string.Empty;
                 using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
-                { 
+                {
                     cn.Open();
                     using (SqlCommand cmd = new SqlCommand("USP_InsertDataWebhooks", cn))
                     {
@@ -115,5 +115,37 @@ namespace CapaDato.PasarelaPago
                 throw;
             }
         }
+        public string GetPagoServicio(string numero_pago_servicio)
+        {
+            try
+            {
+                var response = string.Empty;
+                using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("USP_GetPagoProcesado_MercadoPago", cn))
+                    {
+                        cmd.CommandTimeout = 0;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@idPagoServicio", numero_pago_servicio);
+                        SqlDataReader dr = cmd.ExecuteReader();
+                        while (dr.Read())
+                        {
+                            response = dr["response"].ToString();
+                        }
+                        cn.Close();
+                    }
+                }
+                return response;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
+
+    
+ 

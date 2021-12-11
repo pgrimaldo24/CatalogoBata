@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -390,12 +391,16 @@ namespace CapaPresentacion.Controllers
         {
             var jsonresponse = new JsonResponse();
             var pasarelapagoDao = new Dat_PasarelaPago();
-            var _restServicesApi = new RestServicesApi();
-            //var response = _restServicesApi.PostWebhooks<string, WebhooksResponseDto>(json);
-            var payment_created = pasarelapagoDao.InsertDataWebhooks(json);
-
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
+            var _restServicesApi = new RestServicesApi();            
+            var result = JsonConvert.DeserializeObject<WebhooksResponseDto>(json);
+            var webhooks = new WebhooksResponseDto();
+            var processpayment = pasarelaPagoDao.GetPagoServicio(result.data.id);
+            if (processpayment != "0")
+            {
+                var payment_created = pasarelapagoDao.InsertDataWebhooks(json);
+                return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.NotFound); 
         }
 
         #region method private 
