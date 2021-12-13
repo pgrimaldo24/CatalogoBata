@@ -386,22 +386,54 @@ namespace CapaPresentacion.Controllers
         }
         #endregion
 
-        //[HttpPost]
-        public ActionResult WebhooksMercadoPago(string json)
+        //public ActionResult WebhooksMercadoPago()
+        //{
+        //    return View();
+        //}
+        [HttpPost]
+        public ActionResult WebhooksMercadoPago()
         {
-            var jsonresponse = new JsonResponse();
+            
+            string json = new StreamReader(this.HttpContext.Request.InputStream).ReadToEnd();
+            
+            //string JsonData = "";
+            //if (json == null)
+            //{
+            //    json = "no hay data";
+            //}
+            
+            
+
+            //var body = new System.IO.StreamReader(json.Body);
+
+            //string requestBody = body.ReadToEnd();
+            //var jsonresponse = new JsonResponse();
             var pasarelapagoDao = new Dat_PasarelaPago();
-            var _restServicesApi = new RestServicesApi();            
-            var result = JsonConvert.DeserializeObject<WebhooksResponseDto>(json);
-            var webhooks = new WebhooksResponseDto();
-            var processpayment = pasarelaPagoDao.GetPagoServicio(result.data.id);
-            if (processpayment != "0")
+            //var _restServicesApi = new RestServicesApi();
+            //var result = JsonConvert.DeserializeObject<WebhooksResponseDto>(json);
+            //var webhooks = new WebhooksResponseDto();
+            //var processpayment = pasarelaPagoDao.GetPagoServicio(result.data.id);
+            //if (processpayment != "0")
+            //{
+            //if (json == null) json = "";
+            var payment_created = pasarelapagoDao.InsertDataWebhooks(json);
+            if (payment_created== "1")
             {
-                var payment_created = pasarelapagoDao.InsertDataWebhooks(json);
-                return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
+                return new HttpStatusCodeResult(200);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.NotFound); 
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+            
+
+            //return StatusCode(200);
+            //return new HttpStatusCodeResult(HttpStatusCode.OK); // OK = 200
+            //}
+            //return new HttpStatusCodeResult(HttpStatusCode.NotFound); 
+            //return View();
         }
+
 
         #region method private 
         private bool GetValidarPermisosXRol()
@@ -431,7 +463,7 @@ namespace CapaPresentacion.Controllers
             cardToken.expiration_month = card.fechaExpiracionMes;
             cardToken.expiration_year = card.fechaExpiracionAnio;
             /*CAMBIAR NOMBRE PARA PRD,TITULARDE LA TARJETA*/
-            cardToken.cardholder.name = "APRO";
+            cardToken.cardholder.name = card.nombreCompletoTitular;// "APRO" ;//card.nombreCompletoTitular;// "APRO";
             cardToken.cardholder.identification.number = card.numeroDocumento;
             cardToken.cardholder.identification.type = card.tipoDocumento;
 

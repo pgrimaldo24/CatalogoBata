@@ -593,6 +593,8 @@ else
         var dataArray_cliente;
         $(document).ready(function () {
              
+            //var userAgent = navigator.appCodeName//; || navigator.vendor || window.opera;
+
            dataArray_cliente = function () { return @Html.Raw(Json.Encode(ViewBag.infoProm)); }();
             var formapago = $("#dwFormaPago").val();
             if (formapago == "005") { $("#btnMercadoPago").prop("disabled", false); }
