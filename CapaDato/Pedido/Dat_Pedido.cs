@@ -710,6 +710,10 @@ namespace CapaDato.Pedido
                                    liq_direccion = dr["liq_direccion"].ToString(),
                                    liq_referencia = dr["liq_referencia"].ToString(),
 
+                                   bas_tipo_dis = dr["bas_tipo_dis"].ToString(),
+                                   bas_provincia = dr["bas_provincia"].ToString(),
+                                   bas_documento = dr["bas_documento"].ToString(),
+
                                }).ToList();
 
 

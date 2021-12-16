@@ -13,6 +13,44 @@ namespace CapaDato.PasarelaPago
 {
     public class Dat_PasarelaPago
     {
+        public string vendor_id()
+        {
+            string sqlquery = "USP_MERCADO_PAGO_VENDOR_ID";
+            string vendorid = "C2508642-79CF-44E4-A205-284A4F4DE04C";
+            try
+            {
+                using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
+                {
+                    try
+                    {
+                        if (cn.State == 0) cn.Open();
+                        using (SqlCommand cmd = new SqlCommand(sqlquery, cn))
+                        {
+                            cmd.CommandTimeout = 0;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@VENDOR_ID", SqlDbType.VarChar, 50);
+                            cmd.Parameters["@VENDOR_ID"].Direction = ParameterDirection.Output;
+                            cmd.ExecuteNonQuery();
+
+                            vendorid =Convert.ToString(cmd.Parameters["@VENDOR_ID"].Value);
+                        }
+                    }
+                    catch 
+                    {
+
+                        
+                    }
+                    if (cn != null)
+                        if (cn.State == ConnectionState.Open) cn.Close();
+                }
+            }
+            catch (Exception)
+            {
+
+                
+            }
+            return vendorid;
+        }
         public List<EntEstados> ListaEstadoMercadoPago(string entidadKey)
         {
             try

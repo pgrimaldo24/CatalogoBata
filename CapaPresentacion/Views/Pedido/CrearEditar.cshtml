@@ -4062,7 +4062,7 @@ else
                 type: "GET",
                 url: TeamDetailPostBackURL,
                 contentType: "application/json; charset=utf-8",
-                data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia },
+                data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, nroliq: "@ViewBag.IdLiquidacion" },
                 datatype: "json",
                 cache: true,
                 success: function (data) {

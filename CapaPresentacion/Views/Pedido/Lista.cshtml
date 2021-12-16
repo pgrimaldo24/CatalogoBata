@@ -385,7 +385,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="ifrReporte" class="well" style="width: 100%; height: 100%; padding:0;">
-                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto"
+                            <iframe id="load" src="" frameborder="0" marginheight="1" marginwidth="1" scrolling="auto" onload="javascript: waitingDialog.hide();"
                                      style="zoom:90%; width: 100%; height: calc(100vh - 100px);"></iframe>
                         </div>
                     </div>
@@ -397,7 +397,14 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="mdlMercadoPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id='myModalContentPago'></div>
 
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="mdlNotificacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
     <div class="modal-dialog">
         <div class="modal-content">
@@ -429,6 +436,54 @@
 @section scripts{ 
 <script>
 
+    function pagar_popup(nropedido,nroliqui,numerodocumento,totalpago,tipo_des,referencia,agencia,destino,agencia_direccion,liq_tipo_prov,liq_provincia,custId){
+
+        //alert(pedido);
+        //var numerodocumento = document.getElementById("numerodocumento").innerHTML;
+        //var totalpago = document.getElementById("totalpago").innerHTML;
+        //var tipo_des = $('#dwdespacho').val();
+        //var referencia = $('#txtreferencia').val().trim().trimLeft().trimRight();
+        //var agencia = $('#txtagencia').val().trim().trimLeft().trimRight();
+        //var destino = $('#txtdestino').val().trim().trimLeft().trimRight();
+        //var agencia_direccion = $('#txtagencia_dir').val().trim().trimLeft().trimRight();
+        //var list_productos = glistOtderDtlTem;
+        //var liq_tipo_prov = '';
+        //var liq_provincia = '';
+
+        //liq_tipo_prov = dataArray_cliente.bas_tipo_dis;
+        //liq_provincia = dataArray_cliente.bas_provincia;
+
+        if (totalpago == '' || totalpago == null) { totalpago = 0 }
+        if (tipo_des == null || tipo_des == '') { tipo_des = "0" }
+        if (referencia == null || referencia == '') { referencia = "0" }
+        if (agencia == null || agencia == '') { agencia = "0" }
+        if (destino == null || destino == '') { destino = "0" }
+        if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
+
+        var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";
+        waitingDialog.show('Espere un momento por favor');
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: TeamDetailPostBackURL,
+            contentType: "application/json; charset=utf-8",
+            data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, nropedido:nropedido,nroliq:nroliqui,pagodirecto:'1',custId:custId },
+            datatype: "json",
+            cache: true,
+            success: function (data) {
+                waitingDialog.hide();
+                $('#myModalContentPago').html(data);
+                $('#mdlMercadoPago').modal(options);
+                $('#mdlMercadoPago').modal('show');
+
+            },
+            error: function () {
+                waitingDialog.hide();
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+
     function verpedido(liqId){
         //var liqId = $(this).attr('data-liqId');
         //var pedId = $(this).attr('data-pedId');
@@ -454,7 +509,7 @@
         });
     }
 
-  
+
 
     function generar_flete_pedido(){
 
@@ -471,7 +526,7 @@
             return;
         }
 
-       
+
 
         swal({
             title: "Anular Pedido",
@@ -492,7 +547,7 @@
                         data = JSON.parse(data);
                         if (data.Success) {
                             //objMarcar.isOkUpdate = true;
-                            swal({ title: "Ok", text: data.Message, icon: "success" }).then((value) => { 
+                            swal({ title: "Ok", text: data.Message, icon: "success" }).then((value) => {
                                 buscar_flete();
                                 get_info_cliente(1);
                                 //waitingDialog.hide();
@@ -621,7 +676,7 @@
     var FechaFin=$("#dtpFechaFin").val();
     var rows_selected = [];
     $(document).ready(function () {
-        
+
         //var status_notification_mp = document.getElementById("status_notification").innerHTML;
         //if (status_notification_mp !== "" || status_notification_mp !== undefined || status_notification_mp !== null) {
         //    console.log(status_notification_mp);
@@ -639,7 +694,7 @@
             todayHighlight: true
         }).datepicker("setDate", "0");
 
- 
+
         tabla_flete.DataTable({
             "dom": 't<"row"<"col-md-6"f><"col-md-6"p>>',
             "iDisplayLength": 1500,
@@ -686,7 +741,7 @@
                         let ganancia = full.ganancia;
                         return (ganancia == undefined || ganancia == null) ? ' ' : 'S/ ' + FormatDecimal(ganancia, 2, '.', ',');
                     }
-                },                           
+                },
                 //Comision
                 {
                     "mData": null,
@@ -740,12 +795,12 @@
                          var liqId = full.pedido
                          var pedId = full.pedido
                          var custId=$("#dwPromotor").val();
-                           
+
 
                          //return '<a onclick="EditarLiquidacion(' + liqId + ',' + pedId + ',' + custId + ')" target="_blank" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print fa-1x"></span></a>';
-                  
 
-                         var btnVliq = '<button title="Ver Liquidacion" onclick="verpedido(' + liqId + ');"  class="btn btn-xs btn-default btn-tabla ver-liq" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-print"></span></button>';                                                                         
+
+                         var btnVliq = '<button title="Ver Liquidacion" onclick="verpedido(' + liqId + ');"  class="btn btn-xs btn-default btn-tabla ver-liq" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-print"></span></button>';
 
                          var chk_agregar = '<div class="form-group"><div class="col-sm-5 checkbox text-primary text-bold"><input style="cursor:pointer" type="checkbox" name="chka"  id="chka" value="0" class="chkag" /></div></div>';
 
@@ -801,7 +856,7 @@
 
         if (unicode != 8 && unicode != 44 && unicode != 46) {
             if (unicode < 48 || unicode > 57) //if not a number
-            { return false } //disable key press    
+            { return false } //disable key press
         }
     }
  </script>
@@ -999,6 +1054,7 @@
                     colvis: 'Columnas'
                 }
             },
+            "bProcessing": true,
             "bServerSide": true,
             "bAutoWidth": false,
             "sAjaxSource": '@Url.Action("getListPedido", "Pedido")',
@@ -1059,8 +1115,11 @@
                            var liq_destino=full.liq_destino;
                            var liq_direccion=full.liq_direccion;
                            var liq_referencia=full.liq_referencia;
-                           
+                           var numerodocumento=full.bas_documento;
 
+                           var totalpago=full.TotalPagar;
+                           var liq_tipo_prov=full.bas_tipo_dis;
+                           var liq_provincia=full.bas_provincia;
                            //return '<a onclick="EditarLiquidacion(' + liqId + ',' + pedId + ',' + custId + ')" target="_blank" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print fa-1x"></span></a>';
                            var btnEdit =  full.estId == "PS" || full.estId == "PC" ? '<form action="@Url.Action("CrearEditar", "Pedido")" method="post" style="display: inline;">\
                                             <input type="hidden" name="liqId" value="' + liqId + '" />\
@@ -1076,6 +1135,10 @@
                                             <button type="submit" title="Editar Liquidacion" class="btn btn-xs btn-default btn-tabla editar-fila"><span class="fa fa-pencil text-primary"></span></button>\
                                         </form>' : ("&nbsp;").repeat(10);
 
+                           var btnmercado_pago='<button title="Pagar Mercado Pago" onclick="pagar_popup(\'' + pedId + '\',\'' + liqId + '\',\'' + numerodocumento + '\',\'' + totalpago + '\',\'' + liq_tipo_des + '\',\'' + liq_referencia +  '\',\'' +liq_agencia +  '\',\'' + liq_destino +  '\',\'' + liq_agencia_direccion +  '\',\'' + liq_tipo_prov  + '\',\'' + liq_provincia + '\',\'' + custId + '\' );" class="btn btn-xs btn-default btn-tabla " data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-credit-card"></span></button>';
+
+                           btnmercado_pago=(full.estId == "PS" && "@ViewBag.ActivaMcoPago"=="1" )?btnmercado_pago:'';
+
                            if (full.liq_opg=='2') btnEdit=("&nbsp;").repeat(10);
 
                            var btnVliq = '<button title="Ver Liquidacion" class="btn btn-xs btn-default btn-tabla ver-liq" data-liqId="' + liqId + '" data-pedId="' + pedId + '" data-custId="' + custId + '" ><span class="fa fa-print"></span></button>';
@@ -1085,10 +1148,12 @@
                            if (full.liq_opg=='2') {
                                if (usutip=='01' || usutip=='02') btnAnu=("&nbsp;").repeat(10);
                            }
-
+                           if (full.estId == "PS" && "@ViewBag.ActivaMcoPago"=="1"){
+                               if (btnAnu.length>0) btnAnu=btnAnu + ("&nbsp;").repeat(1);
+                           }
                            
 
-                           return  btnVliq + btnVfac + btnEdit + btnAnu ;
+                           return  btnVliq + btnVfac + btnEdit + btnAnu + btnmercado_pago ;
                        }, "class": "boton-xs-td"
                    },
             ]
@@ -1107,6 +1172,7 @@
                         $("#load").show();
                         $("#load").attr("src", "../AspNetForms/ReportLiquidation.aspx");
                         $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                        //waitingDialog.hide()
                     } else {
                         waitingDialog.hide()
                     }
@@ -1130,6 +1196,7 @@
                         $("#load").show();
                         $("#load").attr("src", "../AspNetForms/ReportInvoice.aspx");
                         $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                        //waitingDialog.hide()
                     } else {
                         waitingDialog.hide()
                     }
@@ -1324,6 +1391,7 @@
                     $("#load").attr("src", "../AspNetForms/reportArticlesReturned.aspx");
                     waitingDialog.hide()
                     $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                    //waitingDialog.hide()
                 } else {
                     waitingDialog.hide()
                 }

@@ -1,5 +1,7 @@
 ﻿using CapaDato.Financiera;
 using CapaDato.PasarelaPago;
+using CapaDato.Pedido;
+using CapaDato.Persona;
 using CapaEntidad.Control;
 using CapaEntidad.Financiera;
 using CapaEntidad.Menu;
@@ -22,61 +24,212 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-
+using System.Linq;
 namespace CapaPresentacion.Controllers
 {
     public class PasarelaPagoController : Controller
     {
         // GET: ProcessPayment
         Dat_PasarelaPago pasarelaPagoDao = new Dat_PasarelaPago();
+        private string _session_list_detalle_pedido = "_session_list_detalle_pedido";
+        private string _session_notas_persona = "_session_notas_persona";
+        private string _session_lnfo_liquidacion = "_session_lnfo_liquidacion";
+        private string _session_customer = "_session_customer";
+        private void loadOrderDtl(ref List<Ent_Order_Dtl> order, Ent_Order_Dtl newLine, decimal custComm)
+        {
+            //
+            Ent_Order_Dtl resultLine = order.Where(x => x._code.Equals(newLine._code) && x._size.Equals(newLine._size)).FirstOrDefault();
+            //
+            decimal commPercent = (custComm / 100);
 
+            //if (fvalidaartcatalogo())
+            //{
+            //    commPercent = 0;
+            //}
+
+            //recalcular el descuento de catalogo 
+            if (!(newLine == null))
+            {
+                if (newLine._ap_percepcion == "0")
+                {
+                    commPercent = 0;
+                }
+            }
+            //***************************
+
+
+            if (resultLine != null)
+            {
+                if (order.Remove(resultLine))
+                {
+                    int newQty = resultLine._qty + newLine._qty;
+                    resultLine._qty = newQty;
+                    resultLine._commission = Math.Round((((resultLine._price * newQty)) * commPercent) * resultLine._comm, 2, MidpointRounding.AwayFromZero);
+                    //resultLine._commissionigv = (((resultLine._priceigv * newQty) - (resultLine._dscto * newQty)) * commPercent) * resultLine._comm;
+                    resultLine._commissionPctg = commPercent;
+                    //resultLine._commissionDesc = resultLine._commission.ToString(_currency);
+                    //resultLine._commissionigvDesc = resultLine._commissionigv.ToString(_currency);
+                    //resultLine._lineTotal =Math.Round ((resultLine._price * newQty) - (resultLine._dscto * newQty) - resultLine._commission,2,MidpointRounding.AwayFromZero);
+
+                    resultLine._lineTotal = Math.Round((resultLine._price * newQty) - (resultLine._dscto + resultLine._commission), 2, MidpointRounding.AwayFromZero);
+
+                    //resultLine._lineTotDesc = ((resultLine._price * newQty) - (resultLine._dscto * newQty) - resultLine._commission).ToString(_currency);
+
+                    //resultLine._lineTotDesc = resultLine._lineTotal.ToString(_currency);
+                    //resultLine._lineTotDesc = ((resultLine._priceigv * newQty) - (resultLine._dscto * newQty) - resultLine._commissionigv).ToString(_currency);
+                    resultLine._lineTotDesc = resultLine._lineTotal;
+
+                    order.Add(resultLine);
+                }
+            }
+            else
+            {
+                newLine._commission = Math.Round((((newLine._price * newLine._qty)) * commPercent) * newLine._comm, 2, MidpointRounding.AwayFromZero);
+                // newLine._commissionigv = (((newLine._priceigv * newLine._qty) - (newLine._dscto * newLine._qty)) * commPercent) * newLine._comm;
+                //newLine._commissionDesc = newLine._commission.ToString(_currency);
+                //newLine._commissionigvDesc = newLine._commissionigv.ToString(_currency);
+                newLine._commissionPctg = commPercent;
+                //newLine._lineTotal =Math.Round( (newLine._price * newLine._qty) - (newLine._dscto * newLine._qty) - newLine._commission,2,MidpointRounding.AwayFromZero);
+
+                newLine._lineTotal = Math.Round((newLine._price * newLine._qty) - (newLine._dscto + newLine._commission), 2, MidpointRounding.AwayFromZero);
+
+                //newLine._lineTotDesc = newLine._lineTotal.ToString(_currency);
+
+                //newLine._lineTotDesc = ((newLine._price * newLine._qty) - (newLine._dscto * newLine._qty) - newLine._commission).ToString(_currency);
+                //newLine._lineTotDesc = ((newLine._priceigv * newLine._qty) - (newLine._dscto * newLine._qty) - newLine._commissionigv).ToString(_currency);
+                newLine._lineTotDesc = newLine._lineTotDesc;
+                order.Add(newLine);
+            }
+        }
+        public List<Ent_Order_Dtl> listaDetalleLiquidacion(string LiqId, decimal comm = 0)
+        {
+             Dat_Pedido datPedido = new Dat_Pedido();
+            List<Ent_Order_Dtl> listLiqDetalle = datPedido.getLiquidacionDetalle(LiqId);
+            List<Ent_Order_Dtl> order = new List<Ent_Order_Dtl>();
+            foreach (Ent_Order_Dtl item in listLiqDetalle)
+            {
+                loadOrderDtl(ref order, item, comm);
+            }
+
+            return order;
+        }
         public ActionResult PasarelaPago2(string numerodocumento, decimal totalpago, string tipo_des, string referencia,
-            string agencia, string destino, string agencia_direccion, string liq_tipo_prov, string liq_provincia)
+            string agencia, string destino, string agencia_direccion, string liq_tipo_prov, string liq_provincia,
+            String nropedido="",string nroliq="",string pagodirecto="",string custId="")
         {
             var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
             var actionName = this.ControllerContext.RouteData.GetRequiredString("action");
             var controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");
             var return_view = actionName + "|" + controllerName;
-            var token_access = ConfigurationManager.AppSettings[ConstantsCommon.TokenMercadoPago.PUBLIC_KEY_MERCADO_PAGO];
 
-            ViewBag.numerodocumento = numerodocumento.Trim();
-            ViewBag.tipo_des = tipo_des;
-            ViewBag.referencia = referencia.Trim();
-            ViewBag.agencia = agencia.Trim();
-            ViewBag.destino = destino.Trim();
-            ViewBag.agencia_direccion = agencia_direccion.Trim();
 
-            var person = GetInformacionUsuario(numerodocumento.Trim());
-            ViewBag.nombres = person.NombreCompleto.Trim().ToString();
-            ViewBag.apellidos = person.ApellidoCompleto.Trim();
-            ViewBag.nombreCompletoUsuario = person.NombreCompleto.Trim() + ' ' + person.ApellidoCompleto.Trim();
-            ViewBag.direccion = person.Bas_Direccion.Trim();
-            ViewBag.tipo_documento = person.TipoDocumento.Trim();
-            ViewBag.celular = person.Bas_Celular.Trim();
-            ViewBag.email = person.Bas_Correo.Trim();
-            ViewBag.departamento = person.Departamento.Trim();
-            ViewBag.provincia = person.Provincia.Trim();
-            ViewBag.liq_tipo_prov = liq_tipo_prov;
-            ViewBag.liq_provincia = liq_provincia;
-
-            #region<Obteniendo el token> 
-            var usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
-            var auth = new Authetication
+            if (_usuario == null)
             {
-                password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
-                username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
-                usuarioWeb = usuario.usu_login,
-            };
-            var token = AuthServicesApi.AuthTokenCatalogoPago(auth);
-            #endregion
-
-            if (totalpago.Equals("") || totalpago.Equals(0) || totalpago.Equals(null))
-                ViewBag.totalpago = 0;
+                return RedirectToAction("Lista", "Pedido");
+            }
             else
-                ViewBag.totalpago = totalpago;
-            ViewBag.mercadoPagoPublicKey = token_access;
+            {
 
-            return View();
+
+                var token_access = ConfigurationManager.AppSettings[ConstantsCommon.TokenMercadoPago.PUBLIC_KEY_MERCADO_PAGO];
+
+                ViewBag.numerodocumento = numerodocumento.Trim();
+                ViewBag.tipo_des = tipo_des;
+                ViewBag.referencia = referencia.Trim();
+                ViewBag.agencia = agencia.Trim();
+                ViewBag.destino = destino.Trim();
+                ViewBag.agencia_direccion = agencia_direccion.Trim();
+
+                var person = GetInformacionUsuario(numerodocumento.Trim());
+                ViewBag.nombres = person.NombreCompleto.Trim().ToString();
+                ViewBag.apellidos = person.ApellidoCompleto.Trim();
+                ViewBag.nombreCompletoUsuario = person.NombreCompleto.Trim() + ' ' + person.ApellidoCompleto.Trim();
+                ViewBag.direccion = person.Bas_Direccion.Trim();
+                ViewBag.tipo_documento = person.TipoDocumento.Trim();
+                ViewBag.celular = person.Bas_Celular.Trim();
+                ViewBag.email = person.Bas_Correo.Trim();
+                ViewBag.departamento = person.Departamento.Trim();
+                ViewBag.provincia = person.Provincia.Trim();
+                ViewBag.liq_tipo_prov = liq_tipo_prov;
+                ViewBag.liq_provincia = liq_provincia;
+                ViewBag.nro_pedido = nropedido;
+                ViewBag.nroliq = nroliq;
+                ViewBag.pagodirecto = pagodirecto;
+                #region<REGION DE PAGO DIRECTO>
+                if (pagodirecto == "1")
+                {
+                    //string IdPedido = "";
+                    //string IdCustomer = "";
+                    //string strLiqId = "";
+                    Dat_Persona datPersona = new Dat_Persona();
+                    Ent_Persona customer = datPersona.GET_INFO_PERSONA(custId);
+                    Session[_session_list_detalle_pedido] = listaDetalleLiquidacion(nroliq, customer._commission);
+
+                    List<Ent_Pago_NCredito> notas = datPersona.get_nota_credito(custId, nroliq);
+
+
+                    Session[_session_notas_persona] = notas;
+
+                    ViewBag.infoProm = customer;
+                    Session[_session_customer] = customer;
+
+
+
+                    //Ent_Pedido_Maestro maestros = datPedido.Listar_Maestros_Pedido(_usuario.usu_id, _usuario.usu_postPago, IdCustomer);
+
+
+                    //List<Ent_Cliente_Despacho> lis_des = dat_cliente.lista_despacho();
+
+                    //var select = lis_des.Select(a => a.desp_cod == "0").ToList();
+
+                    //lis_des.RemoveAt(0);
+
+                    //ViewBag.listPromotor = maestros.combo_ListPromotor;
+                    //ViewBag.listFormaPago = maestros.combo_ListFormaPago;
+                    //ViewBag.IdLiquidacion = liqId;
+                    //ViewBag.despacho = lis_des;// dat_cliente.lista_despacho();
+
+                    Ent_Liquidacion oLiquidacion = new Ent_Liquidacion();
+
+                    oLiquidacion.liq_Id = nroliq;
+                    oLiquidacion.ped_Id = nropedido;
+                    oLiquidacion.cust_Id = custId;
+
+                    //oLiquidacion.liq_tipo_prov = liq_tipo_prov;
+                    //oLiquidacion.liq_tipo_des = liq_tipo_des;
+                    //oLiquidacion.liq_agencia = liq_agencia;
+                    //oLiquidacion.liq_agencia_direccion = liq_agencia_direccion;
+                    //oLiquidacion.liq_destino = liq_destino;
+                    //oLiquidacion.liq_direccion = liq_direccion;
+                    //oLiquidacion.liq_referencia = liq_referencia;
+
+
+                    //ViewBag.Liqui = oLiquidacion;
+                    //ViewBag.ActivaMcoPago = (_usuario.usu_mercado_pago) ? "1" : "0";
+
+                    Session[_session_lnfo_liquidacion] = oLiquidacion;
+                }
+                #endregion
+
+                #region<Obteniendo el token> 
+                var usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+                var auth = new Authetication
+                {
+                    password = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.Password],
+                    username = ConfigurationManager.AppSettings[ConstantsCommon.Credentials_CatalogoPago.User],
+                    usuarioWeb = usuario.usu_login,
+                };
+                var token = AuthServicesApi.AuthTokenCatalogoPago(auth);
+                #endregion
+
+                if (totalpago.Equals("") || totalpago.Equals(0) || totalpago.Equals(null))
+                    ViewBag.totalpago = 0;
+                else
+                    ViewBag.totalpago = totalpago;
+                ViewBag.mercadoPagoPublicKey = token_access;
+
+                return View();
+            }
         }
 
         public ActionResult PasarelaPago(string numerodocumento, decimal totalpago, string tipo_des, string referencia,
@@ -84,6 +237,7 @@ namespace CapaPresentacion.Controllers
         {
             try
             {
+                
                 //if (_usuario.Equals(null)) { return RedirectToAction("Login", "Control", new { returnUrl = return_view }); }
                 //else
                 //{ 
@@ -91,9 +245,21 @@ namespace CapaPresentacion.Controllers
                 //    {
 
                 var _usuario = (Ent_Usuario)Session[Ent_Constantes.NameSessionUser];
+
+               
+
+
+
                 var actionName = this.ControllerContext.RouteData.GetRequiredString("action");
                 var controllerName = this.ControllerContext.RouteData.GetRequiredString("controller");
                 var return_view = actionName + "|" + controllerName;
+
+                if (_usuario == null)
+                {
+                    return RedirectToAction("Lista", "Pedido");
+                }
+                else
+                { 
                 var token_access = ConfigurationManager.AppSettings[ConstantsCommon.TokenMercadoPago.PUBLIC_KEY_MERCADO_PAGO];
 
                 ViewBag.numerodocumento = numerodocumento.Trim();
@@ -122,6 +288,7 @@ namespace CapaPresentacion.Controllers
                     ViewBag.totalpago = totalpago;
                 ViewBag.mercadoPagoPublicKey = token_access;
                 return View();
+                }
                 //    }
                 //    else
                 //    {
@@ -463,7 +630,7 @@ namespace CapaPresentacion.Controllers
             cardToken.expiration_month = card.fechaExpiracionMes;
             cardToken.expiration_year = card.fechaExpiracionAnio;
             /*CAMBIAR NOMBRE PARA PRD,TITULARDE LA TARJETA*/
-            cardToken.cardholder.name = card.nombreCompletoTitular;// "APRO" ;//card.nombreCompletoTitular;// "APRO";
+            cardToken.cardholder.name =  card.nombreCompletoTitular;// "APRO" ;//card.nombreCompletoTitular;// "APRO";
             cardToken.cardholder.identification.number = card.numeroDocumento;
             cardToken.cardholder.identification.type = card.tipoDocumento;
 
@@ -472,11 +639,23 @@ namespace CapaPresentacion.Controllers
             cardToken.device.fingerprint.ram = card.ram;
             cardToken.device.fingerprint.disk_space = card.disk_space;
 
+            
+
             foreach (var item in card.vendor_ids)
-            {
+            {              
                 var vendor = new VendorId();
                 vendor.name = item.name;
-                vendor.value = item.value;
+                if (vendor.name== "vendor_id")
+                {
+                    Dat_PasarelaPago ven = new Dat_PasarelaPago();
+                    vendor.value = ven.vendor_id();
+                }
+                else
+                {
+                    vendor.value = item.value;
+                }
+
+                
                 cardToken.device.fingerprint.vendor_ids.Add(vendor);
             }
 

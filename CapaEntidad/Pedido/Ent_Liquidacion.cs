@@ -38,7 +38,9 @@ namespace CapaEntidad.Pedido
         public string liq_destino { get; set; }
         public string liq_direccion { get; set; }
         public string liq_referencia { get; set; }
-
+        public string bas_tipo_dis { get; set; }
+        public string bas_provincia { get; set; }
+        public string bas_documento { get; set; }
     }    
     public class Ent_NotaCredito
     {

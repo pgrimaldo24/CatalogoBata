@@ -292,7 +292,7 @@ namespace CapaPresentacion.Controllers
                                            decimal _varpercepcion = 0, Int32 _estado = 1, string _ped_id = "", string _liq = "", Int32 _liq_dir = 0,
                                            Int32 _PagPos = 0, string _PagoPostarjeta = "", string _PagoNumConsignacion = "", decimal _PagoTotal = 0,
                                            /*DataTable dtpago = null*/ List<Ent_Documents_Trans> ListPago=null, Boolean _pago_credito = false, Decimal _porc_percepcion = 0, List<Order_Dtl_Temp>
-                                           order_dtl_temp = null, string strTipoPago = "N", string _formaPago = "")
+                                           order_dtl_temp = null, string strTipoPago = "N", string _formaPago = "",string liq_directo="", string ped_directo = "")
         {
 
 
@@ -356,6 +356,7 @@ namespace CapaPresentacion.Controllers
             {
                 var liqMp = new Ent_Liquidacion();
                 liqMp = (Ent_Liquidacion)Session[_session_lnfo_liquidacion];
+               
 
                 if (string.IsNullOrEmpty(liqMp.liq_Id))
                 {
@@ -651,7 +652,7 @@ namespace CapaPresentacion.Controllers
                     Ent_Pedido_Maestro maestros = datPedido.Listar_Maestros_Pedido(_usuario.usu_id, _usuario.usu_postPago, "");
                     ViewBag.listPromotor = maestros.combo_ListPromotor;
                     ViewBag.usutipo = _usuario.usu_tip_id.ToString();
-
+                    ViewBag.ActivaMcoPago = (_usuario.usu_mercado_pago) ? "1" : "0";
                     //Ent_Promotor_Maestros maestros = datUtil.ListarEnt_Maestros_Promotor(_usuario.usu_id);
                     //ViewBag.listLider = maestros.combo_ListLider;
 
@@ -828,7 +829,9 @@ namespace CapaPresentacion.Controllers
                              a.liq_destino,
                              a.liq_direccion,
                              a.liq_referencia,
-
+                             a.bas_tipo_dis,
+                             a.bas_provincia,
+                             a.bas_documento
                          };
             //Se devuelven los resultados por json
             return Json(new

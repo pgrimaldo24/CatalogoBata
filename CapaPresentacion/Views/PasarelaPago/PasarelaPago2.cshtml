@@ -146,13 +146,19 @@
 <span style="display:none;" value="@ViewBag.TokenTarjetaMercadoPago" id="tokenTarjetaMercadoPago">@ViewBag.TokenTarjetaMercadoPago</span>
 <span style="display:none;" value="@ViewBag.totalpago" id="totalpago">@ViewBag.totalpago</span>
 
+<span style="display:none;" value="@ViewBag.nroliq" id="nroliqui1">@ViewBag.nroliq</span>
+<span style="display:none;" value="@ViewBag.nro_pedido" id="nropedido2">@ViewBag.nro_pedido</span>
+
 <span style="display:none;" value="@ViewBag.liq_tipo_prov" id="liq_tipo_prov">@ViewBag.liq_tipo_prov</span>
 <span style="display:none;" value="@ViewBag.liq_provincia" id="liq_provincia">@ViewBag.liq_provincia</span>
+
+<span style="display:none;" value="@ViewBag.pagodirecto" id="pagodirecto">@ViewBag.pagodirecto</span>
+
 <div class="loader" id="loading"></div>
     <div class="row" id="frmRequestPayment" style="visibility:visible">
         <div class="modal-content">
             <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
-                <h4 class="modal-title" id="myModalLabel" style="color:white">Checkout - Mercado Pago</h4>
+                <h4 class="modal-title" id="myModalLabel1" style="color:white">Checkout - Mercado Pago</h4>
             </div>
             <div style="font-size:small;overflow-y: auto;height:500px" class="modal-body" id="listaDetProms">
                 <form id="FormRegistro" name="FormRegistro" style="padding:inherit;">
@@ -359,7 +365,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" hidden="hidden">
                         <div class="col-md-6">
                             <div class="form-group form-group-sm">
                                 <label for="txtubicacion" class="label-form-custom">Dirección</label>
@@ -402,7 +408,7 @@
 <div class="row" id="frmResponsePayment" hidden="hidden" style="visibility:visible">
     <div class="modal-content">
         <div class="modal-header modal-header-danger" style="background-color: #52a3c9 !important;">
-            <h4 class="modal-title" id="myModalLabel" style="color:white">Checkout - Mercado Pago</h4>
+            <h4 class="modal-title" id="myModalLabel2" style="color:white">Checkout - Mercado Pago</h4>
         </div>
         <div style="font-size:small;overflow-y: auto;height:290px;" class="modal-body" id="listaDetProms">
             <form id="FormRegistro" name="FormRegistro">
@@ -448,7 +454,7 @@
         <div class="modal-content" style="top:100px;">
             <div class="modal-header modal-header-danger">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel" style="color:white">Alerta de errores</h4>
+                <h4 class="modal-title" id="myModalLabel3" style="color:white">Alerta de errores</h4>
             </div>
             <div class="modal-body" style="height:100% auto;">
                 <div id="divInfoTime">
@@ -492,7 +498,7 @@
         //promiseDevice();
         document.getElementById('dwFormaPagoCardDeb').style.display = 'none';
 
-       
+
     });
 
     function uuidv4() {
@@ -502,15 +508,28 @@
         });
     }
 
-   
+
 
     var tipo_pago;
     function modal_mensaje() {
         $('#myModalInfoTime').modal('hide');
     }
     function getInfoByUser() {
+
+        //document.getElementById("myModalLabel").value = document.getElementById("nropedido").innerHTML
+
+        var nro_pedido = document.getElementById("nroliqui1").innerHTML;
+        nro_pedido = (nro_pedido.length == 0 ? 'Checkout - Mercado Pago' : 'Checkout - Mercado Pago - Pedido N°: ' + nro_pedido);
+
+        $('#myModalLabel1').text(nro_pedido);
+        $('#myModalLabel2').text(nro_pedido);
+        $('#myModalLabel3').text(nro_pedido);
+
         document.getElementById("txtNombres").value = document.getElementById("nombreCompletoUsuario").innerHTML;;
         document.getElementById("txtDocumento").value = document.getElementById("numerodocumento").innerHTML;
+
+        document.getElementById("txtubicacion").value = document.getElementById("direccion").innerHTML;
+
         var _totalpago = document.getElementById("totalpago").innerHTML;
         if (_totalpago == "0") { document.getElementById("total_amount").innerHTML = "0.00"; }
         else { document.getElementById("total_amount").innerHTML = _totalpago; }
@@ -650,7 +669,10 @@
     }
     function parentCloseModalDetail() {
         //$("#PuntosTienda-load").removeClass("hidden");
-        parent.parentCloseModalDetailCardCvvView();
+        //parent.parentCloseModalDetailCardCvvView();
+        $('#mdlMercadoPago').modal('hide');
+
+        //alert(document.getElementById("nropedido2").innerHTML);
         return false;
     }
     function getValidarTipoPago(valid) {
@@ -866,7 +888,7 @@
         $.ajax({
             type: "POST",
             url: '@Url.Action("LiquidarPedido", "Pedido")',
-            data: { tipo_des: tipo_des, agencia: agencia, destino: destino, direccion_agencia: agencia_direccion, direccion: direccion, referencia: referencia, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, _formaPago: formaPago },
+            data: { tipo_des: tipo_des, agencia: agencia, destino: destino, direccion_agencia: agencia_direccion, direccion: direccion, referencia: referencia, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, _formaPago: formaPago, liq_directo: document.getElementById("nroliqui1").innerHTML, ped_directo: document.getElementById("nropedido2").innerHTML },
             success: function (data) {
                 waitingDialog.hide();
                 if ((data.Success).toString() == "true") {
@@ -910,7 +932,7 @@
         if (tipodoc == "0" || tipodoc == null) { errors.push('Debe seleccionar un tipo de documento.'); }
         if (document_titular == "" || document_titular == null || document_titular.length < 8 || document_titular.length > 8) { errors.push('Debe ingresar un número de documento válido.'); }
         if (email == "" || email == null) { errors.push('Debe ingresar un email.'); }
-        if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); }
+        //if (direccion == "" || direccion == null) { errors.push('Debe ingresar una dirección.'); }
 
         /*borrar elementos*/
         var lis = document.querySelectorAll('#lista-error li');
@@ -967,9 +989,19 @@
         }
     }
     function showListaPedido() {
-        document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
-        $("#btnPedido").prop("disabled", true);
-        parent.parentHrefPopup();
+        var estado = document.getElementById("pagodirecto").innerHTML;;
+
+        if (estado!="1"){
+            document.getElementById('hug_loading').src = "../Content/MercadoPago/img/hug.gif";
+            $("#btnPedido").prop("disabled", true);
+            @*window.location.href = "@Url.Action("Lista", "Pedido")";*@
+            parent.parentHrefPopup();
+        }else{
+            $('#mdlMercadoPago').modal('hide');
+            get_info_cliente(0);
+        }
+
+
 
         //window.location.href = "@Url.Action("Lista", "Pedido")";
     }
