@@ -443,6 +443,7 @@ namespace CapaDato.Financiera
                             Listar = (from DataRow fila in dt.Rows
                                       select new Ent_Movimientos_Pagos()
                                       {
+                                          banco = (fila["banco"] is DBNull) ? string.Empty : (string)(fila["banco"]),
                                           Pag_Id = (fila["Pag_Id"] is DBNull) ? string.Empty : (string)(fila["Pag_Id"]),
                                           Fecha_Op = (fila["Fecha_Op"] is DBNull) ? string.Empty : (string)(fila["Fecha_Op"]),
                                           Des_Operacion = (fila["Des_Operacion"] is DBNull) ? string.Empty : (string)(fila["Des_Operacion"]),

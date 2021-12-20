@@ -110,6 +110,7 @@ namespace CapaEntidad.Financiera
     }
     public class Ent_Movimientos_Pagos
     {
+        public string banco { get; set; }
         public string Pag_Id { get; set; }
         public string Fecha_Op { get; set; }
         public string Des_Operacion { get; set; }
