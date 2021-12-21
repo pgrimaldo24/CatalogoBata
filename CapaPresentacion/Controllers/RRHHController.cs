@@ -239,6 +239,12 @@ namespace CapaPresentacion.Controllers
             var Lista = _ListarPromotor_Lider.ToList();
             try
             {
+                /*<td class="num">34</td>
+                  <td class="num">17.0</td>
+                  <td class="text">067</td>*/
+
+                string style = "<style>.num{mso-number-format:General;}.text{mso-number-format:'\\@';}</style>";
+                sb.Append(style);
                 sb.Append("<div>");
                 sb.Append("<table cellspacing='0' style='width: 1000px' rules='all' border='0' style='border-collapse:collapse;'>");
                 sb.Append("<tr><td Colspan='10'></td></tr>");
@@ -268,7 +274,7 @@ namespace CapaPresentacion.Controllers
                     sb.Append("<td align=''>" + item.Asesor + "</td>\n");
                     sb.Append("<td align=''>" + item.Lider + "</td>\n");
                     sb.Append("<td align=''>" + item.Promotor + "</td>\n");
-                    sb.Append("<td align='Center'>" + item.Documento + "</td>\n");
+                    sb.Append("<td align='Center' class='text' >" + item.Documento + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Fec_Nac + "</td>\n");
                     sb.Append("<td align=''>" + item.Departamento + "</td>\n");
                     sb.Append("<td align=''>" + item.Provincia + "</td>\n");

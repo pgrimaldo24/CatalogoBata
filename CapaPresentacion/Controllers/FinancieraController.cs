@@ -3537,7 +3537,7 @@ namespace CapaPresentacion.Controllers
                     sb.Append("<tr>\n");
                     sb.Append("<td align='Center'>" + item.banco + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Fecha_Op + "</td>\n");
-                    sb.Append("<td align=''>'" + item.Des_Operacion + "</td>\n");
+                    sb.Append("<td align=''>" + item.Des_Operacion + "</td>\n");
                     sb.Append("<td align='right'>" + "S/ " + string.Format("{0:F2}", item.Op_Monto) + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Op_Numero + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Fecha_Op2 + "</td>\n");
