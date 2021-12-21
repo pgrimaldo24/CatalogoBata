@@ -3540,12 +3540,13 @@ namespace CapaPresentacion.Controllers
                     sb.Append("<td align='Center'>" + item.Fecha_Op + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Des_Operacion + "</td>\n");
                     sb.Append("<td align='right'>" + string.Format("{0:F2}", item.Op_Monto) + "</td>\n");
-                    sb.Append("<td align=''>" + item.Des_Operacion + "</td>\n");
-                    sb.Append("<td align='right'>" + "S/ " + string.Format("{0:F2}", item.Op_Monto) + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Op_Numero + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Fecha_Op2 + "</td>\n");
                     sb.Append("<td align='Center'>" + item.Dni_Ruc + "</td>\n");
                     sb.Append("<td align=''>" + item.Cliente + "</td>\n");
+                    //sb.Append("<td align=''>" + item.Des_Operacion + "</td>\n");
+                    //sb.Append("<td align='right'>" + string.Format("{0:F2}", item.Op_Monto) + "</td>\n");
+                     
                     sb.Append("<td align='Center'>" + item.Fecha_Doc + "</td>\n");
                     sb.Append("<td align=''>" + item.Num_Doc + "</td>\n");
                     sb.Append("<td align='right'>" + (item.Importe_Doc == null ? " " : string.Format("{0:F2}", item.Importe_Doc)) + "</td>\n");
