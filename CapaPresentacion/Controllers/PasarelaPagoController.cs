@@ -430,6 +430,25 @@ namespace CapaPresentacion.Controllers
                 throw e;
             }
         }
+        [HttpPost]
+        public ActionResult valida_monto_pagar(string liq_id,decimal monto)
+        {
+            Dat_Pedido valida_pago = null;
+            Int32 estado_valida = 0;
+            try
+            {
+                valida_pago = new Dat_Pedido();
+                Boolean valida= valida_pago.ValidaPagoMonto(liq_id, monto);
+                estado_valida = (valida) ? 1 : 0;
+            }
+            catch (Exception)
+            {
+
+                
+            }            
+            return Json(new { estado = estado_valida });
+        }
+
 
         [HttpGet]
         public ActionResult GetMasterStatus(string key)

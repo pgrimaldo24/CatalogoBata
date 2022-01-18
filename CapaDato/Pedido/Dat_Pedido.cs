@@ -12,7 +12,44 @@ namespace CapaDato.Pedido
 {
     public class Dat_Pedido
     {
+        public Boolean ValidaPagoMonto(string liq_id,Decimal monto)
+        {
+            Boolean valida = false;
+            string sqlquery = "USP_MERCADO_PAGO_VALIDA_MONTO_PAGAR";
+            try
+            {
+                using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
+                {
+                    try
+                    {
+                        if (cn.State == 0) cn.Open();
+                        using (SqlCommand cmd = new SqlCommand(sqlquery, cn))
+                        {
+                            cmd.CommandTimeout = 0;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@LID_ID",liq_id);
+                            cmd.Parameters.AddWithValue("@MONTO", monto);
+                            cmd.Parameters.Add("@VALIDA", SqlDbType.Bit);
+                            cmd.Parameters["@VALIDA"].Direction = ParameterDirection.Output;
+                            cmd.ExecuteNonQuery();
 
+                            valida =Convert.ToBoolean(cmd.Parameters["@VALIDA"].Value);
+
+                        }
+                    }
+                    catch 
+                    {
+
+                        
+                    }
+                }
+            }
+            catch 
+            {
+                                
+            }
+            return valida;
+        }
         public string generar_liquidacion_flete(int usuId, decimal basId, string strListLiq, decimal monto,ref string pedido_flete)
         {
             string sqlquery = "USP_Generar_Liquidacion_Flete";

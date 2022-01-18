@@ -159,14 +159,14 @@
                     <label for="dtpFechaFin" style="color: #3d566e; "></label>
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="col-md-2">
-                            </div>
-                            <div class="col-md-8">
+                            @*<div class="col-md-2">
+                            </div>*@
+                            <div class="col-md-10">
                                 <p class="text-center">
                                     <strong id="StrComentario">Gráfico Barras - Ventas Neta Anual 2021</strong>
                                 </p>
                                 <div class="chart">
-                                    <canvas id="ChartBar" style="height: 310px; width:550px"></canvas>
+                                    <canvas id="ChartBar" style="height: 550px; width:750px"></canvas>
                                 </div>
                             </div>
                             <!-- /.chart-responsive -->
@@ -202,6 +202,7 @@
         var objVentaAnual = {
             Inicio: function () {
                 //debugger
+                $("body").toggleClass('sidebar-collapse');
                 /*[Inicializamos variables]*/
                 $("#rdMonto").attr('checked', true);
                 debugger

@@ -31,9 +31,9 @@
             <div class="panel panel-default p-10">
                 <div class="panel-body" style="padding-top: 7px;padding-bottom: 4px;">
                     <div class="row">
-                        <div class="col-sm-2">
+                        @*<div class="col-sm-1">
 
-                        </div>
+                        </div>*@
                         <div class="col-md-4" style="padding-left: 30px; padding-right: 0px;">
                             <div class="col-md-6" style="padding-left: 0px;">
                                 <label for="" style="color: #3d566e;">Asesor</label>
@@ -49,25 +49,32 @@
                             </div>
                         </div>
                         <div class="col-md-6" style="padding-left: 0px;">
-                            <div class="col-md-4" style="padding-left: 0px;padding-right: 0px;">
-                                <label for="dwCate">Fecha Campaña</label>
+                            <div class="col-md-2" style="padding-left: 0px;">
+                                <label for="dwCate">Año</label>
                                 <div class="form-group">
-                                    @Html.DropDownList("ddlMes", new SelectList(ViewBag.ListarCamFecha, "CamFec_Num", "CamFec_Nom"), new { @class = "form-control selectpicker", @data_live_search = "true", @id = "ddlMes", @name = "ddlMes" })
+                                    @Html.DropDownList("ddlanio", new SelectList(ViewBag.ListarCamFechaAnio, "Anio", "Anio"), new { @class = "form-control selectpicker",  @id = "ddlanio", @name = "ddlanio" })
                                 </div>
                             </div>
-                            <div class="col-md-3" style="padding-right: 0px;">
+
+                            <div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">
+                                <label for="dwCate">Fecha Campaña</label>
+                                <div class="form-group">
+                                    @Html.DropDownList("ddlMes", new SelectList(ViewBag.ListarCamFecha, "CamFec_Num", "CamFec_Nom"), new { @class = "form-control selectpicker",  @id = "ddlMes", @name = "ddlMes" })
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="padding-right: 0px;">
                                 <label for="lblFechaInicio" style="color: #ff6767;">Fecha Inicio</label>
                                 <div id="datepickerIni" class="input-group date" data-date-format="dd/mm/yyyy">
                                     <input id="dtpFechaInicio" type="text" class="form-control input-sm ui-cell-input alignCenter" data-date-format="dd/mm/yyyy" disabled style="max-width: 100%" />
                                 </div>
                             </div>
-                            <div class="col-md-3" style="padding-right: 0px;">
+                            <div class="col-md-2" style="padding-right: 0px;">
                                 <label for="lblFechaInicio" style="color: #ff6767;">Fecha Fin</label>
                                 <div id="datepickerFin" class="input-group date" data-date-format="dd/mm/yyyy">
                                     <input id="dtpFechaFin" type="text" class="form-control input-sm ui-cell-input alignCenter" data-date-format="dd/mm/yyyy" disabled style="max-width: 100%" />
                                 </div>
                             </div>
-                            <div class="col-md-2 text-right" style="padding:0px">
+                            <div class="col-md-1 text-right">
                                 <button id="btnBuscar" type="submit" title="Consultar" class="btn btn-primary" style="margin-top: 21px;">
                                     <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
                                 </button>
@@ -119,24 +126,40 @@
     </div>
 </div>
 @section scripts{
+<script src="~/Scripts/Linkend/linq.min.js"></script>    
  <script>
     var objConsultaPremios = {
         Inicio: function () {
             debugger;
             $("body").toggleClass('sidebar-collapse');
 
+            /*capturando el año actual*/
+            var currentTime = new Date();
+            var year = currentTime.getFullYear()
+            $('#ddlanio').val(year);
+            /*****/
+
             /*[Inicializamos variables]*/
             this.ListarCamFecha = function () { return @Html.Raw(Json.Encode(ViewBag.ListarCamFecha)); }();
+
+            this.ListarCamFechaGeneral = function () { return @Html.Raw(Json.Encode(ViewBag.ListarCamFechaGeneral)); }();
+
             this.ListarLider = function () { return @Html.Raw(Json.Encode(ViewBag.ListarLider)); }();
             //this.ListarLider = function () { return @Html.Raw(Json.Encode(ViewBag.ListarLider)); }();
 
             var date = new Date();
             var Mes = date.getMonth() + 1;
             $('#ddlMes').selectpicker('val', Mes);
+
+            this.lista_filter = objConsultaPremios.ListarCamFechaGeneral.filter(obj => obj.CamFec_Num == Mes && obj.Anio == year);
+            //let iindex = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == Mes);
             let iindex = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == Mes);
 
-            $("#dtpFechaInicio").val(objConsultaPremios.ListarCamFecha[iindex].CamFec_Ini.substring(0, 10));
-            $("#dtpFechaFin").val(objConsultaPremios.ListarCamFecha[iindex].CamFec_Fin.substring(0, 10));
+            //var filtra = objConsultaPremios.ListarCamFechaGeneral.data(C => C.CamFec_Num == Mes && C.Anio == year);
+           
+
+            $("#dtpFechaInicio").val(objConsultaPremios.lista_filter[iindex].CamFec_Ini.substring(0, 10));
+            $("#dtpFechaFin").val(objConsultaPremios.lista_filter[iindex].CamFec_Fin.substring(0, 10));
 
             $("#btnExportar").addClass("disabled");
             $("#btnExportar").attr('disabled', 'disabled');
@@ -156,8 +179,8 @@
                 let index = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == strMes);
                 objConsultaPremios.intMes = strMes;
                 objConsultaPremios.isOkUpdate = true;
-                objConsultaPremios.FechaInicio = objConsultaPremios.ListarCamFecha[index].CamFec_Ini;
-                objConsultaPremios.FechaFin = objConsultaPremios.ListarCamFecha[index].CamFec_Fin;
+                objConsultaPremios.FechaInicio = $("#dtpFechaInicio").val();;//  objConsultaPremios.ListarCamFecha[index].CamFec_Ini;
+                objConsultaPremios.FechaFin = $("#dtpFechaFin").val(); //objConsultaPremios.ListarCamFecha[index].CamFec_Fin;
                 objConsultaPremios.Bas_Id = $("#ddlLider").val();
                 objConsultaPremios.Bas_Aco_Id = $("#ddlAsesor").val();
                 objConsultaPremios.generaal.consultar();
@@ -170,12 +193,29 @@
             /*[btn Exportar y buscar]*/
 
             /*[Select]*/
+
+            $("#ddlanio").change(function () {
+                debugger;
+                let stranio = this.value; 
+                let strMes = $("#ddlMes").val();
+                let index = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == strMes);
+
+                objConsultaPremios.lista_filter = objConsultaPremios.ListarCamFechaGeneral.filter(obj => obj.Anio == stranio);
+
+                $("#dtpFechaInicio").val(objConsultaPremios.lista_filter[index].CamFec_Ini.substring(0, 10));
+                $("#dtpFechaFin").val(objConsultaPremios.lista_filter[index].CamFec_Fin.substring(0, 10));
+            })
+
             $("#ddlMes").change(function () {
                 debugger;
+                let stranio = $("#ddlanio").val();
                 let strMes = this.value;
-                let index = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == strMes);                
-                $("#dtpFechaInicio").val(objConsultaPremios.ListarCamFecha[index].CamFec_Ini.substring(0, 10));
-                $("#dtpFechaFin").val(objConsultaPremios.ListarCamFecha[index].CamFec_Fin.substring(0, 10));
+                let index = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == strMes);
+
+                objConsultaPremios.lista_filter = objConsultaPremios.ListarCamFechaGeneral.filter(obj => obj.Anio == stranio);
+
+                $("#dtpFechaInicio").val(objConsultaPremios.lista_filter[index].CamFec_Ini.substring(0, 10));
+                $("#dtpFechaFin").val(objConsultaPremios.lista_filter[index].CamFec_Fin.substring(0, 10));
             })
 
             $("#ddlAsesor").change(function () {
@@ -317,7 +357,7 @@
                 _Ent.FechaIni = objConsultaPremios.FechaInicio;
                 _Ent.FechaFin = objConsultaPremios.FechaFin;
                 _Ent.Mes = $("#ddlMes option:selected").text();
-                
+
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("get_exporta_LisConsulta_Premios_excel", "Facturacion")',

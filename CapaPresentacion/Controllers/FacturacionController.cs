@@ -3260,7 +3260,17 @@ namespace CapaPresentacion.Controllers
                     ViewBag.ListarLider = ListarLider.ToList();
 
                     DateTime date = DateTime.Now;
-                    ViewBag.ListarCamFecha = datFacturacion.ListarCampaniaFecha().Where(x => x.Anio == date.Year);
+
+                    List<Ent_Campaña_Fecha> camp_fecha_general = datFacturacion.ListarCampaniaFecha();
+
+                    var anio= camp_fecha_general.GroupBy(n => new { n.Anio }).Select(g => new { g.Key.Anio }).OrderBy(o=>o.Anio).ToList();
+
+                    ViewBag.ListarCamFechaAnio = anio;
+                    ViewBag.ListarCamFechaGeneral = camp_fecha_general;
+
+
+                    ViewBag.ListarCamFecha = camp_fecha_general.Where(x => x.Anio == date.Year);
+
                     Ent_Consulta_Premios EntConsultaPremios = new Ent_Consulta_Premios();
                     ViewBag.EntConsultaPremios = EntConsultaPremios;
                     return View();

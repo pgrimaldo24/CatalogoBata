@@ -2067,7 +2067,7 @@ namespace CapaPresentacion.Controllers
                         }
                         newQty = resultLine._qty + qty;
                         resultLine._qty = newQty;
-                        resultLine._commission = Math.Round((((resultLine._price * newQty) - (resultLine._dscto * newQty)) * commPercent) * resultLine._comm, 2, MidpointRounding.AwayFromZero);
+                        resultLine._commission = Math.Round((((resultLine._price * newQty) /*- (resultLine._dscto * newQty)*/) * commPercent) * resultLine._comm, 2, MidpointRounding.AwayFromZero);
                         resultLine._commissionPctg = commPercent;
                         //resultLine._commissionDesc = resultLine._commission.ToString(_currency);
                         int num = 1;

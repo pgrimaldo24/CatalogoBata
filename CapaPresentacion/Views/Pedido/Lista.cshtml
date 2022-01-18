@@ -437,7 +437,54 @@
 <script>
 
     function pagar_popup(nropedido,nroliqui,numerodocumento,totalpago,tipo_des,referencia,agencia,destino,agencia_direccion,liq_tipo_prov,liq_provincia,custId){
+        waitingDialog.show("Espere por favor...");
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("valida_monto_pagar", "PasarelaPago")',
+            data: { liq_id: nroliqui,monto:totalpago },
+            success: function (data) {
+                if (data.estado == 1) {
+                    if (totalpago == '' || totalpago == null) { totalpago = 0 }
+                    if (tipo_des == null || tipo_des == '') { tipo_des = "0" }
+                    if (referencia == null || referencia == '') { referencia = "0" }
+                    if (agencia == null || agencia == '') { agencia = "0" }
+                    if (destino == null || destino == '') { destino = "0" }
+                    if (agencia_direccion == null || agencia_direccion == '') { agencia_direccion = "0" }
 
+                    var TeamDetailPostBackURL ="@Url.Action("PasarelaPago2", "PasarelaPago")";
+                    //waitingDialog.show('Espere un momento por favor');
+                    var options = { "backdrop": "static", keyboard: true };
+                    $.ajax({
+                        type: "GET",
+                        url: TeamDetailPostBackURL,
+                        contentType: "application/json; charset=utf-8",
+                        data: { numerodocumento: numerodocumento, totalpago: totalpago, tipo_des: tipo_des, referencia: referencia, agencia: agencia, destino: destino, agencia_direccion: agencia_direccion, liq_tipo_prov: liq_tipo_prov, liq_provincia: liq_provincia, nropedido:nropedido,nroliq:nroliqui,pagodirecto:'1',custId:custId },
+                        datatype: "json",
+                        cache: true,
+                        success: function (data) {
+                            waitingDialog.hide();
+                            $('#myModalContentPago').html(data);
+                            $('#mdlMercadoPago').modal(options);
+                            $('#mdlMercadoPago').modal('show');
+
+                        },
+                        error: function () {
+                            waitingDialog.hide();
+                            alert("Dynamic content load failed.");
+                        }
+                    });
+                    //waitingDialog.hide()
+
+                } else {
+                    toastr.error('Por favor actualize la pagina, los monto a pagar del pedido es incorrecto', 'Mensaje');
+                    waitingDialog.hide()
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
+            }
+        });
         //alert(pedido);
         //var numerodocumento = document.getElementById("numerodocumento").innerHTML;
         //var totalpago = document.getElementById("totalpago").innerHTML;
@@ -453,7 +500,7 @@
         //liq_tipo_prov = dataArray_cliente.bas_tipo_dis;
         //liq_provincia = dataArray_cliente.bas_provincia;
 
-        if (totalpago == '' || totalpago == null) { totalpago = 0 }
+        @*if (totalpago == '' || totalpago == null) { totalpago = 0 }
         if (tipo_des == null || tipo_des == '') { tipo_des = "0" }
         if (referencia == null || referencia == '') { referencia = "0" }
         if (agencia == null || agencia == '') { agencia = "0" }
@@ -480,6 +527,29 @@
             error: function () {
                 waitingDialog.hide();
                 alert("Dynamic content load failed.");
+            }
+        });*@
+    }
+
+    function verpedido(liqId){
+     
+        waitingDialog.show("Espere por favor...");
+        $.ajax({
+            type: "Post",
+            url: '@Url.Action("VerLiquidacion", "Pedido")',
+            data: { liquidacion: liqId },
+            success: function (data) {
+                if (data.estado == 0) {
+                    $("#load").show();
+                    $("#load").attr("src", "../AspNetForms/ReportLiquidation.aspx");
+                    $("#CRLiquidacion").modal({ backdrop: 'static', keyboard: false });
+                } else {
+                    waitingDialog.hide()
+                }
+            },
+            error: function (xhr) {
+                waitingDialog.hide();
+                toastr.error(xhr, 'Mensaje');
             }
         });
     }
