@@ -1163,6 +1163,143 @@ namespace CapaPresentacion.Controllers
 
                     List<Ent_Order_Dtl> orderLinesOferta_filterMochila = orderLines.Where(c => c._ofe_id != 0 && c._ofe_Tipo == "M").ToList();
 
+                    #region /*INCIO SI EL DESCUENTO ES DE TIPO - Por la compra de BG escolar llévate un par de medias a 6.90 (se pasarán los códigos afectos)*/
+                    List<Ent_Order_Dtl> orderLinesOferta_filterCompra = orderLines.Where(c => c._ofe_id != 0 && c._ofe_Tipo == "Y").ToList();
+                    if (orderLinesOferta_filterCompra.Count>0)
+                    {
+                        var lista_gr = from item in orderLines
+                                       where item._ofe_id != 0
+                                       group item by
+                                       new
+                                       {
+                                           ofertaid = item._ofe_id,
+                                           ofemaxpar = item._ofe_maxpares,
+                                           ofeprecionew=item._ofe_PrecioPack,
+                                       } into g
+                                       select new
+                                       {
+                                           ofertaid = g.Key.ofertaid,
+                                           ofemaxpar = g.Key.ofemaxpar,
+                                           ofeprecionew=g.Key.ofeprecionew,
+                                       };
+                        foreach (var it in lista_gr)
+                        {
+                            Decimal _total1 = orderLinesOferta_filterCompra.Where(r => r._ofe_id == it.ofertaid && r._ofe_porc==0).Sum(x => x._qty);
+                            Decimal _total2 = orderLinesOferta_filterCompra.Where(r => r._ofe_id == it.ofertaid && r._ofe_porc == 1).Sum(x => x._qty);
+                            if (_total1>0 && _total2>0)
+                            {
+                                /*capturamos el maximo de pares y por descuento*/
+                                Decimal _max_pares = it.ofemaxpar;
+                                Decimal _precio_new = it.ofeprecionew;
+                                Decimal _por_desc = 20;
+                                decimal _res = (_max_pares == 0) ? 0 : _total1 / _max_pares;
+                                bool isInt = (int)_res == _res;
+
+                                DataTable dt = new DataTable();
+                                dt.Columns.Add("articulo", typeof(string));
+                                dt.Columns.Add("talla", typeof(string));
+                                dt.Columns.Add("precio", typeof(Decimal));
+                                dt.Columns.Add("cantidad", typeof(Decimal));
+                                dt.Columns.Add("porc_comision", typeof(Decimal));
+                                dt.Columns.Add("descuento", typeof(Decimal));
+                                dt.Columns.Add("oferta", typeof(string));
+                                dt.Columns.Add("aplica", typeof(string));/*producto que se le descuenta*/
+
+                                foreach (var filas in orderLinesOferta_filterCompra.Where(r => r._ofe_id == it.ofertaid).ToList())
+                                {
+                                    for (Int32 c = 0; c < filas._qty; ++c)
+                                    {
+                                        dt.Rows.Add(filas._code.ToString(),
+                                             filas._size.ToString(),
+                                             filas._price,
+                                             1,
+                                             filas._commissionPctg,
+                                             0, filas._ofe_id.ToString(),
+                                             (filas._ofe_porc==0)?"0":"1");
+
+
+                                    }
+                                }
+
+                                if (!isInt)
+                                    _res = Convert.ToInt32((_res) - Convert.ToDecimal(0.1));
+
+                                if (_res != 0)
+                                {
+                                    DataRow[] _filas = dt.Select("len(articulo)>0 and oferta='" + it.ofertaid.ToString() + "'", "precio asc");
+                                    if (_filas.Length > 0)
+                                    {
+                                        if (_por_desc == 1)
+                                        {
+                                            _por_desc = 0.5M;
+                                            _res = 2;
+                                        }
+
+                                        Decimal _des_oferta = 0;
+                                        if (_total1>0)
+                                        {
+                                            if (_total2>0)/*quiere decir que el articulo comprometido y el que se decuento son iguales*/
+                                            {
+                                                for (Int32 i = 0; i < _res; ++i)
+                                                {
+                                                    string _articulo = _filas[i]["articulo"].ToString();
+                                                    string _talla = _filas[i]["talla"].ToString();
+                                                    Decimal _precio = Convert.ToDecimal(_filas[i]["precio"]);
+                                                    Decimal _com_porc = Convert.ToDecimal(_filas[i]["porc_comision"]);
+                                                    Decimal _cant = Convert.ToDecimal(_filas[i]["cantidad"]);
+                                                    decimal _com_mon = Math.Round((_precio * _cant) * _com_porc, 2, MidpointRounding.AwayFromZero);
+                                                    string _aplica = _filas[i]["aplica"].ToString();
+                                                    _des_oferta = 0;
+                                                    if (_aplica == "1")
+                                                    {
+                                                        if (_total1>=i +1)
+                                                        {
+                                                            Ent_Persona data_cli = (Ent_Persona)Session[_session_customer];
+                                                            decimal desc_new_comi = (100 - _por_desc) / 100;/*descuento*/
+                                                            decimal desc_new_aplica = (it.ofeprecionew * desc_new_comi) / ((data_cli._taxRate / 100) + 1);
+                                                            _des_oferta = Math.Round(((_precio * _cant) - _com_mon) - (desc_new_aplica), 2, MidpointRounding.AwayFromZero);
+
+                                                            _filas[i]["descuento"] = _des_oferta;
+                                                        }
+                                                        
+                                                    }                                                 
+                                                }
+
+                                                for (Int32 i = 0; i < orderLines.Count; ++i)
+                                                {
+                                                    string _articulo = orderLines[i]._code.ToString();
+                                                    string _talla = orderLines[i]._size.ToString();
+                                                    string _oferta_id = orderLines[i]._ofe_id.ToString();
+                                                    foreach (DataRow vfila in _filas)
+                                                    {
+                                                        if (_articulo == vfila["articulo"].ToString() && _talla == vfila["talla"].ToString() && _oferta_id == vfila["oferta"].ToString())
+                                                        {
+                                                            orderLines[i]._dscto += Convert.ToDecimal(vfila["descuento"]);
+                                                            //orderLines[i]._dsctoDesc = orderLines[i]._dscto.ToString(_currency);
+
+                                                            orderLines[i]._lineTotal = Math.Round((orderLines[i]._qty * orderLines[i]._price) - (orderLines[i]._commission) - (orderLines[i]._dscto), 2, MidpointRounding.AwayFromZero);
+                                                            orderLines[i]._lineTotDesc = orderLines[i]._lineTotal;
+                                                            //orderLines[i]._lineTotDesc = orderLines[i]._lineTotal.ToString(_currency);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+
+
+                                        
+
+
+                                    }
+                                }
+                            }
+
+                        }
+
+
+                    }
+                    #endregion
 
                     /*INICIO DE LAS OFERTAS DESCUENTO POR PORCENTAJE*/
 
@@ -1200,7 +1337,7 @@ namespace CapaPresentacion.Controllers
 
                             /*ahora capturado el total de pares le hacemos un for para */
 
-                            decimal _res = _total / _max_pares;
+                            decimal _res = (_max_pares==0)?0: _total / _max_pares;/*modificado el 19012022 DM porque generaba error dividir en valor cero */
                             //if (_max_pares == 1)
                             //{
                             //    _res = 1;

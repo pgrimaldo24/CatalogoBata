@@ -351,9 +351,9 @@ namespace CapaPresentacion.Controllers
                     Ent_KPI_Lider _EntL = new Ent_KPI_Lider();
                     List<Ent_KPI_Asesor> ListarAsesor = new List<Ent_KPI_Asesor> { new Ent_KPI_Asesor() { Codigo = "", Descripcion = "Seleccionar a todos" } };
                     List<Ent_KPI_Lider> ListarLider = new List<Ent_KPI_Lider> { new Ent_KPI_Lider() { Codigo = "-1", Descripcion = "Seleccionar a todos" } };
-                    ViewBag.ListarAsesor = ListarAsesor.Concat(datRRHH.ListarAsesor());
+                    ViewBag.ListarAsesor = ListarAsesor.Concat(datRRHH.ListarAsesor(_usuario.usu_id));
                     _EntL.IdAsesor = "";
-                    ViewBag.ListarLider = ListarLider.Concat(datRRHH.ListarLider(_EntL));
+                    ViewBag.ListarLider = ListarLider.Concat(datRRHH.ListarLider(_EntL, _usuario.usu_id));
                     Ent_ConsultaKPI_Detalle EntConsultaKPIDetalle = new Ent_ConsultaKPI_Detalle();
                     Ent_ConsultaKPI EntConsultaKPI = new Ent_ConsultaKPI();
                     ViewBag.EntConsultaKPIDetalle = EntConsultaKPIDetalle;

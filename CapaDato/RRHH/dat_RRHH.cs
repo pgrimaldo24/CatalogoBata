@@ -65,7 +65,7 @@ namespace CapaDato.RRHH
             return Listar;
         }
 
-        public List<Ent_KPI_Asesor> ListarAsesor()
+        public List<Ent_KPI_Asesor> ListarAsesor(decimal usu_id)
         {
             List<Ent_KPI_Asesor> Listar = new List<Ent_KPI_Asesor>();
             string sqlquery = "[USP_Leer_AsesorComercial]";
@@ -76,6 +76,7 @@ namespace CapaDato.RRHH
                     using (SqlCommand cmd = new SqlCommand(sqlquery, cn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@usu_id", usu_id);
                         using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();
@@ -100,7 +101,7 @@ namespace CapaDato.RRHH
             }
             return Listar;
         }
-        public List<Ent_KPI_Lider> ListarLider(Ent_KPI_Lider _Ent)
+        public List<Ent_KPI_Lider> ListarLider(Ent_KPI_Lider _Ent,Decimal usu)
         {
             List<Ent_KPI_Lider> Listar = new List<Ent_KPI_Lider>();
             string sqlquery = "[USP_MVC_LEER_LISTA_LIDER]";
@@ -111,6 +112,7 @@ namespace CapaDato.RRHH
                     using (SqlCommand cmd = new SqlCommand(sqlquery, cn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@usu_id",usu);
                         //cmd.Parameters.AddWithValue("@asesor", DbType.String).Value = _Ent.IdAsesor;
                         using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
