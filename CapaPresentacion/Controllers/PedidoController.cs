@@ -1594,7 +1594,8 @@ namespace CapaPresentacion.Controllers
                                                 //orderLines[i]._dsctoDesc = orderLines[i]._dscto.ToString(_currency);
 
                                                 orderLines[i]._lineTotal = Math.Round((orderLines[i]._qty * orderLines[i]._price) - (orderLines[i]._commission) - (orderLines[i]._dscto), 2, MidpointRounding.AwayFromZero);
-                                                //orderLines[i]._lineTotDesc = orderLines[i]._lineTotal.ToString(_currency);
+                                                orderLines[i]._lineTotDesc = orderLines[i]._lineTotal;
+                                                // orderLines[i]._lineTotDesc = orderLines[i]._lineTotal.ToString(_currency);
                                             }
                                         }
                                     }
@@ -1775,6 +1776,7 @@ namespace CapaPresentacion.Controllers
                                                     //orderLines[i]._dsctoDesc = orderLines[i]._dscto.ToString(_currency);
 
                                                     orderLines[i]._lineTotal = Math.Round((orderLines[i]._qty * orderLines[i]._price) - (orderLines[i]._commission) - (orderLines[i]._dscto), 2, MidpointRounding.AwayFromZero);
+                                                    orderLines[i]._lineTotDesc = orderLines[i]._lineTotal;
                                                     //orderLines[i]._lineTotDesc = orderLines[i]._lineTotal.ToString(_currency);
                                                 }
                                             }
@@ -1915,6 +1917,7 @@ namespace CapaPresentacion.Controllers
                                                     //orderLines[i]._dsctoDesc = orderLines[i]._dscto.ToString(_currency);
 
                                                     orderLines[i]._lineTotal = Math.Round((orderLines[i]._qty * orderLines[i]._price) - (orderLines[i]._commission) - (orderLines[i]._dscto), 2, MidpointRounding.AwayFromZero);
+                                                    orderLines[i]._lineTotDesc = orderLines[i]._lineTotal;
                                                     //orderLines[i]._lineTotDesc = orderLines[i]._lineTotal.ToString(_currency);
                                                 }
                                             }
