@@ -17,10 +17,13 @@ namespace CapaEntidad.Articulo
         public string ofe_prioridad { get; set; }
         public string Ofe_EstID { get; set; }
         public string Ofe_EstID_Admin { get; set; }
+        public string Ofe_Art_Venta { get; set; }
 
         public List<Ent_Oferta_Articulo> lista_articulo { get; set; }
         public List<Ent_Oferta_Categoria> lista_categoria { get; set; }
         public List<Ent_Oferta_Marca> lista_marca { get; set; }
+
+        public List<Ent_Oferta_Articulo> lista_articulo_especial { get; set; }
 
     }
     public class Ent_Oferta_Articulo

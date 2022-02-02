@@ -93,13 +93,14 @@ namespace CapaDato.Articulo
 
         public string update_promocion(int estado , int ofe_id ,string ofe_descripcion,Decimal ofe_porc,DateTime ofe_fecini,DateTime ofe_fecfin,
                                        decimal usu,decimal ofe_prioridad,string ofe_prom_id,List<Ent_Articulo>  articulo ,string categoria ,
-	                                   string marca ,string estado_promo,string estado_promo_admin)
+	                                   string marca ,string estado_promo,string estado_promo_admin,decimal precio_especial, List<Ent_Articulo> articulo_especial)
         {
             string sqlquery = "USP_MVC_PROMOCION_UPDATE";
             string valida = "";
             try
             {
                 DataTable dt = dt_articulo(articulo);
+                DataTable dt_especial = dt_articulo(articulo_especial);
                 using (SqlConnection cn = new SqlConnection(Ent_Conexion.conexion))
                 {
                     try
@@ -123,6 +124,9 @@ namespace CapaDato.Articulo
                             cmd.Parameters.AddWithValue("@marca", marca);
                             cmd.Parameters.AddWithValue("@estado_promo", estado_promo);
                             cmd.Parameters.AddWithValue("@estado_promo_admin", estado_promo_admin);
+
+                            cmd.Parameters.AddWithValue("@precio_especial", precio_especial);
+                            cmd.Parameters.AddWithValue("@articulo_especial", dt_especial);
 
                             cmd.ExecuteNonQuery();
                         }
@@ -230,6 +234,7 @@ namespace CapaDato.Articulo
                             DataTable dt_articulo = ds.Tables[1];
                             DataTable dt_categoria = ds.Tables[2];
                             DataTable dt_marca = ds.Tables[3];
+                            DataTable dt_especial = ds.Tables[4];
 
                             obj = new Ent_Oferta();
                             obj.Ofe_Id = dt_oferta.Rows[0]["Ofe_Id"].ToString();
@@ -241,6 +246,7 @@ namespace CapaDato.Articulo
                             obj.ofe_prioridad = dt_oferta.Rows[0]["ofe_prioridad"].ToString();
                             obj.Ofe_EstID = dt_oferta.Rows[0]["Ofe_EstID"].ToString();
                             obj.Ofe_EstID_Admin= dt_oferta.Rows[0]["Ofe_EstID_Admin"].ToString();
+                            obj.Ofe_Art_Venta = dt_oferta.Rows[0]["Ofe_ArtVenta"].ToString();
                             obj.lista_articulo = (from DataRow fila in dt_articulo.Rows
                                                   select new Ent_Oferta_Articulo()
                                                   {
@@ -262,6 +268,13 @@ namespace CapaDato.Articulo
                                                        Ofe_marca = fila["marca"].ToString(),
                                                    }
                                           ).ToList();
+                            obj.lista_articulo_especial = (from DataRow fila in dt_especial.Rows
+                                                  select new Ent_Oferta_Articulo()
+                                                  {
+                                                      Ofe_Id = fila["Ofe_Id"].ToString(),
+                                                      Ofe_articulo = fila["articulo"].ToString(),
+                                                  }
+                                               ).ToList();
 
                         }
                     }
