@@ -195,7 +195,7 @@
                         <div id="prm" class="form-group" disabled>
                             <label for="txttelefono" style="color: #3d566e;">Teléfono</label>
                             <div class="form-group">
-                                <input type="text" value="" maxlength="100" class="form-control" placeholder="Ingrese el Telefono" name="txttelefono" id="txttelefono" />
+                                <input type="text" value="" maxlength="9" class="form-control" placeholder="Ingrese el Telefono" name="txttelefono" id="txttelefono" />
                             </div>
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                         <div id="prm" class="form-group" disabled>
                             <label for="txtcelular" style="color: #3d566e;">Número Celular</label>
                             <div class="form-group">
-                                <input type="text" value="" maxlength="55" placeholder="Ingrese el Celular" class="form-control" name="txtcelular" id="txtcelular" />
+                                <input type="text" value="" maxlength="9" placeholder="Ingrese el Celular" class="form-control" name="txtcelular" id="txtcelular" />
                             </div>
                         </div>
                     </div>
@@ -944,10 +944,21 @@
     <script>
 
         $(function () {
+            var date = new Date();
+            date.setFullYear(date.getFullYear() -18);
+            var currentMonth = date.getMonth();
+            var currentDate = date.getDate();
+            var currentYear = date.getFullYear();
+
+            var maxDate= new Date(currentYear, currentMonth, currentDate);
+
             $("#datepickerfecnac").datepicker({
                 autoclose: true,
-                todayHighlight: true
-            }).datepicker();
+                todayHighlight: true,
+                endDate: maxDate
+            }).datepicker(
+            "option", "maxDate", maxDate
+            );
         });
 
         $(document).ready(function () {
@@ -1287,6 +1298,11 @@
                 return 1;
             }
 
+            //Validar longitud teléfono y celular
+            var telefonoCelularIncorrecto = validar_longitud_telefono_celuar();
+
+            if(telefonoCelularIncorrecto == 1) return 1;
+
             if (str_direccion.trim().trimLeft().trimRight().length == 0) {
                 if (cl_ubi == 'fa fa-plus') $('#btnubi').click();
                 toastr.error("Ingrese la direccion.", "Aviso");
@@ -1301,6 +1317,12 @@
                     $('#txtref').focus();
                     return 1;
                 }
+                if(str_direccion.trim().trimLeft().trimRight() == str_referencia.trim().trimLeft().trimRight()){
+                    if (cl_ubi == 'fa fa-plus') $('#btnubi').click();
+                    toastr.error("La referencia debe de ser diferente a la dirección.", "Aviso");
+                    $('#txtref').focus();
+                    return 1;
+                }                    
             }
 
           
@@ -1334,6 +1356,31 @@
 
             }
 
+            return 0;
+        }
+
+        function validar_longitud_telefono_celuar(){
+            var cl_tipper = document.getElementById("i_tipper").className;
+
+            var str_telefono = $('#txttelefono').val().toString();            
+            var longitudTelefono = str_telefono.trim().trimLeft().trimRight().length;
+
+            if ( longitudTelefono > 0 && longitudTelefono < 9) {
+                if (cl_tipper == 'fa fa-plus') $('#btntipper').click();
+                toastr.error("El teléfono debe contener nueve números.", "Aviso");
+                $('#txttelefono').focus();
+                return 1;
+            }
+
+            var str_celular = $('#txtcelular').val().toString();
+            var longitudCelular = str_celular.trim().trimLeft().trimRight().length;
+
+            if ( longitudCelular > 0 && longitudCelular < 9) {
+                if (cl_tipper == 'fa fa-plus') $('#btntipper').click();
+                toastr.error("El celular debe de contener nueve números.", "Aviso");
+                $('#txtcelular').focus();
+                return 1;
+            }
             return 0;
         }
 

@@ -592,10 +592,10 @@ else
     <script>
         var dataArray_cliente;
         $(document).ready(function () {
-             
+
             //var userAgent = navigator.appCodeName//; || navigator.vendor || window.opera;
 
-           dataArray_cliente = function () { return @Html.Raw(Json.Encode(ViewBag.infoProm)); }();
+            dataArray_cliente = function () { return @Html.Raw(Json.Encode(ViewBag.infoProm)); }();
             var formapago = $("#dwFormaPago").val();
             if (formapago == "005") { $("#btnMercadoPago").prop("disabled", false); }
             $('#txtagencia').prop("disabled", true);
@@ -606,7 +606,7 @@ else
             $('#txtreferencia').prop("disabled", true);
 
 
-            setInterval("validarTotalPago();",1000);
+            setInterval("validarTotalPago();", 1000);
 
 
             document.getElementById("txtagencia").className = "form-control";
@@ -618,16 +618,13 @@ else
 
             var operacion = "@ViewBag.operacion";
 
-            var ActivaMcoPago="@ViewBag.ActivaMcoPago";
+            var ActivaMcoPago = "@ViewBag.ActivaMcoPago";
 
-
-
-            if (ActivaMcoPago=="1"){
+            if (ActivaMcoPago == "1") {
                 $("#btnMercadoPago").show();
-            }else{
+            } else {
                 $("#btnMercadoPago").hide();
             }
-
 
             if (operacion == 'Nuevo') {
                 var tip_des = dataArray_cliente.desp_cod;
@@ -709,7 +706,7 @@ else
                         $("#divdestino").hide();
 
                         $("#divdireccion").show();
-                        $("#divreferencia").show();
+                        $("#divreferencia").show();                        
                     } else {
 
                         $("#chkagencia").prop("checked", false);
@@ -755,9 +752,28 @@ else
 
 
             }
+
+            deshabilitarCheckBox();
         });
 
-        
+        function deshabilitarCheckBox() {
+            var EsLiderPromotor = "@ViewBag.EsLiderPromotor";
+
+            if (EsLiderPromotor == "True") {
+                //$("#chkagencia").prop("disabled", true);
+                //$("#chkdestino").prop("disabled", true);
+                //$("#chkagencia_dir").prop("disabled", true);
+                $("#chkdireccion").prop("disabled", true);
+                $("#chkreferencia").prop("disabled", true);
+
+                //document.getElementById("chkagencia").parentElement.style.backgroundColor = "#eeeeee";
+                //document.getElementById("chkdestino").parentElement.style.backgroundColor = "#eeeeee";
+                //document.getElementById("chkagencia_dir").parentElement.style.backgroundColor = "#eeeeee";
+                document.getElementById("chkdireccion").parentElement.style.backgroundColor = "#eeeeee";
+                document.getElementById("chkreferencia").parentElement.style.backgroundColor = "#eeeeee";
+            }
+        }
+
 
         $("#btnMercadoPago").click(function () {
             if (getValidarInformacionCliente()) {
@@ -780,9 +796,9 @@ else
             $('#mdlMercadoPago').modal('hide');
         }
 
-     
-        
-       
+
+
+
 
         function habilitarMercadoPago(valor) {
             if (valor == "005") { $("#btnMercadoPago").prop("disabled", false); }
@@ -890,7 +906,7 @@ else
 
                     $('#txtagencia_dir').val(dataArray_cliente.lider_direccion);
                     $('#txtreferencia').val(dataArray_cliente.lider_referencia);
-                    span_envio.innerText = "Requerido la Informacion de Envio " ;//- (Distrito - " + dataArray_cliente.lider_distrito + ")";
+                    span_envio.innerText = "Requerido la Informacion de Envio ";//- (Distrito - " + dataArray_cliente.lider_distrito + ")";
 
                 }
                 else {
@@ -3748,7 +3764,6 @@ else
                 success: function (data) {
                     waitingDialog.hide();
 
-                    //debugger;
                     $('#myModalContent').html(data);
                     $('#myModal').modal(options);
                     $('#myModal').modal('show');
@@ -4080,7 +4095,6 @@ else
         }
 
         function parentHrefPopup() {
-            debugger;
             window.location.href = "@Url.Action("Lista", "Pedido")";
             return false;
         }
@@ -4101,7 +4115,6 @@ else
                 success: function (data) {
                     waitingDialog.hide();
                     if (data.estado == 0) {
-                        debugger
                         if (data.info.length == 0) {
                             waitingDialog.hide();
                             /*si no hay ninguna informacion en el detalle*/

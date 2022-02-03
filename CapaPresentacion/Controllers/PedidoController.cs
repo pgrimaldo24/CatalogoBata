@@ -151,6 +151,8 @@ namespace CapaPresentacion.Controllers
 
                     ViewBag.Liqui = oLiquidacion;
                     ViewBag.ActivaMcoPago = (_usuario.usu_mercado_pago)?"1":"0";
+                    ViewBag.EsLiderPromotor = (_usuario.usu_tip_id == "01" || _usuario.usu_tip_id == "02") ? true : false;
+
 
                     Session[_session_lnfo_liquidacion] = oLiquidacion;
 
