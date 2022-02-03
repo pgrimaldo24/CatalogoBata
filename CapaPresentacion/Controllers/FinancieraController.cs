@@ -2920,7 +2920,7 @@ namespace CapaPresentacion.Controllers
                 if (valida_rol)
                 {
                     Ent_Saldo_Cliente EnSaldCliente = new Ent_Saldo_Cliente();
-                    ViewBag.Listar_ConceptoSC = datFinanciera.Listar_Concepto_Saldo().Where(x => x.Codigo == "90" || x.Codigo == "98" || x.Codigo == "9F" || x.Codigo == "9INT");
+                    ViewBag.Listar_ConceptoSC = datFinanciera.Listar_Concepto_Saldo().Where(x => x.Codigo == "90" || x.Codigo == "98" || x.Codigo == "9F" || x.Codigo == "9INT" || x.Codigo == "MCP");
 
                     List<Ent_Combo> ListarLider = new List<Ent_Combo>();
                     List<Ent_Combo> ListarAsesor = new List<Ent_Combo>();
