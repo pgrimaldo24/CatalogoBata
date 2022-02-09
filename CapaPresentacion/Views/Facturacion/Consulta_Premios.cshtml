@@ -151,7 +151,7 @@
             var Mes = date.getMonth() + 1;
             $('#ddlMes').selectpicker('val', Mes);
 
-            this.lista_filter = objConsultaPremios.ListarCamFechaGeneral.filter(obj => obj.CamFec_Num == Mes && obj.Anio == year);
+            this.lista_filter = objConsultaPremios.ListarCamFechaGeneral.filter(obj =>  obj.Anio == year);
             //let iindex = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == Mes);
             let iindex = objConsultaPremios.ListarCamFecha.findIndex(C => C.CamFec_Num == Mes);
 
